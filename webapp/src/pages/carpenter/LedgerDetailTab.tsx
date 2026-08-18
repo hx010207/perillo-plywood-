@@ -1,7 +1,7 @@
 import React from 'react';
 import { useI18n } from '../../contexts/I18nContext';
 import { Invoice, LineItem } from '../../types';
-import { ArrowLeft, AlertTriangle, FileCheck, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, AlertTriangle } from 'lucide-react';
 
 interface LedgerDetailTabProps {
   item: Invoice;
@@ -44,34 +44,34 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'Approved':
-        return 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40';
+        return 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border-emerald-400/40';
       case 'Rejected':
-        return 'bg-rose-500/20 text-rose-300 border-rose-400/40';
+        return 'bg-rose-500/15 text-rose-700 dark:text-rose-300 border-rose-400/40';
       default:
-        return 'bg-amber-500/20 text-amber-300 border-amber-400/40';
+        return 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border-amber-400/40';
     }
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-white">
+    <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-slate-900 dark:text-white">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/10">
+      <div className="flex items-center justify-between pb-3 border-b border-emerald-950/10 dark:border-white/10">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-[#10B981] hover:text-emerald-300 font-bold text-sm transition-colors"
+          className="flex items-center space-x-2 text-emerald-600 dark:text-[#10B981] hover:text-emerald-700 dark:hover:text-emerald-300 font-bold text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t('back')}</span>
         </button>
-        <h2 className="text-lg font-extrabold text-white">{t('invoiceDetails')}</h2>
+        <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('invoiceDetails')}</h2>
         <div className="w-12" />
       </div>
 
       {/* Image Gallery Preview */}
-      <div className="p-6 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-4">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
         {images.length > 0 ? (
           <div>
-            <div className="relative h-64 sm:h-80 w-full rounded-xl overflow-hidden bg-black/60 border border-white/15 shadow-inner">
+            <div className="relative h-64 sm:h-80 w-full rounded-xl overflow-hidden bg-black/70 border border-slate-200 dark:border-white/15 shadow-inner">
               <img src={images[0]} alt="Submitted Invoice" className="w-full h-full object-contain bg-black/80" />
               <div className="absolute bottom-0 inset-x-0 bg-black/80 backdrop-blur-md py-2 px-4 text-center">
                 <span className="text-xs font-bold text-emerald-300">
@@ -87,25 +87,25 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
                     key={`${uri}-${idx}`}
                     src={uri}
                     alt={`Thumbnail ${idx + 1}`}
-                    className="w-20 h-20 rounded-xl object-cover border border-white/20 shadow-sm"
+                    className="w-20 h-20 rounded-xl object-cover border border-slate-300 dark:border-white/20 shadow-sm"
                   />
                 ))}
               </div>
             )}
           </div>
         ) : (
-          <div className="h-40 rounded-xl border border-white/10 bg-black/40 flex items-center justify-center text-slate-400 text-xs">
+          <div className="h-40 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/40 flex items-center justify-center text-slate-500 dark:text-slate-400 text-xs">
             No attached invoice images
           </div>
         )}
       </div>
 
       {/* Details Card */}
-      <div className="p-6 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-4">
-        <div className="flex items-center justify-between pb-3 border-b border-white/10">
+      <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-white/10">
           <div>
-            <span className="text-xs text-slate-400 uppercase font-semibold">Claim Tracking ID</span>
-            <h3 className="text-xl font-extrabold text-white mt-0.5">{item.id}</h3>
+            <span className="text-xs text-slate-500 dark:text-slate-400 uppercase font-semibold">Claim Tracking ID</span>
+            <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mt-0.5">{item.id}</h3>
           </div>
           <span className={`px-3 py-1 rounded-xl text-xs font-bold uppercase tracking-wider border ${getStatusBadge(item.status)}`}>
             {item.status}
@@ -114,62 +114,62 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
 
         {/* Rejection reason banner */}
         {item.status === 'Rejected' && (
-          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-400/30 space-y-1">
-            <div className="flex items-center text-rose-300 text-xs font-bold space-x-1.5">
-              <AlertTriangle className="w-4 h-4 text-rose-400" />
+          <div className="p-4 rounded-xl bg-rose-500/10 dark:bg-rose-500/15 border border-rose-400/30 space-y-1">
+            <div className="flex items-center text-rose-700 dark:text-rose-300 text-xs font-bold space-x-1.5">
+              <AlertTriangle className="w-4 h-4 text-rose-600 dark:text-rose-400" />
               <span>{t('rejectionReason')}</span>
             </div>
-            <p className="text-xs text-rose-200 font-medium">{item.rejection_reason || 'Verification failed'}</p>
+            <p className="text-xs text-rose-800 dark:text-rose-200 font-medium">{item.rejection_reason || 'Verification failed'}</p>
           </div>
         )}
 
         {/* Key-Value Details */}
-        <div className="divide-y divide-white/10 text-sm">
+        <div className="divide-y divide-slate-100 dark:divide-white/10 text-sm">
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-300">{t('dealerName')}</span>
-            <span className="font-bold text-white">{storeName}</span>
+            <span className="text-slate-600 dark:text-slate-300">{t('dealerName')}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{storeName}</span>
           </div>
 
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-300">{t('dealerCityLabel')}</span>
-            <span className="font-bold text-white">{dealerCity}</span>
+            <span className="text-slate-600 dark:text-slate-300">{t('dealerCityLabel')}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{dealerCity}</span>
           </div>
 
           {/* Line items list */}
           {lineItems.length > 0 ? (
             <div className="py-3 space-y-2">
-              <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+              <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                 {t('lineItems')}
               </span>
-              <div className="bg-[#0B130E] rounded-xl p-3.5 border border-white/10 space-y-2">
+              <div className="bg-slate-50 dark:bg-[#0B130E] rounded-xl p-3.5 border border-slate-200 dark:border-white/10 space-y-2">
                 {lineItems.map((li, idx) => (
-                  <div key={idx} className="flex justify-between text-xs font-semibold text-slate-200">
+                  <div key={idx} className="flex justify-between text-xs font-semibold text-slate-800 dark:text-slate-200">
                     <span>{li.product}</span>
-                    <span className="font-bold text-emerald-400">×{li.quantity} Sheets</span>
+                    <span className="font-bold text-emerald-700 dark:text-emerald-400">×{li.quantity} Sheets</span>
                   </div>
                 ))}
               </div>
             </div>
           ) : (
             <div className="py-2.5 flex justify-between">
-              <span className="text-slate-300">{t('productType')}</span>
-              <span className="font-bold text-white">{item.product_type}</span>
+              <span className="text-slate-600 dark:text-slate-300">{t('productType')}</span>
+              <span className="font-bold text-slate-900 dark:text-white">{item.product_type}</span>
             </div>
           )}
 
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-300">{t('quantity')}</span>
-            <span className="font-bold text-amber-300">{item.quantity} Sheets Total</span>
+            <span className="text-slate-600 dark:text-slate-300">{t('quantity')}</span>
+            <span className="font-bold text-amber-700 dark:text-amber-300">{item.quantity} Sheets Total</span>
           </div>
 
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-300">{t('invoiceNumber')}</span>
-            <span className="font-bold text-white">{item.invoice_number}</span>
+            <span className="text-slate-600 dark:text-slate-300">{t('invoiceNumber')}</span>
+            <span className="font-bold text-slate-900 dark:text-white">{item.invoice_number}</span>
           </div>
 
           <div className="py-2.5 flex justify-between">
-            <span className="text-slate-300">{t('purchaseDate')}</span>
-            <span className="font-medium text-white">{item.purchase_date}</span>
+            <span className="text-slate-600 dark:text-slate-300">{t('purchaseDate')}</span>
+            <span className="font-medium text-slate-900 dark:text-white">{item.purchase_date}</span>
           </div>
 
           {item.status === 'Approved' && (

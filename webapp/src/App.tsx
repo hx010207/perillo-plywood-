@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { I18nProvider } from './contexts/I18nContext';
 import { SplashScreen } from './components/common/SplashScreen';
@@ -43,12 +44,14 @@ export default function App() {
   }
 
   return (
-    <SmoothScrollProvider>
-      <I18nProvider>
-        <AuthProvider>
-          <AppContent />
-        </AuthProvider>
-      </I18nProvider>
-    </SmoothScrollProvider>
+    <ThemeProvider>
+      <SmoothScrollProvider>
+        <I18nProvider>
+          <AuthProvider>
+            <AppContent />
+          </AuthProvider>
+        </I18nProvider>
+      </SmoothScrollProvider>
+    </ThemeProvider>
   );
 }

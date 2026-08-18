@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ShieldCheck } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { CountUp } from '../reactbits/CountUp';
 
 interface PerilloRewardsCardProps {
@@ -11,42 +11,36 @@ interface PerilloRewardsCardProps {
   tierRewardPct?: number;
 }
 
-const TIER_MAP: Record<string, { bg: string; label: string; pillColor: string; cashback: string }> = {
+const TIER_MAP: Record<string, { bg: string; label: string; pillColor: string }> = {
   Member: {
-    bg: '/cards/tier-member.png',
+    bg: '/cards/card-tier-member.png',
     label: 'MEMBER',
-    pillColor: 'bg-emerald-950/60 border-emerald-400/40 text-emerald-300',
-    cashback: '0.8% Cashback',
+    pillColor: 'bg-black/40 border-emerald-400/40 text-amber-300',
   },
   Bronze: {
-    bg: '/cards/tier-bronze.png',
+    bg: '/cards/card-tier-bronze.png',
     label: 'BRONZE',
-    pillColor: 'bg-amber-950/60 border-amber-400/40 text-amber-300',
-    cashback: '1.0% Cashback',
+    pillColor: 'bg-black/40 border-amber-400/40 text-amber-300',
   },
   Silver: {
-    bg: '/cards/tier-silver.png',
+    bg: '/cards/card-tier-silver.png',
     label: 'SILVER',
-    pillColor: 'bg-slate-900/60 border-slate-300/40 text-slate-200',
-    cashback: '1.5% Cashback',
+    pillColor: 'bg-black/40 border-slate-300/40 text-amber-300',
   },
   Gold: {
-    bg: '/cards/tier-bronze.png',
+    bg: '/cards/card-tier-bronze.png',
     label: 'GOLD',
-    pillColor: 'bg-amber-950/60 border-yellow-400/50 text-yellow-300',
-    cashback: '2.0% Cashback',
+    pillColor: 'bg-black/40 border-yellow-400/50 text-amber-300',
   },
   Platinum: {
-    bg: '/cards/tier-pro.png',
+    bg: '/cards/card-tier-pro.png',
     label: 'PRO FLAGSHIP',
-    pillColor: 'bg-black/60 border-amber-400/50 text-amber-300',
-    cashback: '2.5% Cashback',
+    pillColor: 'bg-black/40 border-amber-400/50 text-amber-300',
   },
   Pro: {
-    bg: '/cards/tier-pro.png',
+    bg: '/cards/card-tier-pro.png',
     label: 'PRO FLAGSHIP',
-    pillColor: 'bg-black/60 border-amber-400/50 text-amber-300',
-    cashback: '2.5% Cashback',
+    pillColor: 'bg-black/40 border-amber-400/50 text-amber-300',
   },
 };
 
@@ -55,7 +49,6 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
   userId,
   pointsBalance,
   tier,
-  tierRewardPct,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [rotateX, setRotateX] = useState(0);
@@ -73,8 +66,8 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
     const xPct = (x / rect.width - 0.5) * 2;
     const yPct = (y / rect.height - 0.5) * 2;
 
-    setRotateX(-yPct * 12);
-    setRotateY(xPct * 12);
+    setRotateX(-yPct * 10);
+    setRotateY(xPct * 10);
     setGlarePos({ x: (x / rect.width) * 100, y: (y / rect.height) * 100 });
   };
 
@@ -90,7 +83,7 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
   };
 
   return (
-    <div style={{ perspective: '1200px' }} className="w-full max-w-xl mx-auto">
+    <div style={{ perspective: '1000px' }} className="w-full max-w-xl mx-auto">
       <motion.div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -104,30 +97,37 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
         transition={{ type: 'spring', stiffness: 220, damping: 20 }}
         style={{
           transformStyle: 'preserve-3d',
-          backgroundImage: `url("${tierConfig.bg}")`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
         }}
-        className="relative w-full aspect-[1.586/1] rounded-2xl border border-white/10 shadow-2xl overflow-hidden cursor-pointer select-none"
+        className="relative w-full aspect-[1.586/1] rounded-[20px] shadow-2xl overflow-hidden cursor-pointer select-none border border-white/10"
       >
-        {/* Dynamic Light Sheen / Reflection Overlay */}
+        {/* Full-bleed Card Background Image */}
+        <img
+          src={tierConfig.bg}
+          alt={`${tier} Card Texture`}
+          className="absolute inset-0 w-full h-full object-cover object-center"
+        />
+
+        {/* Ambient Dark Gradient Layer for High Readability */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/35 to-black/25 z-10" />
+
+        {/* Interactive Dynamic Glare Reflection Overlay */}
         <div
           className="pointer-events-none absolute inset-0 z-20 transition-opacity duration-300"
           style={{
             opacity: isHovered ? 0.35 : 0,
-            background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,0.4) 0%, transparent 60%)`,
+            background: `radial-gradient(circle at ${glarePos.x}% ${glarePos.y}%, rgba(255,255,255,0.45) 0%, transparent 60%)`,
           }}
         />
 
-        {/* Ambient Dark Gradient Layer to ensure high text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/30 z-10" />
-
-        {/* Card Content Layer */}
-        <div className="relative z-20 h-full p-5 sm:p-7 flex flex-col justify-between text-white">
-          {/* Top Row: Brand & Dynamic Frosted Tier Pill */}
+        {/* Card Foreground Content with 3D parallax translateZ */}
+        <div 
+          style={{ transform: 'translateZ(20px)' }}
+          className="relative z-30 h-full p-5 sm:p-7 flex flex-col justify-between text-white"
+        >
+          {/* Top Row: Brand Header & Top-Right Frosted Tier Pill */}
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white p-0.5 shadow-md border border-white/30">
+              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white p-0.5 shadow-md border border-white/40">
                 <img
                   src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg"
                   alt="Perillo Logo"
@@ -138,14 +138,14 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
                 <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-white drop-shadow-md block">
                   Perillo Rewards Pass
                 </span>
-                <span className="text-[9px] sm:text-[10px] text-emerald-300/90 font-medium">
+                <span className="text-[9px] sm:text-[10px] text-emerald-300 font-semibold">
                   Hubballi Manufacturing HQ
                 </span>
               </div>
             </div>
 
-            {/* Frosted Tier Pill */}
-            <div className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md border shadow-lg flex items-center space-x-1.5 ${tierConfig.pillColor}`}>
+            {/* Frosted Tier Pill (Top Right) */}
+            <div className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md border border-white/20 shadow-lg flex items-center space-x-1.5 ${tierConfig.pillColor}`}>
               <Sparkles className="w-3 h-3 text-amber-400" />
               <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wide">
                 {tierConfig.label}
@@ -153,10 +153,10 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
             </div>
           </div>
 
-          {/* Center: Large Points Value */}
-          <div className="my-auto py-1">
-            <span className="text-[11px] sm:text-xs font-semibold text-emerald-400 uppercase tracking-wider block mb-0.5">
-              Available Balance
+          {/* Middle: Available Balance & Points Typography (Offset right to prevent EMV chip graphic overlap) */}
+          <div className="my-auto py-1 pl-20 sm:pl-28 md:pl-32">
+            <span className="text-[10px] sm:text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-0.5 drop-shadow-sm">
+              AVAILABLE BALANCE
             </span>
             <div className="flex items-baseline space-x-2">
               <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">
@@ -164,19 +164,19 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
               </h2>
               <span className="text-lg sm:text-2xl font-bold text-emerald-300">Pts</span>
             </div>
-            <p className="text-xs sm:text-sm font-semibold text-amber-300 drop-shadow-md mt-1">
+            <p className="text-xs sm:text-sm font-semibold text-amber-300 drop-shadow-md mt-0.5">
               ₹{(pointsBalance || 0).toLocaleString()} INR • 1 Pt = ₹1
             </p>
           </div>
 
-          {/* Bottom Row: Cardholder Name & Membership Number */}
+          {/* Bottom Row: Cardholder Name & Monospaced Membership ID */}
           <div className="flex items-end justify-between pt-2 border-t border-white/15">
             <div>
               <p className="text-[9px] sm:text-[10px] font-medium text-slate-300 uppercase tracking-wider">
                 Cardholder
               </p>
-              <p className="text-xs sm:text-base font-bold text-white uppercase tracking-wide mt-0.5 drop-shadow-sm">
-                {userName || 'Raju Carpenter'}
+              <p className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wide mt-0.5 drop-shadow-sm">
+                {userName || 'RAJU CARPENTER'}
               </p>
             </div>
 
@@ -184,7 +184,7 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
               <p className="text-[9px] sm:text-[10px] font-medium text-slate-300 uppercase tracking-wider">
                 Membership No
               </p>
-              <p className="text-xs sm:text-sm font-bold text-emerald-300 tracking-wider mt-0.5">
+              <p className="font-mono text-xs sm:text-sm font-bold text-emerald-300 tracking-wider mt-0.5">
                 {formatCardNumber(userId)}
               </p>
             </div>

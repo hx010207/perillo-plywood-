@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
-
-const TIER_CONFIG = {
-  Member:   { icon: '📦', color: '#94A3B8', bg: '#F1F5F9', next: 100, rewardPct: 0.8 },
-  Bronze:   { icon: '🥉', color: '#CD7F32', bg: '#FEF3C7', next: 400, rewardPct: 1.0 },
-  Silver:   { icon: '🥈', color: '#6B7280', bg: '#F3F4F6', next: 700, rewardPct: 1.5 },
-  Gold:     { icon: '🥇', color: '#F59E0B', bg: '#FEF9C3', next: 1000, rewardPct: 2.0 },
-  Platinum: { icon: '💎', color: '#8B5CF6', bg: '#F3E8FF', next: null, rewardPct: 2.5 }
-};
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, ActivityIndicator, RefreshControl, Dimensions } from 'react-native';
+import { PerilloRewardsCard } from '../components/PerilloRewardsCard';
 
 const MILESTONES = [
-  { sheets: 100, gift: 'Branded utility item' },
-  { sheets: 400, gift: 'Professional tool support gift' },
-  { sheets: 700, gift: 'Premium tool kit or bonus reward' },
-  { sheets: 1000, gift: 'Highest cashback slab / premium loyalty benefit' }
+  { sheets: 100, gift: 'Branded Utility Item' },
+  { sheets: 400, gift: 'Professional Tool Support Gift' },
+  { sheets: 700, gift: 'Premium Tool Kit Bonus Reward' },
+  { sheets: 1000, gift: 'Top-Tier Cashback & VIP Benefit' }
 ];
 
 export default function DashboardScreen({ user, stats, apiUrl, onNavigateUpload, onViewLedgerItem, refreshKey, t = (key) => key }) {
@@ -26,7 +19,7 @@ export default function DashboardScreen({ user, stats, apiUrl, onNavigateUpload,
       const response = await fetch(`${apiUrl}/invoices/${user.id}`);
       if (response.ok) {
         const data = await response.json();
-        setRecentClaims(data.slice(0, 3));
+        setRecentClaims(data.slice(0, 4));
       }
     } catch (error) {
       console.warn('Error fetching recent claims:', error);
@@ -48,19 +41,20 @@ export default function DashboardScreen({ user, stats, apiUrl, onNavigateUpload,
     fetchRecentClaims();
   }, [stats.pointsBalance, stats.pendingClaims]);
 
-  const tierCfg = TIER_CONFIG[stats.tier] || TIER_CONFIG.Member;
   const totalSheets = stats.totalSheets || 0;
-  const nextTierSheets = stats.nextTierSheets;
+  const nextTierSheets = stats.nextTierSheets || 100;
   const progressPct = nextTierSheets ? Math.min((totalSheets / nextTierSheets) * 100, 100) : 100;
+  const nextMilestone = MILESTONES.find(m => totalSheets < m.sheets) || MILESTONES[0];
+  const sheetsLeft = Math.max(0, nextMilestone.sheets - totalSheets);
 
-  // Find next milestone
-  const nextMilestone = MILESTONES.find(m => totalSheets < m.sheets);
-
-  const getStatusStyle = (status) => {
+  const getStatusBadge = (status) => {
     switch (status) {
-      case 'Approved': return { bg: '#E6F4EA', text: '#137333' };
-      case 'Rejected': return { bg: '#FCE8E6', text: '#C5221F' };
-      default: return { bg: '#FEF7E0', text: '#B06000' };
+      case 'Approved':
+        return { bg: '#E6F4EA', text: '#065F46', border: '#A7F3D0' };
+      case 'Rejected':
+        return { bg: '#FEE2E2', text: '#B91C1C', border: '#FECACA' };
+      default:
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
     }
   };
 
@@ -68,220 +62,479 @@ export default function DashboardScreen({ user, stats, apiUrl, onNavigateUpload,
     <View style={styles.container}>
       <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1E4620']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8C6D58']} />}
       >
-        {/* Welcome + Verification */}
-        <View style={styles.welcomeContainer}>
-          <View style={styles.welcomeRow}>
-            <View>
-              <Text style={styles.welcomeText}>Namaste 👋</Text>
-              <Text style={styles.carpenterName}>{user.name || 'User'}</Text>
+        {/* 1. Welcome Greeting Header with Circular Avatar */}
+        <View style={styles.welcomeCard}>
+          <View style={styles.avatarRow}>
+            <View style={styles.avatarCircle}>
+              <Text style={styles.avatarText}>{(user.name || 'R').charAt(0).toUpperCase()}</Text>
             </View>
+            <View style={styles.welcomeMeta}>
+              <Text style={styles.namasteLabel}>NAMASTE 🙏</Text>
+              <Text style={styles.carpenterName}>{user.name || 'Raju Carpenter'}</Text>
+              <Text style={styles.carpenterPhone}>
+                {user.phone ? `+91 ${user.phone}` : `User ID: ${user.id}`}
+              </Text>
+            </View>
+          </View>
+
+          <View style={styles.badgeWrap}>
             {stats.verified ? (
               <View style={styles.verifiedBadge}>
                 <Text style={styles.verifiedText}>✓ Verified</Text>
               </View>
             ) : (
-              <View style={styles.unverifiedBadge}>
-                <Text style={styles.unverifiedText}>⏳ Pending</Text>
+              <View style={styles.pendingBadge}>
+                <Text style={styles.pendingText}>⏳ Pending</Text>
               </View>
             )}
           </View>
-          <Text style={styles.carpenterId}>ID: {user.id}</Text>
         </View>
 
-        {/* Balance Card */}
-        <View style={styles.balanceCard}>
-          <View style={styles.balanceInfo}>
-            <Text style={styles.balanceLabel}>POINTS BALANCE</Text>
-            <Text style={styles.balanceAmount}>{(stats.pointsBalance || 0).toLocaleString()} Pts</Text>
-            <Text style={styles.balanceValue}>Value: ₹ {(stats.pointsBalance || 0).toLocaleString()}</Text>
-          </View>
-          <View style={[styles.tierBadge, { backgroundColor: tierCfg.bg }]}>
-            <Text style={styles.tierIcon}>{tierCfg.icon}</Text>
-            <Text style={[styles.tierName, { color: tierCfg.color }]}>{stats.tier}</Text>
-            <Text style={[styles.tierReward, { color: tierCfg.color }]}>{tierCfg.rewardPct}%</Text>
-          </View>
-        </View>
+        {/* 2. 4-Tier Rewards Card (Static Texture Assets) */}
+        <PerilloRewardsCard
+          userName={user.name}
+          userId={user.id}
+          pointsBalance={stats.pointsBalance}
+          tier={stats.tier}
+        />
 
-        {/* Tier Progress Card */}
-        <View style={styles.tierCard}>
-          <View style={styles.tierHeader}>
-            <Text style={styles.tierTitle}>{t('loyaltyProgress')}</Text>
-            <Text style={styles.sheetCount}>{totalSheets} {t('sheets')} {t('total')}</Text>
-          </View>
-          
-          {/* Progress bar */}
-          <View style={styles.progressBarBg}>
-            <View style={[styles.progressBarFill, { width: `${progressPct}%`, backgroundColor: tierCfg.color }]} />
-          </View>
-          <View style={styles.progressLabels}>
-            <Text style={styles.progressLabelLeft}>{stats.tier} · {tierCfg.rewardPct}%</Text>
-            {stats.nextTier ? (
-              <Text style={styles.progressLabelRight}>{stats.nextTier} ({nextTierSheets} sheets)</Text>
-            ) : (
-              <Text style={styles.progressLabelRight}>{t('maxTierReached')}</Text>
-            )}
+        {/* 3. Loyalty Progress Tracker */}
+        <View style={styles.progressCard}>
+          <View style={styles.progressHeader}>
+            <Text style={styles.progressTitle}>🏆 {t('loyaltyProgress') || 'Loyalty Progress'}</Text>
+            <Text style={styles.progressCounter}>
+              {totalSheets} / {nextTierSheets} Sheets
+            </Text>
           </View>
 
-          {/* Next milestone gift */}
+          {/* Progress Bar */}
+          <View style={styles.progressBarTrack}>
+            <View style={[styles.progressBarFill, { width: `${progressPct}%` }]} />
+          </View>
+
+          {/* Milestone Banner */}
           {nextMilestone && (
-            <View style={styles.milestoneHint}>
+            <View style={styles.milestoneBox}>
               <Text style={styles.milestoneText}>
-                {t('nextMilestoneGift')} {nextMilestone.sheets} {t('sheets')}: {nextMilestone.gift}
+                🎁 Next at <Text style={styles.bold}>{nextMilestone.sheets} Sheets</Text>: {nextMilestone.gift}
               </Text>
+              <Text style={styles.sheetsLeftPill}>{sheetsLeft} LEFT</Text>
             </View>
           )}
         </View>
 
-        {/* Stats Grid */}
-        <View style={styles.statsGrid}>
-          <View style={[styles.statBox, styles.statBoxPending]}>
-            <Text style={styles.statNumberPending}>{stats.pendingClaims}</Text>
-            <Text style={styles.statLabel}>Pending</Text>
+        {/* 4. KPI Triad */}
+        <View style={styles.kpiRow}>
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>PENDING</Text>
+            <Text style={[styles.kpiValue, { color: '#B45309' }]}>{stats.pendingClaims || 0}</Text>
+            <Text style={styles.kpiSub}>Under Review</Text>
           </View>
-          <View style={[styles.statBox, styles.statBoxApproved]}>
-            <Text style={styles.statNumberApproved}>{stats.approvedClaims}</Text>
-            <Text style={styles.statLabel}>Approved</Text>
+
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>APPROVED</Text>
+            <Text style={[styles.kpiValue, { color: '#065F46' }]}>{stats.approvedClaims || 0}</Text>
+            <Text style={styles.kpiSub}>Credited</Text>
+          </View>
+
+          <View style={styles.kpiCard}>
+            <Text style={styles.kpiLabel}>TOTAL SHEETS</Text>
+            <Text style={[styles.kpiValue, { color: '#2A1E17' }]}>{totalSheets}</Text>
+            <Text style={styles.kpiSub}>Lifetime</Text>
           </View>
         </View>
 
-        {/* Recent Claims */}
-        <View style={styles.recentSection}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>{t('recentUploads')}</Text>
-            <Text style={styles.pullText}>{t('pullRefresh')}</Text>
-          </View>
-
-          {loading ? (
-            <ActivityIndicator color="#1E4620" size="small" style={{ marginTop: 20 }} />
-          ) : recentClaims.length === 0 ? (
-            <View style={styles.emptyContainer}>
-              <Text style={styles.emptyText}>{t('noHistory')}</Text>
-              <Text style={styles.emptySubText}>{t('uploadFirst')}</Text>
-            </View>
-          ) : (
-            recentClaims.map((item) => {
-              const statusTheme = getStatusStyle(item.status);
-              const storeName = item.store_name || item.dealer_name || '';
-              const dealerCity = item.dealer_city || '';
-              const itemSummary = item.product_type || '';
-              return (
-                <TouchableOpacity 
-                  key={item.id} 
-                  style={styles.claimCard}
-                  onPress={() => onViewLedgerItem(item)}
-                >
-                  <View style={styles.claimIconContainer}>
-                    <Text style={styles.claimIcon}>📄</Text>
-                  </View>
-                  <View style={styles.claimDetails}>
-                    <Text style={styles.claimDealer}>{storeName}</Text>
-                    <Text style={styles.claimCity}>{dealerCity}</Text>
-                    <Text style={styles.claimProduct} numberOfLines={1}>{itemSummary} • {item.quantity} Sheets</Text>
-                    <Text style={styles.claimDate}>No: {item.invoice_number}</Text>
-                  </View>
-                  <View style={styles.claimRightSide}>
-                    <View style={[styles.statusBadge, { backgroundColor: statusTheme.bg }]}>
-                      <Text style={[styles.statusText, { color: statusTheme.text }]}>{item.status}</Text>
-                    </View>
-                    {item.status === 'Approved' && (
-                      <Text style={styles.pointsEarnedText}>+{item.points_earned} Pts</Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              );
-            })
-          )}
+        {/* 5. Recent Uploads Section */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>📄 {t('recentUploads') || 'Recent Invoices'}</Text>
+          <TouchableOpacity onPress={onRefresh}>
+            <Text style={styles.refreshLink}>{t('pullRefresh') || 'Refresh'}</Text>
+          </TouchableOpacity>
         </View>
+
+        {loading ? (
+          <ActivityIndicator color="#8C6D58" style={{ marginVertical: 20 }} />
+        ) : recentClaims.length === 0 ? (
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyIcon}>📷</Text>
+            <Text style={styles.emptyTitle}>{t('noHistory') || 'No claims submitted yet'}</Text>
+            <Text style={styles.emptySub}>{t('uploadFirst') || 'Upload your first invoice to earn reward points'}</Text>
+            <TouchableOpacity style={styles.emptyBtn} onPress={onNavigateUpload}>
+              <Text style={styles.emptyBtnText}>{t('uploadInvoice') || 'Upload Invoice'}</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          recentClaims.map((item) => {
+            const badge = getStatusBadge(item.status);
+            return (
+              <TouchableOpacity 
+                key={item.id} 
+                style={styles.claimCard}
+                onPress={() => onViewLedgerItem(item)}
+              >
+                <View style={styles.claimTop}>
+                  <Text style={styles.claimStore} numberOfLines={1}>
+                    🏪 {item.store_name || item.dealer_name || 'Dealer Store'}
+                  </Text>
+                  <View style={[styles.statusPill, { backgroundColor: badge.bg, borderColor: badge.border }]}>
+                    <Text style={[styles.statusPillText, { color: badge.text }]}>{item.status}</Text>
+                  </View>
+                </View>
+
+                <Text style={styles.claimProduct}>
+                  {item.dealer_city ? `${item.dealer_city} • ` : ''}{item.product_type} ({item.quantity} Sheets)
+                </Text>
+
+                <View style={styles.claimFooter}>
+                  <Text style={styles.claimDate}>
+                    Inv #{item.invoice_number} · {item.purchase_date}
+                  </Text>
+                  {item.status === 'Approved' && (
+                    <Text style={styles.claimPoints}>+{item.points_earned} Pts</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            );
+          })
+        )}
       </ScrollView>
 
-      {/* FAB */}
-      <TouchableOpacity style={styles.fab} onPress={onNavigateUpload}>
+      {/* Floating Action Button */}
+      <TouchableOpacity style={styles.fab} onPress={onNavigateUpload} activeOpacity={0.9}>
         <Text style={styles.fabIcon}>📷</Text>
-        <Text style={styles.fabText}>{t('uploadInvoice')}</Text>
+        <Text style={styles.fabText}>{t('uploadInvoice') || 'UPLOAD INVOICE'}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC' },
-  scrollContent: { padding: 16, paddingBottom: 90 },
-  welcomeContainer: { marginBottom: 16 },
-  welcomeRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  welcomeText: { fontSize: 14, color: '#64748B', fontWeight: '500' },
-  carpenterName: { fontSize: 22, fontWeight: 'bold', color: '#1E293B', marginTop: 2 },
-  carpenterId: { fontSize: 12, color: '#94A3B8', fontWeight: '600', marginTop: 2 },
-  verifiedBadge: { backgroundColor: '#DCFCE7', paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, borderWidth: 1, borderColor: '#86EFAC' },
-  verifiedText: { fontSize: 11, fontWeight: '700', color: '#166534' },
-  unverifiedBadge: { backgroundColor: '#FEF9C3', paddingVertical: 4, paddingHorizontal: 10, borderRadius: 12, borderWidth: 1, borderColor: '#FDE047' },
-  unverifiedText: { fontSize: 11, fontWeight: '700', color: '#854D0E' },
-
-  balanceCard: {
-    backgroundColor: '#1E4620', borderRadius: 20, padding: 22,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    shadowColor: '#1E4620', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 4,
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF7F2',
   },
-  balanceInfo: { flex: 1 },
-  balanceLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 11, fontWeight: '700', letterSpacing: 1 },
-  balanceAmount: { color: '#FFFFFF', fontSize: 30, fontWeight: 'bold', marginTop: 4 },
-  balanceValue: { color: '#FBBF24', fontSize: 13, fontWeight: '600', marginTop: 2 },
-  tierBadge: { width: 64, height: 64, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
-  tierIcon: { fontSize: 26 },
-  tierName: { fontSize: 10, fontWeight: '800', marginTop: 2, textTransform: 'uppercase' },
-  tierReward: { fontSize: 9, fontWeight: '800', marginTop: 2 },
-
-  tierCard: {
-    backgroundColor: '#FFFFFF', borderRadius: 16, padding: 16, marginTop: 14,
-    borderWidth: 1, borderColor: '#E2E8F0',
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 90,
   },
-  tierHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  tierTitle: { fontSize: 14, fontWeight: 'bold', color: '#1E4620' },
-  sheetCount: { fontSize: 12, fontWeight: '700', color: '#64748B' },
-  progressBarBg: { height: 8, backgroundColor: '#E2E8F0', borderRadius: 4, overflow: 'hidden' },
-  progressBarFill: { height: 8, borderRadius: 4 },
-  progressLabels: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 6 },
-  progressLabelLeft: { fontSize: 11, fontWeight: '700', color: '#475569' },
-  progressLabelRight: { fontSize: 11, fontWeight: '600', color: '#94A3B8' },
-  milestoneHint: { marginTop: 10, backgroundColor: '#FFFBEB', borderRadius: 10, padding: 10, borderWidth: 1, borderColor: '#FDE68A' },
-  milestoneText: { fontSize: 12, color: '#92400E', fontWeight: '600' },
-
-  statsGrid: { flexDirection: 'row', marginTop: 14, gap: 12 },
-  statBox: { flex: 1, backgroundColor: '#FFFFFF', borderRadius: 14, padding: 14, alignItems: 'center', borderWidth: 1, borderColor: '#E2E8F0' },
-  statBoxPending: { borderLeftWidth: 4, borderLeftColor: '#D97706' },
-  statBoxApproved: { borderLeftWidth: 4, borderLeftColor: '#10B981' },
-  statNumberPending: { fontSize: 22, fontWeight: 'bold', color: '#D97706' },
-  statNumberApproved: { fontSize: 22, fontWeight: 'bold', color: '#10B981' },
-  statLabel: { fontSize: 11, color: '#64748B', marginTop: 3, fontWeight: '500' },
-
-  recentSection: { marginTop: 20 },
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#1E4620' },
-  pullText: { fontSize: 11, color: '#94A3B8' },
-  emptyContainer: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 14, padding: 24, alignItems: 'center', marginTop: 8 },
-  emptyText: { fontSize: 14, color: '#475569', fontWeight: '600', textAlign: 'center' },
-  emptySubText: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginTop: 6, lineHeight: 18 },
-
-  claimCard: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', marginBottom: 10, borderWidth: 1, borderColor: '#E2E8F0' },
-  claimIconContainer: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  claimIcon: { fontSize: 18 },
-  claimDetails: { flex: 1 },
-  claimDealer: { fontSize: 14, fontWeight: 'bold', color: '#1E293B' },
-  claimCity: { fontSize: 11, color: '#64748B', marginTop: 2, fontWeight: '600' },
-  claimProduct: { fontSize: 12, color: '#64748B', marginTop: 2, fontWeight: '500' },
-  claimDate: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
-  claimRightSide: { alignItems: 'flex-end' },
-  statusBadge: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 8 },
-  statusText: { fontSize: 11, fontWeight: '700', textTransform: 'uppercase' },
-  pointsEarnedText: { fontSize: 12, color: '#1E4620', fontWeight: 'bold', marginTop: 4 },
-
+  welcomeCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 16,
+    marginBottom: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    shadowColor: '#2A1E17',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+  avatarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  avatarCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#8C6D58',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#FFFFFF',
+  },
+  avatarText: {
+    color: '#FFFFFF',
+    fontSize: 20,
+    fontWeight: '900',
+  },
+  welcomeMeta: {
+    justifyContent: 'center',
+  },
+  namasteLabel: {
+    fontSize: 10,
+    fontWeight: '800',
+    color: '#8C6D58',
+    letterSpacing: 1,
+  },
+  carpenterName: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#2A1E17',
+    marginTop: 1,
+  },
+  carpenterPhone: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6B5A4E',
+    marginTop: 1,
+  },
+  badgeWrap: {
+    alignSelf: 'flex-start',
+  },
+  verifiedBadge: {
+    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    borderColor: 'rgba(16, 185, 129, 0.35)',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  verifiedText: {
+    color: '#065F46',
+    fontSize: 10.5,
+    fontWeight: '800',
+  },
+  pendingBadge: {
+    backgroundColor: 'rgba(245, 158, 11, 0.15)',
+    borderColor: 'rgba(245, 158, 11, 0.35)',
+    borderWidth: 1,
+    borderRadius: 999,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+  },
+  pendingText: {
+    color: '#B45309',
+    fontSize: 10.5,
+    fontWeight: '800',
+  },
+  progressCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 16,
+    marginVertical: 8,
+  },
+  progressHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  progressTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2A1E17',
+    textTransform: 'uppercase',
+  },
+  progressCounter: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#8C6D58',
+  },
+  progressBarTrack: {
+    height: 10,
+    backgroundColor: '#E7E2D9',
+    borderRadius: 999,
+    overflow: 'hidden',
+    marginBottom: 10,
+  },
+  progressBarFill: {
+    height: '100%',
+    backgroundColor: '#8C6D58',
+    borderRadius: 999,
+  },
+  milestoneBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(140, 109, 88, 0.1)',
+    borderRadius: 10,
+    padding: 10,
+  },
+  milestoneText: {
+    fontSize: 11,
+    color: '#2A1E17',
+    flex: 1,
+  },
+  bold: {
+    fontWeight: '800',
+  },
+  sheetsLeftPill: {
+    fontSize: 9.5,
+    fontWeight: '900',
+    color: '#8C6D58',
+    backgroundColor: '#FAF7F2',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.3)',
+    marginLeft: 8,
+  },
+  kpiRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginVertical: 8,
+  },
+  kpiCard: {
+    flex: 1,
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 12,
+    alignItems: 'center',
+  },
+  kpiLabel: {
+    fontSize: 9.5,
+    fontWeight: '800',
+    color: '#6B5A4E',
+    letterSpacing: 0.5,
+  },
+  kpiValue: {
+    fontSize: 22,
+    fontWeight: '900',
+    marginVertical: 4,
+  },
+  kpiSub: {
+    fontSize: 9,
+    color: '#8C6D58',
+    fontWeight: '600',
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 16,
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#8C6D58',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  refreshLink: {
+    fontSize: 11,
+    fontWeight: '700',
+    color: '#6B5A4E',
+  },
+  emptyCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 24,
+    alignItems: 'center',
+  },
+  emptyIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  emptyTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#2A1E17',
+    marginBottom: 4,
+  },
+  emptySub: {
+    fontSize: 11,
+    color: '#6B5A4E',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  emptyBtn: {
+    backgroundColor: '#8C6D58',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 12,
+  },
+  emptyBtnText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+    textTransform: 'uppercase',
+  },
+  claimCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 14,
+    marginBottom: 10,
+  },
+  claimTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  claimStore: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2A1E17',
+    flex: 1,
+    marginRight: 8,
+  },
+  statusPill: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusPillText: {
+    fontSize: 9.5,
+    fontWeight: '800',
+  },
+  claimProduct: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#8C6D58',
+    marginBottom: 6,
+  },
+  claimFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(140, 109, 88, 0.15)',
+    paddingTop: 6,
+  },
+  claimDate: {
+    fontSize: 10,
+    color: '#6B5A4E',
+    fontWeight: '600',
+  },
+  claimPoints: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#065F46',
+  },
   fab: {
-    position: 'absolute', bottom: 14, left: 16, right: 16,
-    backgroundColor: '#D97706', borderRadius: 14, height: 52,
-    flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    shadowColor: '#D97706', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.25, shadowRadius: 8, elevation: 4,
+    position: 'absolute',
+    bottom: 20,
+    right: 20,
+    backgroundColor: '#8C6D58',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingVertical: 14,
+    paddingHorizontal: 22,
+    borderRadius: 20,
+    shadowColor: '#2A1E17',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 10,
+    elevation: 8,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
-  fabIcon: { fontSize: 18, marginRight: 8, color: '#FFFFFF' },
-  fabText: { color: '#FFFFFF', fontSize: 14, fontWeight: 'bold', letterSpacing: 0.5 },
+  fabIcon: {
+    fontSize: 16,
+  },
+  fabText: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
 });

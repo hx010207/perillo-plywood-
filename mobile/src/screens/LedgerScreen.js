@@ -47,64 +47,79 @@ export default function LedgerScreen({ user, apiUrl, onViewItem, refreshKey, t =
     fetchInvoices().finally(() => setLoading(false));
   }, [user.id, refreshKey]);
 
-  const getStatusTheme = (status) => {
+  const getStatusBadge = (status) => {
     switch (status) {
-      case 'Approved': return { bg: '#10B981', color: '#FFFFFF' };
-      case 'Rejected': return { bg: '#EF4444', color: '#FFFFFF' };
-      default: return { bg: '#F59E0B', color: '#FFFFFF' };
+      case 'Approved':
+        return { bg: '#E6F4EA', text: '#065F46', border: '#A7F3D0' };
+      case 'Rejected':
+        return { bg: '#FEE2E2', text: '#B91C1C', border: '#FECACA' };
+      default:
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
     }
   };
 
   if (loading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator color="#1E4620" size="large" />
+        <ActivityIndicator color="#8C6D58" size="large" />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <ScrollView
+      <ScrollView 
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1E4620']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8C6D58']} />}
       >
         <View style={styles.headerRow}>
-          <Text style={styles.title}>{t('claimsHistory')}</Text>
-          <Text style={styles.pullText}>{t('pullRefresh')}</Text>
+          <View>
+            <Text style={styles.screenTitle}>{t('claimsHistory') || 'Claims History'}</Text>
+            <Text style={styles.screenSub}>All submitted invoices & reward status</Text>
+          </View>
+          <TouchableOpacity onPress={onRefresh}>
+            <Text style={styles.refreshBtn}>🔄 {t('pullRefresh') || 'Refresh'}</Text>
+          </TouchableOpacity>
         </View>
 
         {invoices.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{t('noClaimsFound')}</Text>
-            <Text style={styles.emptySubText}>{t('noClaimsSubText')}</Text>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyIcon}>📋</Text>
+            <Text style={styles.emptyTitle}>{t('noClaimsFound') || 'No claims on record'}</Text>
+            <Text style={styles.emptySub}>{t('noClaimsSubText') || 'Upload invoices to start earning reward points'}</Text>
           </View>
         ) : (
           invoices.map((item) => {
-            const theme = getStatusTheme(item.status);
-            const storeName = item.store_name || item.dealer_name || '-';
-            const dealerCity = item.dealer_city || '-';
-            const itemSummary = item.product_type || '-';
+            const badge = getStatusBadge(item.status);
+            const storeName = item.store_name || item.dealer_name || 'Dealer Store';
+            const dealerCity = item.dealer_city || '';
+
             return (
-              <TouchableOpacity key={item.id} style={styles.card} onPress={() => onViewItem(item)}>
-                <View style={styles.cardTop}>
-                  <Text style={styles.trackingId}>{item.id}</Text>
-                  <View style={[styles.statusBadge, { backgroundColor: theme.bg }]}>
-                    <Text style={[styles.statusText, { color: theme.color }]}>{item.status}</Text>
+              <TouchableOpacity
+                key={item.id}
+                style={styles.claimCard}
+                onPress={() => onViewItem(item)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.claimHeader}>
+                  <Text style={styles.claimId}>Claim #{item.id}</Text>
+                  <View style={[styles.statusBadge, { backgroundColor: badge.bg, borderColor: badge.border }]}>
+                    <Text style={[styles.statusText, { color: badge.text }]}>{item.status}</Text>
                   </View>
                 </View>
 
-                <Text style={styles.storeText}>🏪 {storeName}</Text>
-                <Text style={styles.cityText}>{dealerCity}</Text>
-                <Text style={styles.itemsText} numberOfLines={1}>{itemSummary}</Text>
-                
-                <View style={styles.cardBottom}>
+                <Text style={styles.storeName}>🏪 {storeName}</Text>
+                {dealerCity ? <Text style={styles.cityName}>📍 {dealerCity}</Text> : null}
+                <Text style={styles.productType}>{item.product_type}</Text>
+
+                <View style={styles.claimFooter}>
                   <View>
-                    <Text style={styles.sheetText}>{item.quantity} {t('sheets')}</Text>
-                    <Text style={styles.dateText}>{t('invoiceNo')} {item.invoice_number} • {item.purchase_date}</Text>
+                    <Text style={styles.quantityText}>{item.quantity} Sheets</Text>
+                    <Text style={styles.metaText}>Inv #{item.invoice_number} • {item.purchase_date}</Text>
                   </View>
+
                   {item.status === 'Approved' && (
-                    <Text style={styles.ptsText}>+{item.points_earned} Pts</Text>
+                    <Text style={styles.pointsText}>+{item.points_earned} Pts</Text>
                   )}
                 </View>
               </TouchableOpacity>
@@ -116,159 +131,371 @@ export default function LedgerScreen({ user, apiUrl, onViewItem, refreshKey, t =
   );
 }
 
-// Detail subcomponent
+// Sub-component for Details Screen
 LedgerScreen.Detail = function LedgerDetail({ item, apiUrl, t = (key) => key }) {
-  const getStatusTheme = (status) => {
+  const images = parseImageList(item).map((path) => buildImageUri(apiUrl, path)).filter(Boolean);
+  let lineItems = [];
+  if (item.line_items) {
+    try {
+      lineItems = typeof item.line_items === 'string' ? JSON.parse(item.line_items) : item.line_items;
+    } catch (e) {}
+  }
+
+  const getStatusBadge = (status) => {
     switch (status) {
-      case 'Approved': return { bg: '#E6F4EA', text: '#137333' };
-      case 'Rejected': return { bg: '#FCE8E6', text: '#C5221F' };
-      default: return { bg: '#FEF7E0', text: '#B06000' };
+      case 'Approved':
+        return { bg: '#E6F4EA', text: '#065F46', border: '#A7F3D0' };
+      case 'Rejected':
+        return { bg: '#FEE2E2', text: '#B91C1C', border: '#FECACA' };
+      default:
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
     }
   };
 
-  const statusTheme = getStatusTheme(item.status);
-  const images = parseImageList(item).map((imagePath) => buildImageUri(apiUrl, imagePath)).filter(Boolean);
-  
-  const storeName = item.store_name || item.dealer_name || '-';
-  const dealerCity = item.dealer_city || '-';
-
-  // Parse line items
-  let lineItems = [];
-  try { lineItems = JSON.parse(item.line_items || '[]'); } catch(e) {}
+  const badge = getStatusBadge(item.status);
 
   return (
-    <ScrollView style={styles.detailScroll} contentContainerStyle={styles.detailScrollContent}>
-      {/* Image */}
-      <View style={styles.imageGalleryContainer}>
-        <View style={styles.imageContainer}>
-          <Image source={{ uri: images[0] || '' }} style={styles.detailImage} resizeMode="cover" />
-          <View style={styles.imageOverlay}>
-            <Text style={styles.imageOverlayText}>{t('submittedAttachment')}</Text>
-          </View>
+    <ScrollView contentContainerStyle={styles.detailScrollContent}>
+      {/* Attached Invoice Images */}
+      {images.length > 0 && (
+        <View style={styles.imageGallery}>
+          <Image source={{ uri: images[0] }} style={styles.mainImage} resizeMode="contain" />
+          {images.length > 1 && (
+            <ScrollView horizontal style={styles.thumbRow}>
+              {images.map((uri, idx) => (
+                <Image key={idx} source={{ uri }} style={styles.thumbImage} />
+              ))}
+            </ScrollView>
+          )}
         </View>
-        {images.length > 1 && (
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.thumbnailScroll} contentContainerStyle={styles.thumbnailScrollContent}>
-            {images.map((uri, index) => (
-              <Image key={`${uri}-${index}`} source={{ uri }} style={styles.thumbnailImage} resizeMode="cover" />
-            ))}
-          </ScrollView>
-        )}
-        {!images.length && (
-          <View style={styles.noImageBox}>
-            <Text style={styles.noImageText}>{t('none')}</Text>
-          </View>
-        )}
-      </View>
+      )}
 
-      {/* Details Card */}
-      <View style={styles.detailCard}>
-        <View style={styles.detailCardHeader}>
-          <Text style={styles.detailId}>{item.id}</Text>
-          <View style={[styles.detailStatusBadge, { backgroundColor: statusTheme.bg }]}>
-            <Text style={[styles.detailStatusText, { color: statusTheme.text }]}>{item.status}</Text>
+      {/* Details Box */}
+      <View style={styles.card}>
+        <View style={styles.claimHeader}>
+          <View>
+            <Text style={styles.metaText}>Claim ID</Text>
+            <Text style={styles.detailId}>{item.id}</Text>
+          </View>
+          <View style={[styles.statusBadge, { backgroundColor: badge.bg, borderColor: badge.border }]}>
+            <Text style={[styles.statusText, { color: badge.text }]}>{item.status}</Text>
           </View>
         </View>
 
-        {item.status === 'Rejected' && (
-          <View style={styles.rejectionBanner}>
-            <Text style={styles.rejectionTitle}>{t('rejectionReason')}</Text>
-            <Text style={styles.rejectionBody}>{item.rejection_reason || 'Verification failed'}</Text>
+        {item.status === 'Rejected' && item.rejection_reason && (
+          <View style={styles.rejectionBox}>
+            <Text style={styles.rejectionTitle}>⚠️ Rejection Reason</Text>
+            <Text style={styles.rejectionText}>{item.rejection_reason}</Text>
           </View>
         )}
 
         <View style={styles.divider} />
 
-        {renderDetailField(t('dealerName'), storeName)}
-        {renderDetailField(t('dealerCityLabel'), dealerCity)}
-        
-        {/* Line items */}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Dealer Store</Text>
+          <Text style={styles.infoValue}>{item.store_name || item.dealer_name || '-'}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>City / Location</Text>
+          <Text style={styles.infoValue}>{item.dealer_city || '-'}</Text>
+        </View>
+
         {lineItems.length > 0 ? (
-          <View style={styles.lineItemsSection}>
-            <Text style={styles.lineItemsSectionTitle}>{t('lineItems')}</Text>
+          <View style={styles.lineItemsDetailBox}>
+            <Text style={styles.infoLabel}>Line Items</Text>
             {lineItems.map((li, idx) => (
               <View key={idx} style={styles.lineItemRow}>
-                <Text style={styles.lineItemProduct}>{li.product}</Text>
-                <Text style={styles.lineItemQty}>×{li.quantity}</Text>
+                <Text style={styles.liProduct}>{li.product}</Text>
+                <Text style={styles.liQty}>× {li.quantity} Sheets</Text>
               </View>
             ))}
           </View>
         ) : (
-          renderDetailField(t('productType'), item.product_type)
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Product Grade</Text>
+            <Text style={styles.infoValue}>{item.product_type}</Text>
+          </View>
         )}
 
-        {renderDetailField(t('quantity'), `${item.quantity}`)}
-        {renderDetailField(t('invoiceNumber'), item.invoice_number)}
-        {renderDetailField(t('purchaseDate'), item.purchase_date)}
-        {renderDetailField(t('qrCode'), item.qr_code || t('none'))}
-        {item.status === 'Approved' && renderDetailField(t('pointsEarned'), `+${item.points_earned} Pts`, '#1E4620')}
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Total Quantity</Text>
+          <Text style={styles.infoValueBold}>{item.quantity} Sheets</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Invoice Number</Text>
+          <Text style={styles.infoValue}>{item.invoice_number}</Text>
+        </View>
+
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Purchase Date</Text>
+          <Text style={styles.infoValue}>{item.purchase_date}</Text>
+        </View>
+
+        {item.status === 'Approved' && (
+          <View style={[styles.infoRow, { borderTopWidth: 1, borderTopColor: 'rgba(140, 109, 88, 0.2)', paddingTop: 10, marginTop: 4 }]}>
+            <Text style={styles.pointsEarnedLabel}>Points Credited</Text>
+            <Text style={styles.pointsEarnedValue}>+{item.points_earned} Pts</Text>
+          </View>
+        )}
       </View>
     </ScrollView>
   );
 };
 
-function renderDetailField(label, value, valueColor = '#1E293B') {
-  return (
-    <View style={styles.fieldRow}>
-      <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={[styles.fieldValue, { color: valueColor }]}>{value}</Text>
-    </View>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC' },
-  centerContainer: { flex: 1, alignItems: 'center', justifyContent: 'center', backgroundColor: '#F8FAFC' },
-  scrollContent: { padding: 16 },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  title: { fontSize: 17, fontWeight: 'bold', color: '#1E4620' },
-  pullText: { fontSize: 11, color: '#94A3B8' },
-  emptyContainer: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 14, padding: 28, alignItems: 'center', marginTop: 16 },
-  emptyText: { fontSize: 15, color: '#475569', fontWeight: 'bold' },
-  emptySubText: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginTop: 8, lineHeight: 18 },
-
-  card: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 14, marginBottom: 12, borderWidth: 1, borderColor: '#E2E8F0' },
-  cardTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  trackingId: { fontSize: 14, fontWeight: 'bold', color: '#1E293B' },
-  statusBadge: { paddingVertical: 3, paddingHorizontal: 10, borderRadius: 8 },
-  statusText: { fontSize: 10, fontWeight: 'bold', textTransform: 'uppercase' },
-  storeText: { fontSize: 14, color: '#334155', fontWeight: '600' },
-  itemsText: { fontSize: 12, color: '#64748B', fontWeight: '500', marginTop: 2 },
-  cardBottom: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-end', marginTop: 10, paddingTop: 10, borderTopWidth: 1, borderTopColor: '#F1F5F9' },
-  sheetText: { fontSize: 13, color: '#1E4620', fontWeight: 'bold' },
-  dateText: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
-  ptsText: { fontSize: 14, color: '#1E4620', fontWeight: 'bold' },
-  cityText: { fontSize: 11, color: '#64748B', marginTop: 2, fontWeight: '600' },
-
-  // Detail styles
-  detailScroll: { flex: 1, backgroundColor: '#F8FAFC' },
-  detailScrollContent: { padding: 16 },
-  imageGalleryContainer: { marginBottom: 16 },
-  imageContainer: { height: 200, width: '100%', borderRadius: 14, overflow: 'hidden', backgroundColor: '#E2E8F0', borderWidth: 1, borderColor: '#CBD5E1', position: 'relative' },
-  detailImage: { width: '100%', height: '100%' },
-  imageOverlay: { position: 'absolute', bottom: 0, left: 0, right: 0, backgroundColor: 'rgba(30,70,32,0.75)', paddingVertical: 6, paddingHorizontal: 12 },
-  imageOverlayText: { color: '#FFFFFF', fontSize: 11, fontWeight: 'bold', textAlign: 'center' },
-  thumbnailScroll: { marginTop: 10 },
-  thumbnailScrollContent: { gap: 8 },
-  thumbnailImage: { width: 72, height: 72, borderRadius: 10, borderWidth: 1, borderColor: '#CBD5E1', backgroundColor: '#E2E8F0' },
-  noImageBox: { height: 160, borderRadius: 14, borderWidth: 1, borderColor: '#CBD5E1', backgroundColor: '#FFFFFF', alignItems: 'center', justifyContent: 'center' },
-  noImageText: { color: '#94A3B8', fontSize: 12, fontWeight: '600' },
-  detailCard: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 18, borderWidth: 1, borderColor: '#E2E8F0' },
-  detailCardHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 14 },
-  detailId: { fontSize: 18, fontWeight: 'bold', color: '#1E293B' },
-  detailStatusBadge: { paddingVertical: 5, paddingHorizontal: 12, borderRadius: 8 },
-  detailStatusText: { fontSize: 11, fontWeight: 'bold', textTransform: 'uppercase' },
-  rejectionBanner: { backgroundColor: '#FEF2F2', borderWidth: 1, borderColor: '#FCA5A5', borderRadius: 10, padding: 12, marginBottom: 14 },
-  rejectionTitle: { fontSize: 11, fontWeight: '700', color: '#991B1B' },
-  rejectionBody: { fontSize: 12, color: '#B91C1C', marginTop: 3, fontWeight: '500' },
-  divider: { height: 1, backgroundColor: '#E2E8F0', marginVertical: 10 },
-
-  lineItemsSection: { marginVertical: 8, backgroundColor: '#F8FAFC', borderRadius: 10, padding: 12, borderWidth: 1, borderColor: '#E2E8F0' },
-  lineItemsSectionTitle: { fontSize: 11, fontWeight: '700', color: '#475569', marginBottom: 8, textTransform: 'uppercase' },
-  lineItemRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 6, borderBottomWidth: 1, borderBottomColor: '#F1F5F9' },
-  lineItemProduct: { fontSize: 13, color: '#334155', fontWeight: '500' },
-  lineItemQty: { fontSize: 13, fontWeight: 'bold', color: '#1E4620' },
-
-  fieldRow: { flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: '#F8FAFC' },
-  fieldLabel: { fontSize: 12, color: '#64748B', fontWeight: '500' },
-  fieldValue: { fontSize: 13, fontWeight: '600' },
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF7F2',
+  },
+  centerContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#FAF7F2',
+  },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+  screenTitle: {
+    fontSize: 18,
+    fontWeight: '900',
+    color: '#2A1E17',
+  },
+  screenSub: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6B5A4E',
+    marginTop: 1,
+  },
+  refreshBtn: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#8C6D58',
+  },
+  emptyCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 30,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  emptyIcon: {
+    fontSize: 36,
+    marginBottom: 10,
+  },
+  emptyTitle: {
+    fontSize: 15,
+    fontWeight: '800',
+    color: '#2A1E17',
+  },
+  emptySub: {
+    fontSize: 11.5,
+    color: '#6B5A4E',
+    textAlign: 'center',
+    marginTop: 4,
+  },
+  claimCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 14,
+    marginBottom: 10,
+    shadowColor: '#2A1E17',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
+  },
+  claimHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  claimId: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#6B5A4E',
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  storeName: {
+    fontSize: 13.5,
+    fontWeight: '800',
+    color: '#2A1E17',
+  },
+  cityName: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6B5A4E',
+    marginTop: 1,
+  },
+  productType: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#8C6D58',
+    marginTop: 4,
+  },
+  claimFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-end',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(140, 109, 88, 0.15)',
+    paddingTop: 8,
+    marginTop: 8,
+  },
+  quantityText: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#2A1E17',
+  },
+  metaText: {
+    fontSize: 10.5,
+    color: '#6B5A4E',
+    fontWeight: '600',
+    marginTop: 1,
+  },
+  pointsText: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#065F46',
+  },
+  detailScrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+    backgroundColor: '#FAF7F2',
+  },
+  imageGallery: {
+    backgroundColor: '#000000',
+    borderRadius: 16,
+    overflow: 'hidden',
+    marginBottom: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.3)',
+  },
+  mainImage: {
+    width: '100%',
+    height: 240,
+    backgroundColor: '#111827',
+  },
+  thumbRow: {
+    padding: 8,
+    backgroundColor: '#1E293B',
+  },
+  thumbImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 8,
+    marginRight: 8,
+  },
+  card: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 16,
+  },
+  detailId: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#2A1E17',
+    marginTop: 1,
+  },
+  rejectionBox: {
+    backgroundColor: '#FEE2E2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 10,
+  },
+  rejectionTitle: {
+    fontSize: 11.5,
+    fontWeight: '800',
+    color: '#B91C1C',
+  },
+  rejectionText: {
+    fontSize: 11,
+    color: '#7F1D1D',
+    marginTop: 2,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: 'rgba(140, 109, 88, 0.15)',
+    marginVertical: 10,
+  },
+  infoRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 6,
+  },
+  infoLabel: {
+    fontSize: 12,
+    fontWeight: '600',
+    color: '#6B5A4E',
+  },
+  infoValue: {
+    fontSize: 12.5,
+    fontWeight: '700',
+    color: '#2A1E17',
+  },
+  infoValueBold: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#8C6D58',
+  },
+  lineItemsDetailBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 6,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.2)',
+  },
+  lineItemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 4,
+  },
+  liProduct: {
+    fontSize: 11.5,
+    color: '#2A1E17',
+    fontWeight: '700',
+  },
+  liQty: {
+    fontSize: 11.5,
+    color: '#8C6D58',
+    fontWeight: '800',
+  },
+  pointsEarnedLabel: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#065F46',
+  },
+  pointsEarnedValue: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#065F46',
+  },
 });

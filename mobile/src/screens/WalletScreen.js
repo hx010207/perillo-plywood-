@@ -38,7 +38,7 @@ export default function WalletScreen({ user, stats, apiUrl, onRefreshStats, t = 
     const hasBank = !!(user.bank_name && user.account_number && user.ifsc_code);
 
     if (!hasUpi && !hasBank) {
-      Alert.alert(t('missingPaymentProfile'), t('missingPaymentMsg'));
+      Alert.alert(t('missingPaymentProfile') || 'Missing Payout Details', t('missingPaymentMsg') || 'Please add UPI ID or Bank Account in your Profile tab before requesting payouts.');
       return;
     }
 
@@ -49,26 +49,27 @@ export default function WalletScreen({ user, stats, apiUrl, onRefreshStats, t = 
     setModalVisible(true);
   };
 
+  const pointsNum = parseInt(redeemPoints, 10) || 0;
+  const currentBalance = stats.pointsBalance || 0;
+  const remainingBalance = Math.max(0, currentBalance - pointsNum);
+
+  const handlePresetSelect = (amount) => {
+    const validAmount = Math.min(amount, currentBalance);
+    setRedeemPoints(String(validAmount));
+  };
+
   const submitRedeem = async () => {
-    const pointsNum = parseInt(redeemPoints, 10);
     if (isNaN(pointsNum) || pointsNum <= 0) {
-      Alert.alert(t('invalidAmount'), t('invalidAmountMsg'));
+      Alert.alert(t('invalidAmount') || 'Invalid Amount', t('invalidAmountMsg') || 'Please enter a valid amount of points.');
       return;
     }
-    if (pointsNum > (stats.pointsBalance || 0)) {
-      Alert.alert(t('insufficientBalance'), t('insufficientMsg'));
-      return;
-    }
-    if (redeemType === 'UPI' && !user.upi_id) {
-      Alert.alert(t('missingUPI'), t('missingUPIMsg'));
-      return;
-    }
-    if (redeemType === 'Bank' && (!user.bank_name || !user.account_number || !user.ifsc_code)) {
-      Alert.alert(t('missingBank'), t('missingBankMsg'));
+    if (pointsNum > currentBalance) {
+      Alert.alert(t('insufficientBalance') || 'Insufficient Balance', t('insufficientMsg') || 'Requested points exceed available balance.');
       return;
     }
 
     setRedeeming(true);
+
     try {
       const response = await fetch(`${apiUrl}/payouts`, {
         method: 'POST',
@@ -76,79 +77,116 @@ export default function WalletScreen({ user, stats, apiUrl, onRefreshStats, t = 
         body: JSON.stringify({
           carpenterId: user.id,
           points: pointsNum,
-          payoutType: redeemType
-        })
+          payoutType: redeemType,
+        }),
       });
 
       const data = await response.json();
       if (response.ok && data.success) {
         setModalVisible(false);
-        Alert.alert(t('requestSubmitted'), `${t('payoutRequestFor')} ₹${pointsNum} ${t('submittedSoon')}`);
-        onRefresh();
+        Alert.alert(
+          t('requestSubmitted') || 'Payout Requested',
+          `${t('payoutRequestFor') || 'Request for'} ₹${pointsNum} INR submitted. Funds will be transferred shortly.`
+        );
+        fetchPayouts();
+        onRefreshStats();
       } else {
-        Alert.alert(t('requestFailed'), data.error || t('somethingWentWrong'));
+        Alert.alert(t('redeemFailed') || 'Request Failed', data.error || 'Failed to submit redemption request.');
       }
-    } catch (err) {
-      console.error('Redeem error:', err);
-      Alert.alert(t('error'), t('connectionFailure'));
+    } catch (error) {
+      console.error('Redeem error:', error);
+      Alert.alert(t('error') || 'Error', 'Network error while submitting payout request.');
     } finally {
       setRedeeming(false);
     }
   };
 
-  const getStatusStyle = (status) => {
-    switch(status) {
-      case 'Approved': return { bg: '#DCFCE7', text: '#166534' };
-      case 'Rejected': return { bg: '#FEE2E2', text: '#991B1B' };
-      default: return { bg: '#FEF9C3', text: '#854D0E' };
+  const getStatusBadge = (status) => {
+    switch (status) {
+      case 'Approved':
+      case 'Completed':
+        return { bg: '#E6F4EA', text: '#065F46', border: '#A7F3D0' };
+      case 'Rejected':
+        return { bg: '#FEE2E2', text: '#B91C1C', border: '#FECACA' };
+      default:
+        return { bg: '#FEF3C7', text: '#B45309', border: '#FDE68A' };
     }
   };
 
   return (
     <View style={styles.container}>
-      <ScrollView 
+      <ScrollView
         contentContainerStyle={styles.scrollContent}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#1E4620']} />}
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} colors={['#8C6D58']} />}
       >
-        {/* Balance Card */}
-        <View style={styles.walletCard}>
-          <Text style={styles.walletLabel}>{t('availableBalance')}</Text>
-          <Text style={styles.walletPoints}>{(stats.pointsBalance || 0).toLocaleString()} Pts</Text>
-          <Text style={styles.walletRupees}>{t('equivalentTo')} {(stats.pointsBalance || 0).toLocaleString()}</Text>
+        {/* Wallet Hero Card */}
+        <View style={styles.heroCard}>
+          <View style={styles.heroTop}>
+            <View>
+              <Text style={styles.heroLabel}>{t('availableBalance') || 'AVAILABLE BALANCE'}</Text>
+              <View style={styles.pointsRow}>
+                <Text style={styles.heroPoints}>{currentBalance.toLocaleString()}</Text>
+                <Text style={styles.heroPointsSuffix}> Pts</Text>
+              </View>
+              <Text style={styles.heroInr}>
+                {t('equivalentTo') || 'Value'}: ₹{currentBalance.toLocaleString()} INR (1 Pt = ₹1)
+              </Text>
+            </View>
+            <View style={styles.walletIconCircle}>
+              <Text style={styles.walletIconText}>💰</Text>
+            </View>
+          </View>
 
-          <TouchableOpacity style={styles.redeemButton} onPress={handleRedeemClick}>
-            <Text style={styles.redeemButtonText}>{t('redeemBtn')}</Text>
+          <TouchableOpacity
+            style={[styles.redeemBtn, currentBalance <= 0 && styles.redeemBtnDisabled]}
+            onPress={handleRedeemClick}
+            disabled={currentBalance <= 0}
+          >
+            <Text style={styles.redeemBtnText}>⚡ {t('redeemBtn') || 'REQUEST PAYOUT'}</Text>
           </TouchableOpacity>
-          <Text style={styles.redeemNote}>{t('payoutReviewNote')}</Text>
         </View>
 
-        {/* History */}
+        {/* Payout History Section */}
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('payoutHistory')}</Text>
-          <Text style={styles.pullText}>{t('pullRefresh')}</Text>
+          <View>
+            <Text style={styles.sectionTitle}>{t('payoutHistory') || 'Payout History'}</Text>
+            <Text style={styles.sectionSub}>All withdrawal and disbursal records</Text>
+          </View>
+          <TouchableOpacity onPress={onRefresh}>
+            <Text style={styles.refreshBtn}>🔄 {t('pullRefresh') || 'Refresh'}</Text>
+          </TouchableOpacity>
         </View>
 
         {loading ? (
-          <ActivityIndicator color="#1E4620" size="small" style={{ marginTop: 20 }} />
+          <ActivityIndicator color="#8C6D58" style={{ marginVertical: 20 }} />
         ) : payouts.length === 0 ? (
-          <View style={styles.emptyContainer}>
-            <Text style={styles.emptyText}>{t('noRedemptionHistory')}</Text>
-            <Text style={styles.emptySubText}>{t('noRedemptionSubText')}</Text>
+          <View style={styles.emptyCard}>
+            <Text style={styles.emptyIcon}>💳</Text>
+            <Text style={styles.emptyTitle}>{t('noRedemptionHistory') || 'No redemptions yet'}</Text>
+            <Text style={styles.emptySub}>{t('noRedemptionSubText') || 'Redeem your points to receive cash directly to your UPI/Bank'}</Text>
           </View>
         ) : (
           payouts.map((item) => {
-            const ss = getStatusStyle(item.status);
+            const badge = getStatusBadge(item.status);
             return (
-              <View key={item.id} style={styles.historyCard}>
-                <View style={styles.historyIconBox}>
-                  <Text style={styles.historyIcon}>{item.payout_type === 'UPI' ? '⚡' : '🏦'}</Text>
+              <View key={item.id} style={styles.payoutCard}>
+                <View style={styles.payoutTop}>
+                  <View style={styles.payoutTypeRow}>
+                    <Text style={styles.typeIcon}>{item.payout_type === 'UPI' ? '⚡' : '🏦'}</Text>
+                    <View>
+                      <Text style={styles.payoutTitle}>{item.payout_type} Transfer</Text>
+                      <Text style={styles.payoutId}>ID: {item.id} • {(item.created_at || '').split('T')[0]}</Text>
+                    </View>
+                  </View>
+
+                  <View style={[styles.statusBadge, { backgroundColor: badge.bg, borderColor: badge.border }]}>
+                    <Text style={[styles.statusText, { color: badge.text }]}>{item.status}</Text>
+                  </View>
                 </View>
-                <View style={styles.historyDetails}>
-                  <Text style={styles.historyTitle}>{t('redeemedVia')} {item.payout_type} — ₹{item.amount}</Text>
-                  <Text style={styles.historyDate}>{(item.created_at || '').split('T')[0]}</Text>
-                </View>
-                <View style={[styles.historyStatusBadge, { backgroundColor: ss.bg }]}>
-                  <Text style={[styles.historyStatusText, { color: ss.text }]}>{item.status}</Text>
+
+                <View style={styles.payoutFooter}>
+                  <Text style={styles.payoutPoints}>{item.points_redeemed || item.amount} Points</Text>
+                  <Text style={styles.payoutAmount}>₹{item.amount} INR</Text>
                 </View>
               </View>
             );
@@ -157,56 +195,100 @@ export default function WalletScreen({ user, stats, apiUrl, onRefreshStats, t = 
       </ScrollView>
 
       {/* Redeem Modal */}
-      <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => setModalVisible(false)}>
-        <View style={styles.modalBackdrop}>
-          <View style={styles.modalPanel}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>{t('redeemPoints')}</Text>
-              <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeBtn}>
-                <Text style={styles.closeBtnText}>✕</Text>
+      <Modal visible={modalVisible} transparent animationType="fade" onRequestClose={() => setModalVisible(false)}>
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalTitle}>{t('redeemPoints') || 'Redeem Points'}</Text>
+
+            {/* Current Balance Summary */}
+            <View style={styles.modalBalanceBox}>
+              <View>
+                <Text style={styles.modalBalanceLabel}>{t('availableBalance') || 'Available Balance'}</Text>
+                <Text style={styles.modalBalanceValue}>{currentBalance.toLocaleString()} Pts</Text>
+              </View>
+              <View style={{ alignItems: 'flex-end' }}>
+                <Text style={styles.modalBalanceLabel}>After Payout</Text>
+                <Text style={styles.modalRemainingValue}>{remainingBalance.toLocaleString()} Pts</Text>
+              </View>
+            </View>
+
+            {/* Input */}
+            <Text style={styles.modalInputLabel}>{t('enterPoints') || 'Enter points to redeem'}</Text>
+            <TextInput
+              style={styles.modalInput}
+              keyboardType="numeric"
+              placeholder="e.g. 500"
+              placeholderTextColor="#A89F91"
+              value={redeemPoints}
+              onChangeText={(t) => setRedeemPoints(t.replace(/[^0-9]/g, ''))}
+            />
+
+            {/* Quick Presets */}
+            <View style={styles.presetRow}>
+              {[500, 1000, 2000].map((amt) => (
+                <TouchableOpacity
+                  key={amt}
+                  style={[styles.presetBtn, amt > currentBalance && styles.presetBtnDisabled]}
+                  onPress={() => handlePresetSelect(amt)}
+                  disabled={amt > currentBalance}
+                >
+                  <Text style={styles.presetBtnText}>₹{amt}</Text>
+                </TouchableOpacity>
+              ))}
+              <TouchableOpacity
+                style={styles.presetBtnMax}
+                onPress={() => handlePresetSelect(currentBalance)}
+              >
+                <Text style={styles.presetBtnMaxText}>Max</Text>
               </TouchableOpacity>
             </View>
 
-            <View style={styles.modalBody}>
-              <Text style={styles.balanceInfoText}>{t('balance')} {stats.pointsBalance || 0} Pts ({t('max')} {stats.pointsBalance || 0})</Text>
-              
-              <Text style={styles.modalInputLabel}>{t('enterPoints')}</Text>
-              <TextInput
-                style={styles.pointsInput}
-                placeholder="e.g. 500"
-                keyboardType="numeric"
-                value={redeemPoints}
-                onChangeText={setRedeemPoints}
-              />
+            {/* Payout Mode Selector */}
+            <Text style={styles.modalInputLabel}>{t('choosePayoutMode') || 'Payout Mode'}</Text>
+            <View style={styles.payoutModeCol}>
+              {user.upi_id ? (
+                <TouchableOpacity
+                  style={[styles.modeCard, redeemType === 'UPI' && styles.modeCardActive]}
+                  onPress={() => setRedeemType('UPI')}
+                >
+                  <Text style={styles.modeIcon}>⚡</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.modeTitle}>Instant UPI</Text>
+                    <Text style={styles.modeSub}>{user.upi_id}</Text>
+                  </View>
+                  {redeemType === 'UPI' && <Text style={styles.checkMark}>✓</Text>}
+                </TouchableOpacity>
+              ) : null}
 
-              <Text style={styles.modalInputLabel}>{t('choosePayoutMode')}</Text>
-              <View style={styles.payoutModeRow}>
-                {user.upi_id ? (
-                  <TouchableOpacity 
-                    style={[styles.modeSelector, redeemType === 'UPI' && styles.modeSelectorActive]}
-                    onPress={() => setRedeemType('UPI')}
-                  >
-                    <Text style={styles.modeIcon}>⚡</Text>
-                    <Text style={[styles.modeLabel, redeemType === 'UPI' && styles.modeLabelActive]}>UPI ({user.upi_id})</Text>
-                  </TouchableOpacity>
-                ) : null}
+              {user.account_number ? (
+                <TouchableOpacity
+                  style={[styles.modeCard, redeemType === 'Bank' && styles.modeCardActive]}
+                  onPress={() => setRedeemType('Bank')}
+                >
+                  <Text style={styles.modeIcon}>🏦</Text>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.modeTitle}>{user.bank_name || 'Bank Transfer'}</Text>
+                    <Text style={styles.modeSub}>•••• {String(user.account_number).slice(-4)}</Text>
+                  </View>
+                  {redeemType === 'Bank' && <Text style={styles.checkMark}>✓</Text>}
+                </TouchableOpacity>
+              ) : null}
+            </View>
 
-                {user.account_number ? (
-                  <TouchableOpacity 
-                    style={[styles.modeSelector, redeemType === 'Bank' && styles.modeSelectorActive]}
-                    onPress={() => setRedeemType('Bank')}
-                  >
-                    <Text style={styles.modeIcon}>🏦</Text>
-                    <Text style={[styles.modeLabel, redeemType === 'Bank' && styles.modeLabelActive]}>Bank (...{(user.account_number || '').slice(-4)})</Text>
-                  </TouchableOpacity>
-                ) : null}
-              </View>
-
-              <TouchableOpacity style={styles.confirmButton} onPress={submitRedeem} disabled={redeeming}>
+            {/* Modal Actions */}
+            <View style={styles.modalActionRow}>
+              <TouchableOpacity style={styles.modalCancelBtn} onPress={() => setModalVisible(false)}>
+                <Text style={styles.modalCancelText}>{t('cancel') || 'Cancel'}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.modalConfirmBtn, (redeeming || pointsNum <= 0 || pointsNum > currentBalance) && styles.modalConfirmBtnDisabled]}
+                onPress={submitRedeem}
+                disabled={redeeming || pointsNum <= 0 || pointsNum > currentBalance}
+              >
                 {redeeming ? (
                   <ActivityIndicator color="#FFFFFF" size="small" />
                 ) : (
-                  <Text style={styles.confirmButtonText}>{t('confirmRedemption')}</Text>
+                  <Text style={styles.modalConfirmText}>{t('confirmRedemption') || 'Confirm'}</Text>
                 )}
               </TouchableOpacity>
             </View>
@@ -218,53 +300,375 @@ export default function WalletScreen({ user, stats, apiUrl, onRefreshStats, t = 
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F8FAFC' },
-  scrollContent: { padding: 16 },
-
-  walletCard: {
-    backgroundColor: '#1E4620', borderRadius: 20, padding: 24, alignItems: 'center',
-    shadowColor: '#1E4620', shadowOffset: { width: 0, height: 6 }, shadowOpacity: 0.15, shadowRadius: 12, elevation: 3,
+  container: {
+    flex: 1,
+    backgroundColor: '#FAF7F2',
   },
-  walletLabel: { color: 'rgba(255,255,255,0.7)', fontSize: 13, fontWeight: '600' },
-  walletPoints: { color: '#FFFFFF', fontSize: 38, fontWeight: 'bold', marginVertical: 6 },
-  walletRupees: { color: '#FBBF24', fontSize: 14, fontWeight: '600', marginBottom: 18 },
-  redeemButton: { backgroundColor: '#FFFFFF', paddingVertical: 12, paddingHorizontal: 24, borderRadius: 12, width: '100%', alignItems: 'center' },
-  redeemButtonText: { color: '#1E4620', fontSize: 15, fontWeight: 'bold' },
-  redeemNote: { color: 'rgba(255,255,255,0.5)', fontSize: 10, fontWeight: '500', marginTop: 8 },
-
-  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 24, marginBottom: 12, paddingHorizontal: 4 },
-  sectionTitle: { fontSize: 16, fontWeight: 'bold', color: '#1E4620' },
-  pullText: { fontSize: 11, color: '#94A3B8' },
-  emptyContainer: { backgroundColor: '#FFFFFF', borderWidth: 1, borderColor: '#E2E8F0', borderRadius: 14, padding: 24, alignItems: 'center', marginTop: 6 },
-  emptyText: { fontSize: 14, color: '#475569', fontWeight: '600', textAlign: 'center' },
-  emptySubText: { fontSize: 12, color: '#94A3B8', textAlign: 'center', marginTop: 6, lineHeight: 18 },
-
-  historyCard: { backgroundColor: '#FFFFFF', borderRadius: 14, padding: 14, flexDirection: 'row', alignItems: 'center', marginBottom: 10, borderWidth: 1, borderColor: '#E2E8F0' },
-  historyIconBox: { width: 42, height: 42, borderRadius: 12, backgroundColor: '#F1F5F9', alignItems: 'center', justifyContent: 'center', marginRight: 12 },
-  historyIcon: { fontSize: 18 },
-  historyDetails: { flex: 1 },
-  historyTitle: { fontSize: 14, fontWeight: 'bold', color: '#1E293B' },
-  historyDate: { fontSize: 11, color: '#94A3B8', marginTop: 2, fontWeight: '500' },
-  historyStatusBadge: { paddingVertical: 4, paddingHorizontal: 10, borderRadius: 8 },
-  historyStatusText: { fontSize: 10, fontWeight: '700', textTransform: 'uppercase' },
-
-  // Modal
-  modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
-  modalPanel: { backgroundColor: '#FFFFFF', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 24 },
-  modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#E2E8F0', paddingBottom: 14 },
-  modalTitle: { fontSize: 17, fontWeight: 'bold', color: '#1E4620' },
-  closeBtn: { padding: 4 },
-  closeBtnText: { fontSize: 20, color: '#94A3B8', fontWeight: '600' },
-  modalBody: { paddingTop: 16 },
-  balanceInfoText: { fontSize: 13, color: '#64748B', fontWeight: '600', marginBottom: 14 },
-  modalInputLabel: { fontSize: 13, fontWeight: '600', color: '#475569', marginBottom: 8 },
-  pointsInput: { borderWidth: 1.5, borderColor: '#CBD5E1', borderRadius: 12, height: 48, fontSize: 16, paddingHorizontal: 14, color: '#1E293B', fontWeight: 'bold', marginBottom: 14 },
-  payoutModeRow: { flexDirection: 'column', gap: 10, marginBottom: 20 },
-  modeSelector: { flexDirection: 'row', alignItems: 'center', borderWidth: 1.5, borderColor: '#CBD5E1', borderRadius: 12, padding: 12, backgroundColor: '#F8FAFC' },
-  modeSelectorActive: { borderColor: '#1E4620', backgroundColor: '#F0FDF4' },
-  modeIcon: { fontSize: 18, marginRight: 10 },
-  modeLabel: { fontSize: 13, color: '#475569', fontWeight: '600' },
-  modeLabelActive: { color: '#1E4620' },
-  confirmButton: { backgroundColor: '#1E4620', borderRadius: 12, height: 50, alignItems: 'center', justifyContent: 'center' },
-  confirmButtonText: { color: '#FFFFFF', fontSize: 15, fontWeight: 'bold' },
+  scrollContent: {
+    padding: 16,
+    paddingBottom: 40,
+  },
+  heroCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 18,
+    marginBottom: 16,
+    shadowColor: '#2A1E17',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+  },
+  heroTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 16,
+  },
+  heroLabel: {
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#8C6D58',
+    letterSpacing: 0.5,
+  },
+  pointsRow: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginVertical: 2,
+  },
+  heroPoints: {
+    fontSize: 34,
+    fontWeight: '900',
+    color: '#2A1E17',
+    letterSpacing: -0.5,
+  },
+  heroPointsSuffix: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#8C6D58',
+  },
+  heroInr: {
+    fontSize: 12,
+    fontWeight: '700',
+    color: '#065F46',
+  },
+  walletIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: 'rgba(140, 109, 88, 0.12)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+  },
+  walletIconText: {
+    fontSize: 22,
+  },
+  redeemBtn: {
+    backgroundColor: '#8C6D58',
+    borderRadius: 14,
+    paddingVertical: 14,
+    alignItems: 'center',
+    shadowColor: '#8C6D58',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  redeemBtnDisabled: {
+    opacity: 0.5,
+  },
+  redeemBtnText: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '900',
+    letterSpacing: 0.5,
+  },
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  sectionTitle: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#8C6D58',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  sectionSub: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: '#6B5A4E',
+    marginTop: 1,
+  },
+  refreshBtn: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#8C6D58',
+  },
+  emptyCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 28,
+    alignItems: 'center',
+    marginTop: 10,
+  },
+  emptyIcon: {
+    fontSize: 32,
+    marginBottom: 8,
+  },
+  emptyTitle: {
+    fontSize: 14,
+    fontWeight: '800',
+    color: '#2A1E17',
+  },
+  emptySub: {
+    fontSize: 11,
+    color: '#6B5A4E',
+    textAlign: 'center',
+    marginTop: 3,
+  },
+  payoutCard: {
+    backgroundColor: 'rgba(250, 247, 242, 0.95)',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    padding: 14,
+    marginBottom: 10,
+    shadowColor: '#2A1E17',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 4,
+  },
+  payoutTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  payoutTypeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  typeIcon: {
+    fontSize: 18,
+  },
+  payoutTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2A1E17',
+  },
+  payoutId: {
+    fontSize: 10.5,
+    fontWeight: '600',
+    color: '#6B5A4E',
+    marginTop: 1,
+  },
+  statusBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+    borderWidth: 1,
+  },
+  statusText: {
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  payoutFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: 'rgba(140, 109, 88, 0.15)',
+    paddingTop: 8,
+  },
+  payoutPoints: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#8C6D58',
+  },
+  payoutAmount: {
+    fontSize: 14,
+    fontWeight: '900',
+    color: '#065F46',
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.55)',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  modalContainer: {
+    backgroundColor: '#FAF7F2',
+    borderRadius: 24,
+    padding: 20,
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.3)',
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.25,
+    shadowRadius: 16,
+  },
+  modalTitle: {
+    fontSize: 17,
+    fontWeight: '900',
+    color: '#2A1E17',
+    marginBottom: 14,
+    textAlign: 'center',
+  },
+  modalBalanceBox: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 14,
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.2)',
+    marginBottom: 14,
+  },
+  modalBalanceLabel: {
+    fontSize: 10.5,
+    fontWeight: '700',
+    color: '#6B5A4E',
+  },
+  modalBalanceValue: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#2A1E17',
+    marginTop: 2,
+  },
+  modalRemainingValue: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#B45309',
+    marginTop: 2,
+  },
+  modalInputLabel: {
+    fontSize: 11.5,
+    fontWeight: '700',
+    color: '#6B5A4E',
+    marginBottom: 6,
+  },
+  modalInput: {
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: 'rgba(140, 109, 88, 0.3)',
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    height: 48,
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#2A1E17',
+    marginBottom: 8,
+  },
+  presetRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 14,
+  },
+  presetBtn: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    borderRadius: 10,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  presetBtnDisabled: {
+    opacity: 0.4,
+  },
+  presetBtnText: {
+    fontSize: 12,
+    fontWeight: '800',
+    color: '#6B5A4E',
+  },
+  presetBtnMax: {
+    flex: 1,
+    backgroundColor: 'rgba(140, 109, 88, 0.15)',
+    borderWidth: 1,
+    borderColor: '#8C6D58',
+    borderRadius: 10,
+    paddingVertical: 8,
+    alignItems: 'center',
+  },
+  presetBtnMaxText: {
+    fontSize: 12,
+    fontWeight: '900',
+    color: '#8C6D58',
+  },
+  payoutModeCol: {
+    gap: 8,
+    marginBottom: 16,
+  },
+  modeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1,
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    borderRadius: 12,
+    padding: 12,
+    gap: 10,
+  },
+  modeCardActive: {
+    borderColor: '#8C6D58',
+    backgroundColor: 'rgba(140, 109, 88, 0.1)',
+  },
+  modeIcon: {
+    fontSize: 18,
+  },
+  modeTitle: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#2A1E17',
+  },
+  modeSub: {
+    fontSize: 11,
+    color: '#8C6D58',
+    fontWeight: '700',
+  },
+  checkMark: {
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#8C6D58',
+  },
+  modalActionRow: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  modalCancelBtn: {
+    flex: 1,
+    backgroundColor: '#E5E7EB',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  modalCancelText: {
+    fontSize: 13,
+    fontWeight: '800',
+    color: '#374151',
+  },
+  modalConfirmBtn: {
+    flex: 2,
+    backgroundColor: '#8C6D58',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  modalConfirmBtnDisabled: {
+    opacity: 0.6,
+  },
+  modalConfirmText: {
+    fontSize: 13,
+    fontWeight: '900',
+    color: '#FFFFFF',
+  },
 });

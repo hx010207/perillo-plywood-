@@ -16,8 +16,7 @@ import RejectedScreen from './src/screens/RejectedScreen';
 import { AuthProvider, useAuth } from './src/context/AuthContext';
 import { I18nProvider, useI18n } from './src/i18n';
 import { resolveApiBaseUrl } from './src/config/backend';
-
-const plywoodImage = require('./src/assets/perillo-plywood-sheet.jpg');
+import { ErrorBoundary } from './src/components/ErrorBoundary';
 
 const API_URL = resolveApiBaseUrl();
 
@@ -26,16 +25,18 @@ function SplashScreen({ onFinish }) {
   const rotateAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.4)).current;
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const textFade = useRef(new Animated.Value(0)).current;
-  const taglineFade = useRef(new Animated.Value(0)).current;
   const exitAnim = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
-    // Image enters: scale up + rotate
+    // Failsafe timer: automatically finish splash after 2s max
+    const fallbackTimer = setTimeout(() => {
+      if (onFinish) onFinish();
+    }, 2200);
+
     Animated.parallel([
       Animated.timing(scaleAnim, {
         toValue: 1,
-        duration: 900,
+        duration: 800,
         easing: Easing.out(Easing.back(1.4)),
         useNativeDriver: true,
       }),
@@ -46,37 +47,24 @@ function SplashScreen({ onFinish }) {
       }),
       Animated.timing(rotateAnim, {
         toValue: 1,
-        duration: 1200,
+        duration: 1000,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
       }),
     ]).start(() => {
-      // After image settles, show text
-      Animated.stagger(200, [
-        Animated.timing(textFade, {
-          toValue: 1,
-          duration: 500,
+      setTimeout(() => {
+        Animated.timing(exitAnim, {
+          toValue: 0,
+          duration: 350,
           useNativeDriver: true,
-        }),
-        Animated.timing(taglineFade, {
-          toValue: 1,
-          duration: 500,
-          useNativeDriver: true,
-        }),
-      ]).start(() => {
-        // Hold for a moment then exit
-        setTimeout(() => {
-          Animated.timing(exitAnim, {
-            toValue: 0,
-            duration: 400,
-            easing: Easing.in(Easing.quad),
-            useNativeDriver: true,
-          }).start(() => {
-            if (onFinish) onFinish();
-          });
-        }, 800);
-      });
+        }).start(() => {
+          clearTimeout(fallbackTimer);
+          if (onFinish) onFinish();
+        });
+      }, 600);
     });
+
+    return () => clearTimeout(fallbackTimer);
   }, []);
 
   const rotate = rotateAnim.interpolate({
@@ -87,30 +75,28 @@ function SplashScreen({ onFinish }) {
   return (
     <Animated.View style={[splashStyles.container, { opacity: exitAnim }]}>
       <ExpoStatusBar style="light" />
-
-      <Animated.Image
-        source={plywoodImage}
+      <Animated.View
         style={[
-          splashStyles.plywoodImage,
+          splashStyles.logoCircle,
           {
             opacity: fadeAnim,
             transform: [{ scale: scaleAnim }, { rotate }],
           },
         ]}
-        resizeMode="contain"
-      />
-
-      <Animated.Text style={[splashStyles.brandName, { opacity: textFade }]}>
-        Perillo Plywood
-      </Animated.Text>
-
-      <Animated.Text style={[splashStyles.tagline, { opacity: taglineFade }]}>
-        For a smart user...
-      </Animated.Text>
-
-      <Animated.View style={[splashStyles.loaderRow, { opacity: taglineFade }]}>
-        <ActivityIndicator color="#86EFAC" size="small" />
+      >
+        <Image
+          source={{ uri: 'https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg' }}
+          style={splashStyles.logoImage}
+          resizeMode="cover"
+        />
       </Animated.View>
+
+      <Text style={splashStyles.brandName}>Perillo Plywood</Text>
+      <Text style={splashStyles.tagline}>Loyalty & Rewards Portal</Text>
+
+      <View style={splashStyles.loaderRow}>
+        <ActivityIndicator color="#D9C5B2" size="small" />
+      </View>
     </Animated.View>
   );
 }
@@ -119,39 +105,45 @@ const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const splashStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#122814',
+    backgroundColor: '#1A1410',
     alignItems: 'center',
     justifyContent: 'center',
   },
-  plywoodImage: {
-    width: SCREEN_WIDTH * 0.52,
-    height: SCREEN_WIDTH * 0.52,
-    borderRadius: 20,
-    marginBottom: 28,
-    shadowColor: '#86EFAC',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 20,
+  logoCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: '#FFFFFF',
+    overflow: 'hidden',
+    borderWidth: 3,
+    borderColor: '#8C6D58',
+    marginBottom: 20,
+    shadowColor: '#8C6D58',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
+  },
+  logoImage: {
+    width: '100%',
+    height: '100%',
   },
   brandName: {
-    fontSize: 30,
+    fontSize: 26,
     fontWeight: '900',
-    color: '#FFFFFF',
-    letterSpacing: 1,
+    color: '#FAF7F2',
+    letterSpacing: 0.5,
     textAlign: 'center',
   },
   tagline: {
-    fontSize: 14,
-    color: '#86EFAC',
-    fontWeight: '600',
-    marginTop: 8,
-    fontStyle: 'italic',
+    fontSize: 13,
+    color: '#D9C5B2',
+    fontWeight: '700',
+    marginTop: 6,
   },
   loaderRow: {
-    marginTop: 32,
+    marginTop: 28,
   },
 });
-
 
 function AppContent() {
   const insets = useSafeAreaInsets();
@@ -168,11 +160,11 @@ function AppContent() {
     approvedClaims: 0,
     totalSheets: 0,
     tier: 'Member',
-    tierColor: '#94A3B8',
+    tierColor: '#8C6D58',
     tierRewardPct: 0.8,
     nextTier: 'Bronze',
     nextTierSheets: 100,
-    verified: false
+    verified: false,
   });
 
   useEffect(() => {
@@ -211,17 +203,17 @@ function AppContent() {
   }, [user?.id]);
 
   const handleLogout = () => {
-    Alert.alert(t('logoutConfirmTitle'), t('logoutConfirmMsg'), [
-      { text: t('cancel'), style: 'cancel' },
+    Alert.alert(t('logoutConfirmTitle') || 'Logout', t('logoutConfirmMsg') || 'Are you sure you want to log out?', [
+      { text: t('cancel') || 'Cancel', style: 'cancel' },
       {
-        text: t('logout'),
+        text: t('logout') || 'Logout',
         style: 'destructive',
         onPress: () => {
           logout();
           setCurrentScreen('LOGIN');
           setActiveTab('HOME');
-        }
-      }
+        },
+      },
     ]);
   };
 
@@ -232,14 +224,14 @@ function AppContent() {
         <View style={styles.header}>
           <View style={styles.logoContainer}>
             <Image 
-              source={{ uri: 'https://i.ibb.co/rRH94QrC/perillo-new-logo.png' }} 
+              source={{ uri: 'https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg' }} 
               style={styles.logo}
-              resizeMode="contain"
+              resizeMode="cover"
             />
             <View>
-              <Text style={styles.brandTitle}>{t('appName')}</Text>
+              <Text style={styles.brandTitle}>{t('appName') || 'Perillo Rewards'}</Text>
               {stats.verified && (
-                <Text style={styles.verifiedBadgeSmall}>✓ Verified</Text>
+                <Text style={styles.verifiedBadgeSmall}>✓ Verified Account</Text>
               )}
             </View>
           </View>
@@ -255,7 +247,7 @@ function AppContent() {
               <Text style={styles.languageButtonText}>{(supportedLanguages.find((item) => item.code === language) || supportedLanguages[0]).label}</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-              <Text style={styles.logoutText}>{t('logout')}</Text>
+              <Text style={styles.logoutText}>{t('logout') || 'Logout'}</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -266,14 +258,14 @@ function AppContent() {
   // Bottom Tab Bar with safe area
   const renderBottomTabBar = () => {
     const tabs = [
-      { key: 'HOME', label: t('tabHome'), icon: '🏠' },
-      { key: 'LEDGER', label: t('tabLedger'), icon: '📋' },
-      { key: 'WALLET', label: t('tabWallet'), icon: '💰' },
-      { key: 'PROFILE', label: t('tabProfile'), icon: '👤' }
+      { key: 'HOME', label: t('tabHome') || 'Home', icon: '🏠' },
+      { key: 'LEDGER', label: t('tabLedger') || 'Ledger', icon: '📋' },
+      { key: 'WALLET', label: t('tabWallet') || 'Wallet', icon: '💰' },
+      { key: 'PROFILE', label: t('tabProfile') || 'Profile', icon: '👤' },
     ];
 
     return (
-      <View style={[styles.tabBar, { paddingBottom: Math.max(insets.bottom, 8) }]}>
+      <View style={[styles.tabBar, { paddingBottom: Math.max(insets.bottom, 10) }]}>
         {tabs.map((tab) => {
           const isActive = activeTab === tab.key;
           return (
@@ -338,14 +330,14 @@ function AppContent() {
             <View style={styles.header}>
               <View style={styles.logoContainer}>
                 <Image 
-                  source={{ uri: 'https://i.ibb.co/rRH94QrC/perillo-new-logo.png' }} 
+                  source={{ uri: 'https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg' }} 
                   style={styles.logo}
-                  resizeMode="contain"
+                  resizeMode="cover"
                 />
-                <Text style={styles.brandTitle}>{t('appName')}</Text>
+                <Text style={styles.brandTitle}>{t('appName') || 'Perillo Rewards'}</Text>
               </View>
               <TouchableOpacity onPress={handleLogout} style={styles.logoutButton}>
-                <Text style={styles.logoutText}>{t('logout')}</Text>
+                <Text style={styles.logoutText}>{t('logout') || 'Logout'}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -364,7 +356,7 @@ function AppContent() {
               onUpdateUser={(updatedUser) => updateUser(updatedUser)}
             />
           </View>
-          <ExpoStatusBar style="light" />
+          <ExpoStatusBar style="dark" />
         </View>
       );
     }
@@ -421,9 +413,9 @@ function AppContent() {
           <View style={styles.detailContainer}>
             <View style={styles.detailHeaderRow}>
               <TouchableOpacity onPress={() => setCurrentScreen('DASHBOARD')} style={styles.backButton}>
-                  <Text style={styles.backButtonText}>{t('back')}</Text>
+                <Text style={styles.backButtonText}>← {t('back') || 'Back'}</Text>
               </TouchableOpacity>
-                <Text style={styles.detailTitle}>{t('invoiceDetails')}</Text>
+              <Text style={styles.detailTitle}>{t('invoiceDetails') || 'Invoice Details'}</Text>
               <View style={{ width: 60 }} />
             </View>
             <LedgerScreen.Detail item={selectedLedgerItem} apiUrl={API_URL} t={t} />
@@ -452,7 +444,7 @@ function AppContent() {
       </View>
 
       {currentScreen === 'DASHBOARD' && renderBottomTabBar()}
-      <ExpoStatusBar style="light" />
+      <ExpoStatusBar style="dark" />
     </View>
   );
 }
@@ -460,17 +452,19 @@ function AppContent() {
 export default function App() {
   const [splashDone, setSplashDone] = useState(false);
 
-  if (!splashDone) {
-    return <SplashScreen onFinish={() => setSplashDone(true)} />;
-  }
-
   return (
     <SafeAreaProvider>
-      <I18nProvider>
-        <AuthProvider baseUrl={API_URL}>
-          <AppContent />
-        </AuthProvider>
-      </I18nProvider>
+      <ErrorBoundary>
+        <I18nProvider>
+          <AuthProvider baseUrl={API_URL}>
+            {!splashDone ? (
+              <SplashScreen onFinish={() => setSplashDone(true)} />
+            ) : (
+              <AppContent />
+            )}
+          </AuthProvider>
+        </I18nProvider>
+      </ErrorBoundary>
     </SafeAreaProvider>
   );
 }
@@ -478,20 +472,20 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F3F6F4',
+    backgroundColor: '#FAF7F2',
   },
   headerSafeArea: {
-    backgroundColor: '#1E4620',
+    backgroundColor: '#FAF7F2',
   },
   header: {
-    height: 56,
-    backgroundColor: '#1E4620',
+    height: 58,
+    backgroundColor: '#FAF7F2',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#163318',
+    borderBottomColor: 'rgba(140, 109, 88, 0.2)',
   },
   logoContainer: {
     flexDirection: 'row',
@@ -500,32 +494,34 @@ const styles = StyleSheet.create({
   logo: {
     width: 36,
     height: 36,
-    borderRadius: 8,
+    borderRadius: 18,
     backgroundColor: '#FFFFFF',
+    borderWidth: 1.5,
+    borderColor: '#8C6D58',
     marginRight: 10,
   },
   brandTitle: {
-    fontSize: 17,
-    fontWeight: 'bold',
-    color: '#FFFFFF',
+    fontSize: 16,
+    fontWeight: '900',
+    color: '#2A1E17',
   },
   verifiedBadgeSmall: {
     fontSize: 10,
-    color: '#86EFAC',
-    fontWeight: '600',
+    color: '#065F46',
+    fontWeight: '800',
   },
   logoutButton: {
-    paddingVertical: 7,
-    paddingHorizontal: 14,
-    borderRadius: 8,
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.5)',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    backgroundColor: 'rgba(140, 109, 88, 0.08)',
   },
   logoutText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
+    color: '#8C6D58',
+    fontSize: 12,
+    fontWeight: '800',
   },
   headerActions: {
     flexDirection: 'row',
@@ -533,26 +529,26 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   languageButton: {
-    paddingVertical: 7,
+    paddingVertical: 6,
     paddingHorizontal: 10,
-    borderRadius: 8,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.35)',
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
+    borderColor: 'rgba(140, 109, 88, 0.25)',
+    backgroundColor: 'rgba(140, 109, 88, 0.08)',
   },
   languageButtonText: {
-    color: '#FFFFFF',
+    color: '#2A1E17',
     fontSize: 11,
-    fontWeight: '700',
+    fontWeight: '800',
   },
   content: {
     flex: 1,
   },
   tabBar: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     flexDirection: 'row',
     borderTopWidth: 1,
-    borderTopColor: '#E2E8F0',
+    borderTopColor: 'rgba(140, 109, 88, 0.2)',
     paddingTop: 8,
   },
   tabItem: {
@@ -562,47 +558,47 @@ const styles = StyleSheet.create({
   },
   tabIcon: {
     fontSize: 20,
-    color: '#94A3B8',
+    color: '#A89F91',
   },
   tabIconActive: {
-    color: '#1E4620',
+    color: '#8C6D58',
   },
   tabLabel: {
-    fontSize: 11,
-    color: '#94A3B8',
-    marginTop: 3,
-    fontWeight: '500',
+    fontSize: 10.5,
+    color: '#6B5A4E',
+    marginTop: 2,
+    fontWeight: '600',
   },
   tabLabelActive: {
-    color: '#1E4620',
-    fontWeight: 'bold',
+    color: '#8C6D58',
+    fontWeight: '900',
   },
   detailContainer: {
     flex: 1,
   },
   detailHeaderRow: {
     height: 50,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#FAF7F2',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 8,
+    paddingHorizontal: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#E2E8F0',
+    borderBottomColor: 'rgba(140, 109, 88, 0.2)',
   },
   backButton: {
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 8,
+    paddingVertical: 6,
   },
   backButtonText: {
-    fontSize: 14,
-    color: '#1E4620',
-    fontWeight: 'bold',
+    fontSize: 13,
+    color: '#8C6D58',
+    fontWeight: '800',
   },
   detailTitle: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#1E4620',
+    fontSize: 15,
+    fontWeight: '900',
+    color: '#2A1E17',
   },
   infoBanner: {
     backgroundColor: '#FEF3C7',
@@ -614,9 +610,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   infoBannerText: {
-    color: '#D97706',
-    fontWeight: '700',
-    fontSize: 13,
+    color: '#B45309',
+    fontWeight: '800',
+    fontSize: 12.5,
     textAlign: 'center',
   },
 });

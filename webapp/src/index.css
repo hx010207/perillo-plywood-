@@ -19,15 +19,13 @@
     --surface-card-border: rgba(16, 185, 129, 0.30);
   }
 
-  html {
-    background-color: var(--bg-base);
+  html, body {
+    background-color: transparent;
     color: var(--text-primary);
   }
 
   body {
     @apply antialiased font-sans min-h-screen selection:bg-[#10B981] selection:text-black;
-    background-color: var(--bg-base);
-    color: var(--text-primary);
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 }

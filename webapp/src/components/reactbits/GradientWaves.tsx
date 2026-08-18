@@ -13,12 +13,12 @@ interface GradientWavesProps {
 }
 
 export const GradientWaves: React.FC<GradientWavesProps> = ({
-  horizonColor = '#E2E8F0',
+  horizonColor = '#0B1D12',
   waveColor = '#10B981',
   crestColor = '#34D399',
-  speed = 0.3,
+  speed = 0.4,
   amplitude = 2.0,
-  opacity = 0.6,
+  opacity = 0.85,
   grain = true,
   grainIntensity = 0.03,
   className = '',
@@ -69,57 +69,54 @@ export const GradientWaves: React.FC<GradientWavesProps> = ({
 
       ctx.clearRect(0, 0, width, height);
 
-      // Base ambient gradient
+      // Base ambient deep gradient
       const baseGrad = ctx.createLinearGradient(0, 0, 0, height);
       baseGrad.addColorStop(0, horizonColor);
       baseGrad.addColorStop(0.5, horizonColor);
-      baseGrad.addColorStop(1, '#F8FAF9');
+      baseGrad.addColorStop(1, '#051008');
       ctx.fillStyle = baseGrad;
       ctx.fillRect(0, 0, width, height);
-
-      ctx.globalAlpha = opacity;
 
       // Draw multi-layered animated flowing waves
       const wavesCount = 4;
       for (let w = 0; w < wavesCount; w++) {
+        ctx.save();
+        ctx.globalAlpha = opacity * (0.6 + (w / wavesCount) * 0.4);
         ctx.beginPath();
-        const baseHeight = height * (0.45 + w * 0.15);
+        const baseHeight = height * (0.42 + w * 0.14);
         ctx.moveTo(0, height);
 
-        for (let x = 0; x <= width; x += 15) {
-          const wave1 = Math.sin(x * 0.003 + time + w * 1.5) * (30 * amplitude);
-          const wave2 = Math.cos(x * 0.006 - time * 0.8 + w * 0.8) * (20 * amplitude);
-          const wave3 = Math.sin(x * 0.0015 + time * 1.2 + w) * (15 * amplitude);
+        for (let x = 0; x <= width; x += 12) {
+          const wave1 = Math.sin(x * 0.003 + time + w * 1.4) * (32 * amplitude);
+          const wave2 = Math.cos(x * 0.006 - time * 0.9 + w * 0.7) * (22 * amplitude);
+          const wave3 = Math.sin(x * 0.0018 + time * 1.3 + w * 2) * (16 * amplitude);
           const y = baseHeight + wave1 + wave2 + wave3;
 
-          if (x === 0) {
-            ctx.lineTo(x, y);
-          } else {
-            ctx.lineTo(x, y);
-          }
+          ctx.lineTo(x, y);
         }
 
         ctx.lineTo(width, height);
         ctx.closePath();
 
-        const waveGrad = ctx.createLinearGradient(0, baseHeight - 40, width, height);
+        const waveGrad = ctx.createLinearGradient(0, baseHeight - 50, width, height);
         if (w % 2 === 0) {
           waveGrad.addColorStop(0, crestColor);
-          waveGrad.addColorStop(0.6, waveColor);
-          waveGrad.addColorStop(1, 'transparent');
+          waveGrad.addColorStop(0.5, waveColor);
+          waveGrad.addColorStop(1, 'rgba(5, 16, 8, 0.9)');
         } else {
           waveGrad.addColorStop(0, waveColor);
-          waveGrad.addColorStop(0.5, crestColor);
-          waveGrad.addColorStop(1, 'transparent');
+          waveGrad.addColorStop(0.4, crestColor);
+          waveGrad.addColorStop(1, 'rgba(5, 16, 8, 0.95)');
         }
 
         ctx.fillStyle = waveGrad;
         ctx.fill();
+        ctx.restore();
       }
 
       // Add grain overlay
       if (grain && grainCanvas) {
-        ctx.globalAlpha = 0.6;
+        ctx.globalAlpha = 0.5;
         ctx.fillStyle = ctx.createPattern(grainCanvas, 'repeat') || 'transparent';
         ctx.fillRect(0, 0, width, height);
       }
@@ -139,7 +136,7 @@ export const GradientWaves: React.FC<GradientWavesProps> = ({
   return (
     <canvas
       ref={canvasRef}
-      className={`fixed inset-0 pointer-events-none -z-10 w-full h-full ${className}`}
+      className={`w-full h-full block ${className}`}
     />
   );
 };

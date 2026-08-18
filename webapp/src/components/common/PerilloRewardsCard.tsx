@@ -127,15 +127,15 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
           {/* Top Row: Brand Header & Top-Right Frosted Tier Pill */}
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-2.5">
-              <div className="w-8 h-8 rounded-lg overflow-hidden bg-white p-0.5 shadow-md border border-white/40">
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-white p-0.5 shadow-md border border-white/40">
                 <img
                   src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg"
                   alt="Perillo Logo"
-                  className="w-full h-full object-cover rounded-md"
+                  className="w-full h-full object-cover rounded-full"
                 />
               </div>
               <div>
-                <span className="text-[11px] sm:text-xs font-extrabold uppercase tracking-wider text-white drop-shadow-md block">
+                <span className="text-[11px] sm:text-xs font-black uppercase tracking-wider text-white drop-shadow-md block">
                   Perillo Rewards Pass
                 </span>
                 <span className="text-[9px] sm:text-[10px] text-emerald-300 font-semibold">
@@ -147,19 +147,19 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
             {/* Frosted Tier Pill (Top Right) */}
             <div className={`px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md border border-white/20 shadow-lg flex items-center space-x-1.5 ${tierConfig.pillColor}`}>
               <Sparkles className="w-3 h-3 text-amber-400" />
-              <span className="text-[10px] sm:text-xs font-extrabold uppercase tracking-wide">
+              <span className="text-[10px] sm:text-xs font-black uppercase tracking-wide">
                 {tierConfig.label}
               </span>
             </div>
           </div>
 
-          {/* Middle: Available Balance & Points Typography (Offset right to prevent EMV chip graphic overlap) */}
-          <div className="my-auto py-1 pl-20 sm:pl-28 md:pl-32">
+          {/* Middle: Clean Left-Aligned Available Balance & Points Typography (leaves right side clear for chip) */}
+          <div className="my-auto py-1 text-left pl-6 sm:pl-8 max-w-[62%]">
             <span className="text-[10px] sm:text-xs font-bold text-emerald-400 uppercase tracking-widest block mb-0.5 drop-shadow-sm">
               AVAILABLE BALANCE
             </span>
             <div className="flex items-baseline space-x-2">
-              <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight drop-shadow-lg">
+              <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight drop-shadow-lg">
                 <CountUp to={pointsBalance || 0} duration={1.6} />
               </h2>
               <span className="text-lg sm:text-2xl font-bold text-emerald-300">Pts</span>
@@ -175,7 +175,7 @@ export const PerilloRewardsCard: React.FC<PerilloRewardsCardProps> = ({
               <p className="text-[9px] sm:text-[10px] font-medium text-slate-300 uppercase tracking-wider">
                 Cardholder
               </p>
-              <p className="text-xs sm:text-sm font-extrabold text-white uppercase tracking-wide mt-0.5 drop-shadow-sm">
+              <p className="text-xs sm:text-sm font-black text-white uppercase tracking-wide mt-0.5 drop-shadow-sm">
                 {userName || 'RAJU CARPENTER'}
               </p>
             </div>

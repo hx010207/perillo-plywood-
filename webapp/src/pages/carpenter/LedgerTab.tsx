@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useI18n } from '../../contexts/I18nContext';
 import { User, Invoice } from '../../types';
 import { fetchInvoices } from '../../services/api';
-import { FileText, RefreshCw } from 'lucide-react';
-import { Badge } from '../../components/common/Badge';
+import { FileText, RefreshCw, ChevronRight, Clock, CheckCircle2, AlertCircle } from 'lucide-react';
+import { SpotlightCard } from '../../components/reactbits/SpotlightCard';
 
 interface LedgerTabProps {
   user: User;
@@ -30,17 +30,28 @@ export const LedgerTab: React.FC<LedgerTabProps> = ({ user, onViewItem, refreshK
     loadInvoices().finally(() => setLoading(false));
   }, [user.id, refreshKey]);
 
+  const getStatusBadge = (status: string) => {
+    switch (status) {
+      case 'Approved':
+        return 'bg-emerald-500/20 text-emerald-300 border-emerald-400/40';
+      case 'Rejected':
+        return 'bg-rose-500/20 text-rose-300 border-rose-400/40';
+      default:
+        return 'bg-amber-500/20 text-amber-300 border-amber-400/30';
+    }
+  };
+
   return (
-    <div className="space-y-4 pb-24 sm:pb-8">
+    <div className="space-y-4 pb-28 sm:pb-12 max-w-4xl mx-auto text-white">
       {/* Header Row */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-xl font-black text-[#1E4620]">{t('claimsHistory')}</h2>
-          <p className="text-xs text-slate-500 font-medium">All submitted purchase invoices</p>
+          <h2 className="text-xl font-black font-display text-white">{t('claimsHistory')}</h2>
+          <p className="text-xs text-slate-400">All submitted purchase invoices and points ledger</p>
         </div>
         <button
           onClick={loadInvoices}
-          className="flex items-center space-x-1 text-xs font-bold text-slate-400 hover:text-slate-600"
+          className="flex items-center space-x-1.5 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>{t('pullRefresh')}</span>
@@ -48,59 +59,74 @@ export const LedgerTab: React.FC<LedgerTabProps> = ({ user, onViewItem, refreshK
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-slate-400 text-xs font-semibold">
-          Loading history...
+        <div className="text-center py-16 bg-[#0e1611]/60 rounded-3xl border border-white/10 text-slate-400 text-xs font-mono">
+          Loading claims ledger...
         </div>
       ) : invoices.length === 0 ? (
-        <div className="bg-white rounded-2xl p-10 border border-slate-200 text-center space-y-2">
-          <FileText className="w-10 h-10 text-slate-300 mx-auto" />
-          <h3 className="text-base font-bold text-slate-700">{t('noClaimsFound')}</h3>
+        <SpotlightCard className="p-12 text-center space-y-3">
+          <FileText className="w-12 h-12 text-slate-500 mx-auto" />
+          <h3 className="text-base font-bold text-white">{t('noClaimsFound')}</h3>
           <p className="text-xs text-slate-400 max-w-sm mx-auto leading-relaxed">
             {t('noClaimsSubText')}
           </p>
-        </div>
+        </SpotlightCard>
       ) : (
         <div className="space-y-3">
           {invoices.map((item) => {
             const storeName = item.store_name || item.dealer_name || '-';
             const dealerCity = item.dealer_city || '-';
             const itemSummary = item.product_type || '-';
+
             return (
-              <div
+              <SpotlightCard
                 key={item.id}
-                onClick={() => onViewItem(item)}
-                className="bg-white rounded-2xl p-4 border border-slate-200 shadow-xs hover:border-emerald-500/50 transition-all cursor-pointer space-y-3 group"
+                className="p-4 sm:p-5 cursor-pointer group press-scale"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <span className="text-xs font-bold text-slate-800">{item.id}</span>
-                  <Badge status={item.status} />
-                </div>
-
-                <div>
-                  <h4 className="text-sm font-bold text-slate-900 group-hover:text-emerald-800 transition-colors">
-                    🏪 {storeName}
-                  </h4>
-                  <p className="text-xs text-slate-500 font-medium">{dealerCity}</p>
-                  <p className="text-xs text-slate-600 font-semibold mt-1 truncate">{itemSummary}</p>
-                </div>
-
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 text-xs">
-                  <div>
-                    <span className="font-extrabold text-[#1E4620]">
-                      {item.quantity} {t('sheets')}
+                <div onClick={() => onViewItem(item)} className="space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-white/10">
+                    <span className="text-xs font-mono font-bold text-slate-300">
+                      ID: {item.id}
                     </span>
-                    <p className="text-[11px] text-slate-400">
-                      {t('invoiceNo')} {item.invoice_number} • {item.purchase_date}
-                    </p>
+                    <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-mono font-black uppercase tracking-wider border ${getStatusBadge(item.status)}`}>
+                      {item.status}
+                    </span>
                   </div>
 
-                  {item.status === 'Approved' && (
-                    <span className="text-sm font-black text-[#1E4620]">
-                      +{item.points_earned} Pts
-                    </span>
-                  )}
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="text-sm font-bold text-white group-hover:text-emerald-300 transition-colors">
+                        🏪 {storeName}
+                      </h4>
+                      <p className="text-xs text-slate-400 mt-0.5">{dealerCity}</p>
+                      <p className="text-xs text-amber-300 font-semibold mt-1 truncate">
+                        {itemSummary}
+                      </p>
+                    </div>
+
+                    {item.status === 'Approved' && (
+                      <div className="text-right">
+                        <span className="text-sm sm:text-base font-black font-mono text-emerald-400">
+                          +{item.points_earned} Pts
+                        </span>
+                        <p className="text-[10px] text-slate-400 font-mono">Credited to wallet</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-white/10 text-xs">
+                    <div>
+                      <span className="font-extrabold text-white">
+                        {item.quantity} {t('sheets')}
+                      </span>
+                      <span className="text-[11px] text-slate-400 font-mono ml-2">
+                        Inv #{item.invoice_number} • {item.purchase_date}
+                      </span>
+                    </div>
+
+                    <ChevronRight className="w-4 h-4 text-slate-500 group-hover:text-emerald-400 transition-colors" />
+                  </div>
                 </div>
-              </div>
+              </SpotlightCard>
             );
           })}
         </div>

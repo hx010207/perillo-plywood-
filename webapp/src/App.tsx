@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { I18nProvider } from './contexts/I18nContext';
 import { SplashScreen } from './components/common/SplashScreen';
+import { SmoothScrollProvider } from './components/reactbits/SmoothScrollProvider';
 import { LoginSignupPage } from './pages/auth/LoginSignupPage';
 import { CarpenterShell } from './pages/carpenter/CarpenterShell';
 import { AdminShell } from './pages/admin/AdminShell';
@@ -42,10 +43,12 @@ export default function App() {
   }
 
   return (
-    <I18nProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
-    </I18nProvider>
+    <SmoothScrollProvider>
+      <I18nProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </I18nProvider>
+    </SmoothScrollProvider>
   );
 }

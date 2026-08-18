@@ -2,8 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useI18n } from '../../contexts/I18nContext';
 import { User, Stats } from '../../types';
 import { updateProfile } from '../../services/api';
-import { User as UserIcon, Phone, MapPin, CreditCard, ShieldCheck, Zap, Landmark, KeyRound, Edit3, CheckCircle2, AlertCircle } from 'lucide-react';
+import { User as UserIcon, Phone, MapPin, CreditCard, ShieldCheck, Zap, Landmark, KeyRound, Edit3, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
+import { SpotlightCard } from '../../components/reactbits/SpotlightCard';
 
 interface ProfileTabProps {
   user: User;
@@ -12,7 +13,7 @@ interface ProfileTabProps {
   autoEdit?: boolean;
 }
 
-const TIER_ICONS: Record<string, string> = { Member: '📦', Bronze: '🥉', Silver: '🥈', Gold: '🥇', Platinum: '💎' };
+const TIER_ICONS: Record<string, string> = { Member: '🪵', Bronze: '🥉', Silver: '🥈', Gold: '🥇', Platinum: '💎' };
 const TIER_COLORS: Record<string, string> = { Member: '#94A3B8', Bronze: '#CD7F32', Silver: '#6B7280', Gold: '#F59E0B', Platinum: '#8B5CF6' };
 
 export const ProfileTab: React.FC<ProfileTabProps> = ({
@@ -99,103 +100,73 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
     return '••••••' + val.slice(-4);
   };
 
-  const tier = stats?.tier || 'Member';
-  const totalSheets = stats?.totalSheets || 0;
-
-  const renderField = (label: string, value?: string, icon?: React.ReactNode) => (
-    <div className="flex items-center justify-between py-3 border-b border-slate-100 last:border-0 text-sm">
-      <div className="flex items-center space-x-2.5 text-slate-500 font-medium">
-        <span>{icon}</span>
-        <span>{label}</span>
-      </div>
-      <span className="font-bold text-slate-800 text-right">{value || t('notProvided')}</span>
-    </div>
-  );
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6 pb-24 sm:pb-8">
-      {/* Avatar Card */}
-      <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm text-center flex flex-col items-center">
-        <div className="w-20 h-20 rounded-full bg-[#1E4620] text-white font-black text-3xl flex items-center justify-center shadow-lg border-2 border-emerald-500/20 mb-3">
-          {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
-        </div>
-        <h2 className="text-2xl font-black text-slate-900">{user.name}</h2>
-        <p className="text-xs font-semibold text-slate-400 mt-0.5">ID: {user.id}</p>
-
-        {/* Status Badges */}
-        <div className="flex items-center justify-center space-x-2 mt-3">
-          {stats?.verified ? (
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-300">
-              {t('verified')}
-            </span>
-          ) : (
-            <span className="px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-300">
-              {t('pendingVerification')}
-            </span>
-          )}
-
-          <span
-            className="px-3 py-1 rounded-full text-xs font-bold border flex items-center space-x-1"
-            style={{
-              backgroundColor: `${TIER_COLORS[tier]}15`,
-              borderColor: TIER_COLORS[tier],
-              color: TIER_COLORS[tier],
-            }}
-          >
-            <span>{TIER_ICONS[tier]}</span>
-            <span>{tier}</span>
-          </span>
-        </div>
-        <p className="text-xs font-semibold text-slate-400 mt-2">
-          {totalSheets} {t('sheetsPurchased')}
-        </p>
-      </div>
-
-      {/* View / Edit Form */}
-      {!isEditing ? (
-        <div className="space-y-6">
-          {/* Personal Details */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-            <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-              <h3 className="text-sm font-bold text-[#1E4620] uppercase tracking-wider">
-                {t('personalDetails')}
-              </h3>
-              <button
-                onClick={() => setIsEditing(true)}
-                className="text-xs font-bold text-amber-600 hover:text-amber-700 flex items-center space-x-1"
-              >
-                <Edit3 className="w-3.5 h-3.5" />
-                <span>{t('editInfo')}</span>
-              </button>
+    <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto text-white">
+      {/* 1. User Summary Profile Card */}
+      <SpotlightCard className="p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-center space-x-4">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-950 flex items-center justify-center text-white font-black text-2xl shadow-lg border border-emerald-400/40">
+              {(user.name || 'R').charAt(0).toUpperCase()}
             </div>
-
-            {renderField(t('mobile'), `+91 ${user.phone}`, <Phone className="w-4 h-4 text-emerald-700" />)}
-            {renderField(t('region'), user.region, <MapPin className="w-4 h-4 text-emerald-700" />)}
-            {renderField(t('aadhaar'), maskAadhaar(user.aadhaar_number), <ShieldCheck className="w-4 h-4 text-emerald-700" />)}
-            {renderField(t('panCard'), maskPan(user.pan_card), <CreditCard className="w-4 h-4 text-emerald-700" />)}
+            <div>
+              <div className="flex items-center space-x-2">
+                <h3 className="text-xl sm:text-2xl font-black font-display text-white">{user.name || 'Carpenter'}</h3>
+                {stats.verified && (
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
+                    <ShieldCheck className="w-3 h-3 mr-1 text-emerald-400" />
+                    Verified
+                  </span>
+                )}
+              </div>
+              <p className="text-xs text-slate-400 font-mono mt-0.5">
+                {user.phone ? `+91 ${user.phone}` : ''} • ID: {user.id}
+              </p>
+              <p className="text-xs text-amber-300 font-medium mt-0.5">
+                {user.region ? `📍 ${user.region}` : 'Hubballi Region'}
+              </p>
+            </div>
           </div>
 
-          {/* Bank & UPI Details */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-2">
-            <h3 className="text-sm font-bold text-[#1E4620] uppercase tracking-wider pb-2 border-b border-slate-100">
-              {t('bankUpiDetails')}
-            </h3>
+          <button
+            onClick={() => setIsEditing(!isEditing)}
+            className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-emerald-400 hover:text-emerald-300 text-xs font-bold transition-all border border-white/15 flex items-center space-x-1.5 self-start sm:self-auto"
+          >
+            <Edit3 className="w-3.5 h-3.5" />
+            <span>{isEditing ? t('cancel') : t('editProfile')}</span>
+          </button>
+        </div>
 
-            {renderField(t('upiId'), user.upi_id, <Zap className="w-4 h-4 text-amber-600" />)}
-            {renderField(t('bankName'), user.bank_name, <Landmark className="w-4 h-4 text-sky-700" />)}
-            {renderField(t('accountNumber'), user.account_number, <CreditCard className="w-4 h-4 text-sky-700" />)}
-            {renderField(t('ifscCode'), user.ifsc_code, <KeyRound className="w-4 h-4 text-sky-700" />)}
+        {/* Tier Status & Sheet Counter */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-white/10 text-xs">
+          <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Loyalty Tier</span>
+            <p className="text-sm font-black text-amber-300 mt-0.5 flex items-center space-x-1">
+              <span>{TIER_ICONS[stats.tier] || '🪵'}</span>
+              <span>{stats.tier} Tier</span>
+            </p>
+          </div>
+          <div className="p-3 rounded-xl bg-black/40 border border-white/10">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Verified Sheets</span>
+            <p className="text-sm font-black font-mono text-white mt-0.5">{stats.totalSheets || 0} Sheets</p>
+          </div>
+          <div className="col-span-2 sm:col-span-1 p-3 rounded-xl bg-black/40 border border-white/10">
+            <span className="text-[10px] font-mono text-slate-400 uppercase">Cashback Slab</span>
+            <p className="text-sm font-black font-mono text-emerald-400 mt-0.5">{stats.tierRewardPct || 0.8}% per sheet</p>
           </div>
         </div>
-      ) : (
-        <form onSubmit={handleSave} className="space-y-6">
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-[#1E4620] uppercase tracking-wider pb-2 border-b border-slate-100">
-              {t('editProfileTitle')}
-            </h3>
+      </SpotlightCard>
 
+      {/* Edit Mode Form */}
+      {isEditing ? (
+        <SpotlightCard className="p-6 sm:p-8 space-y-6">
+          <h4 className="text-base font-black font-display text-emerald-400 uppercase tracking-wider">
+            Edit KYC & Bank Profile
+          </h4>
+
+          <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
+              <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
                 {t('fullName')} *
               </label>
               <input
@@ -203,132 +174,181 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder={t('fullNamePlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-700"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('region')}
+              <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+                {t('regionLabel')}
               </label>
               <input
                 type="text"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                placeholder={t('regionPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-700"
+                placeholder="e.g. Hubballi, Karnataka"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('aadhaar')}
-              </label>
-              <input
-                type="text"
-                maxLength={12}
-                value={aadhaarNumber}
-                onChange={(e) => setAadhaarNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                placeholder={t('aadhaarPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-700"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+                  {t('aadhaar')}
+                </label>
+                <input
+                  type="text"
+                  maxLength={12}
+                  value={aadhaarNumber}
+                  onChange={(e) => setAadhaarNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                  placeholder="12-digit Aadhaar"
+                  className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono text-white focus:outline-none focus:border-emerald-400"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+                  {t('panCardLabel')}
+                </label>
+                <input
+                  type="text"
+                  maxLength={10}
+                  value={panCard}
+                  onChange={(e) => setPanCard(e.target.value.toUpperCase())}
+                  placeholder="ABCDE1234F"
+                  className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono text-white uppercase focus:outline-none focus:border-emerald-400"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('panCardLabel')}
-              </label>
-              <input
-                type="text"
-                maxLength={10}
-                value={panCard}
-                onChange={(e) => setPanCard(e.target.value.toUpperCase())}
-                placeholder={t('panCardPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium uppercase focus:ring-2 focus:ring-emerald-700"
-              />
-            </div>
-          </div>
+            <div className="pt-3 border-t border-white/10">
+              <h5 className="text-xs font-mono uppercase text-emerald-400 mb-3">Bank & UPI Details</h5>
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('upiId')}</label>
+                  <input
+                    type="text"
+                    value={upiId}
+                    onChange={(e) => setUpiId(e.target.value)}
+                    placeholder="mobile@upi"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
+                  />
+                </div>
 
-          <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-[#1E4620] uppercase tracking-wider pb-2 border-b border-slate-100">
-              {t('payoutBankSettings')}
-            </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('bankName')}</label>
+                    <input
+                      type="text"
+                      value={bankName}
+                      onChange={(e) => setBankName(e.target.value)}
+                      placeholder="State Bank of India"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-white focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('upiLabel')}
-              </label>
-              <input
-                type="text"
-                value={upiId}
-                onChange={(e) => setUpiId(e.target.value)}
-                placeholder={t('upiPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium"
-              />
-            </div>
+                  <div>
+                    <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('ifscCode')}</label>
+                    <input
+                      type="text"
+                      value={ifscCode}
+                      onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
+                      placeholder="SBIN0001234"
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white uppercase focus:outline-none focus:border-emerald-400"
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('bankNameLabel')}
-              </label>
-              <input
-                type="text"
-                value={bankName}
-                onChange={(e) => setBankName(e.target.value)}
-                placeholder={t('bankNamePlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('accountLabel')}
-              </label>
-              <input
-                type="text"
-                value={accountNumber}
-                onChange={(e) => setAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
-                placeholder={t('accountPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium"
-              />
+                <div>
+                  <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('accountNumber')}</label>
+                  <input
+                    type="text"
+                    value={accountNumber}
+                    onChange={(e) => setAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="Account Number"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-                {t('ifscLabel')}
-              </label>
-              <input
-                type="text"
-                value={ifscCode}
-                onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
-                placeholder={t('ifscPlaceholder')}
-                className="w-full px-3.5 py-2 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium uppercase"
-              />
+            <div className="pt-4 flex items-center justify-end space-x-3">
+              <button
+                type="button"
+                onClick={() => setIsEditing(false)}
+                className="px-5 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs transition-colors"
+              >
+                {t('cancel')}
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="px-7 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-glow-emerald transition-all disabled:opacity-50"
+              >
+                {loading ? 'Saving...' : t('saveChanges')}
+              </button>
             </div>
-          </div>
+          </form>
+        </SpotlightCard>
+      ) : (
+        /* Read-Only View */
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Personal Details */}
+          <SpotlightCard className="p-6 space-y-4">
+            <h4 className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest flex items-center space-x-2">
+              <UserIcon className="w-4 h-4" />
+              <span>Personal KYC Details</span>
+            </h4>
 
-          <div className="flex items-center space-x-3 pt-2">
-            <button
-              type="button"
-              onClick={() => setIsEditing(false)}
-              className="flex-1 py-3 border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl"
-            >
-              {t('cancel')}
-            </button>
-            <button
-              type="submit"
-              disabled={loading}
-              className="flex-[2] py-3 bg-[#1E4620] hover:bg-[#163318] text-white font-bold text-xs rounded-xl shadow-md disabled:opacity-70"
-            >
-              {loading ? (
-                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
-              ) : (
-                <span>{t('saveDetails')}</span>
-              )}
-            </button>
-          </div>
-        </form>
+            <div className="space-y-3 text-xs divide-y divide-white/10">
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">Mobile</span>
+                <span className="font-mono text-white">+91 {user.phone}</span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">Region</span>
+                <span className="font-medium text-white">{user.region || 'Hubballi, Karnataka'}</span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">Aadhaar Card</span>
+                <span className="font-mono text-emerald-300 font-bold">{maskAadhaar(user.aadhaar_number)}</span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">PAN Card</span>
+                <span className="font-mono text-emerald-300 font-bold">{maskPan(user.pan_card)}</span>
+              </div>
+            </div>
+          </SpotlightCard>
+
+          {/* Bank & UPI Details */}
+          <SpotlightCard className="p-6 space-y-4">
+            <h4 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center space-x-2">
+              <Landmark className="w-4 h-4" />
+              <span>Bank & UPI Details</span>
+            </h4>
+
+            <div className="space-y-3 text-xs divide-y divide-white/10">
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">UPI ID</span>
+                <span className="font-mono text-emerald-300 font-bold">{user.upi_id || 'Not Set'}</span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">Bank Name</span>
+                <span className="font-medium text-white">{user.bank_name || 'Not Set'}</span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">Account Number</span>
+                <span className="font-mono text-white">
+                  {user.account_number ? `•••• •••• ${user.account_number.slice(-4)}` : 'Not Set'}
+                </span>
+              </div>
+              <div className="pt-2 flex justify-between">
+                <span className="text-slate-400">IFSC Code</span>
+                <span className="font-mono text-white">{user.ifsc_code || 'Not Set'}</span>
+              </div>
+            </div>
+          </SpotlightCard>
+        </div>
       )}
 
       {/* Alert Modal */}
@@ -337,12 +357,12 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
         onClose={() => setAlertState({ ...alertState, isOpen: false })}
         title={alertState.title}
       >
-        <div className="space-y-4">
-          <p className="text-sm font-semibold text-slate-700">{alertState.message}</p>
+        <div className="space-y-4 text-slate-200">
+          <p className="text-sm font-medium leading-relaxed">{alertState.message}</p>
           <div className="flex justify-end pt-2">
             <button
               onClick={() => setAlertState({ ...alertState, isOpen: false })}
-              className="px-5 py-2.5 bg-[#1E4620] text-white font-bold text-xs rounded-xl shadow-sm"
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl shadow-md"
             >
               {t('ok')}
             </button>

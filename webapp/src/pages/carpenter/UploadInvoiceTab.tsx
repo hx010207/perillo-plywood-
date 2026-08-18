@@ -3,8 +3,9 @@ import { useI18n } from '../../contexts/I18nContext';
 import { User } from '../../types';
 import { submitInvoice } from '../../services/api';
 import { ImageUploader } from '../../components/common/ImageUploader';
-import { ArrowLeft, Plus, Trash2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, CheckCircle2, AlertCircle, Sparkles, ShieldCheck, FileCheck } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
+import { SpotlightCard } from '../../components/reactbits/SpotlightCard';
 
 const PRODUCT_TYPES = ['Perillo Pro', 'Perillo Star', 'Perillo Club', 'Perillo Shuttering Plywood'];
 
@@ -19,7 +20,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
   const [storeName, setStoreName] = useState('');
   const [dealerCity, setDealerCity] = useState('');
   const [lineItems, setLineItems] = useState<{ product: string; quantity: string }[]>([
-    { product: '', quantity: '' },
+    { product: 'Perillo Pro', quantity: '10' },
   ]);
   const [invoiceNumber, setInvoiceNumber] = useState('');
   const [purchaseDate, setPurchaseDate] = useState(new Date().toLocaleDateString('en-IN'));
@@ -32,7 +33,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
   });
 
   const addLineItem = () => {
-    setLineItems([...lineItems, { product: '', quantity: '' }]);
+    setLineItems([...lineItems, { product: 'Perillo Pro', quantity: '5' }]);
   };
 
   const removeLineItem = (index: number) => {
@@ -132,184 +133,210 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-24 sm:pb-8">
+    <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-white">
       {/* Top bar */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-200">
+      <div className="flex items-center justify-between pb-3 border-b border-white/10">
         <button
           onClick={onBack}
-          className="flex items-center space-x-1.5 text-[#1E4620] hover:text-[#122814] font-bold text-sm"
+          className="flex items-center space-x-1.5 text-emerald-400 hover:text-emerald-300 font-bold text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t('back')}</span>
         </button>
-        <h2 className="text-lg font-bold text-[#1E4620]">{t('newClaim')}</h2>
+        <h2 className="text-lg font-black font-display text-white">{t('newClaim')}</h2>
         <div className="w-12" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* Multi-image uploader */}
-        <ImageUploader images={images} setImages={setImages} />
-
-        {/* Store & Dealer Details */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
+        {/* 1. Multi-image uploader dropzone */}
+        <SpotlightCard className="p-5 sm:p-6 space-y-4">
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-              {t('dealerNameLabel')} *
-            </label>
-            <input
-              type="text"
-              required
-              value={storeName}
-              onChange={(e) => setStoreName(e.target.value)}
-              placeholder={t('dealerNamePlaceholder')}
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-700 focus:bg-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-              {t('dealerCityLabel')} *
-            </label>
-            <input
-              type="text"
-              required
-              value={dealerCity}
-              onChange={(e) => setDealerCity(e.target.value)}
-              placeholder={t('dealerCityPlaceholder')}
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium focus:ring-2 focus:ring-emerald-700 focus:bg-white"
-            />
-          </div>
-        </div>
-
-        {/* Dynamic Line Items */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-          <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-            <h3 className="text-sm font-bold text-slate-800 uppercase tracking-wider">
-              {t('plywoodItems')}
+            <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400">
+              1. Upload Invoice Receipt
             </h3>
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-800 font-extrabold text-xs rounded-lg border border-emerald-300">
+            <p className="text-xs text-slate-400 mt-0.5">
+              Invoice image must be clear, showing dealer name and sheet quantities.
+            </p>
+          </div>
+          <ImageUploader images={images} setImages={setImages} />
+        </SpotlightCard>
+
+        {/* 2. Store & Dealer Details */}
+        <SpotlightCard className="p-5 sm:p-6 space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400">
+            2. Dealer Details
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wide text-slate-300 mb-1.5">
+                {t('dealerNameLabel')} *
+              </label>
+              <input
+                type="text"
+                required
+                value={storeName}
+                onChange={(e) => setStoreName(e.target.value)}
+                placeholder="e.g. Mahadev Timber Traders"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wide text-slate-300 mb-1.5">
+                {t('dealerCityLabel')} *
+              </label>
+              <input
+                type="text"
+                required
+                value={dealerCity}
+                onChange={(e) => setDealerCity(e.target.value)}
+                placeholder="e.g. Hubballi, Karnataka"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+          </div>
+        </SpotlightCard>
+
+        {/* 3. Dynamic Plywood Items Selector */}
+        <SpotlightCard className="p-5 sm:p-6 space-y-4">
+          <div className="flex items-center justify-between pb-2 border-b border-white/10">
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400">
+                3. {t('plywoodItems')}
+              </h3>
+              <p className="text-xs text-slate-400">Add all purchased Perillo products</p>
+            </div>
+            <span className="px-3.5 py-1.5 bg-emerald-500/20 text-emerald-300 font-mono font-black text-xs rounded-xl border border-emerald-400/40 shadow-xs">
               {t('totalSheetsLabel')}: {totalSheets} {t('sheets')}
             </span>
           </div>
 
-          {lineItems.map((item, index) => (
-            <div key={index} className="bg-slate-50 rounded-xl p-4 border border-slate-200 space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-[#1E4620]">Item {index + 1}</span>
-                {lineItems.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeLineItem(index)}
-                    className="text-xs font-bold text-red-600 hover:text-red-700 flex items-center space-x-1"
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                    <span>Remove</span>
-                  </button>
-                )}
-              </div>
+          <div className="space-y-3">
+            {lineItems.map((item, index) => (
+              <div key={index} className="bg-black/40 rounded-2xl p-4 border border-white/10 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-mono font-bold text-amber-400">Item 0{index + 1}</span>
+                  {lineItems.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeLineItem(index)}
+                      className="text-xs font-bold text-rose-400 hover:text-rose-300 flex items-center space-x-1"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Remove</span>
+                    </button>
+                  )}
+                </div>
 
-              {/* Product Type Chips */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-500 mb-1.5">
-                  {t('productTypeLabel')}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {PRODUCT_TYPES.map((p) => {
-                    const active = item.product === p;
-                    return (
-                      <button
-                        key={p}
-                        type="button"
-                        onClick={() => updateLineItem(index, 'product', p)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
-                          active
-                            ? 'bg-emerald-100 border-emerald-600 text-[#1E4620]'
-                            : 'bg-white border-slate-300 text-slate-600 hover:bg-slate-100'
-                        }`}
-                      >
-                        {p}
-                      </button>
-                    );
-                  })}
+                {/* Product Type Chips */}
+                <div>
+                  <label className="block text-[11px] font-mono text-slate-400 mb-1.5 uppercase">
+                    Select Product Grade:
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    {PRODUCT_TYPES.map((p) => {
+                      const active = item.product === p;
+                      return (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => updateLineItem(index, 'product', p)}
+                          className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+                            active
+                              ? 'bg-emerald-500 text-slate-950 border-emerald-400 font-black shadow-glow-emerald'
+                              : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Quantity */}
+                <div>
+                  <label className="block text-[11px] font-mono text-slate-400 mb-1 uppercase">
+                    Quantity (Sheets):
+                  </label>
+                  <input
+                    type="number"
+                    min="1"
+                    value={item.quantity}
+                    onChange={(e) => updateLineItem(index, 'quantity', e.target.value.replace(/[^0-9]/g, ''))}
+                    placeholder="e.g. 10"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0e1611] border border-white/15 text-sm font-mono font-bold text-white focus:outline-none focus:border-emerald-400"
+                  />
                 </div>
               </div>
-
-              {/* Quantity */}
-              <div>
-                <label className="block text-[11px] font-bold text-slate-500 mb-1">
-                  {t('quantityLabel')}
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  value={item.quantity}
-                  onChange={(e) => updateLineItem(index, 'quantity', e.target.value.replace(/[^0-9]/g, ''))}
-                  placeholder={t('quantityPlaceholder')}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-xl bg-white text-sm font-semibold"
-                />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
 
           <button
             type="button"
             onClick={addLineItem}
-            className="w-full py-2.5 border-2 border-dashed border-[#1E4620] text-[#1E4620] hover:bg-emerald-50 font-bold text-xs rounded-xl flex items-center justify-center space-x-1 transition-colors"
+            className="w-full py-3 border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 text-emerald-300 hover:bg-emerald-500/10 font-bold text-xs rounded-2xl flex items-center justify-center space-x-1.5 transition-colors"
           >
             <Plus className="w-4 h-4" />
             <span>{t('addAnotherItem')}</span>
           </button>
-        </div>
+        </SpotlightCard>
 
-        {/* Invoice Details */}
-        <div className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm space-y-4">
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-              {t('invoiceNumberLabel')} *
-            </label>
-            <input
-              type="text"
-              required
-              value={invoiceNumber}
-              onChange={(e) => setInvoiceNumber(e.target.value.toUpperCase())}
-              placeholder={t('invoiceNumberPlaceholder')}
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl bg-slate-50 text-sm font-semibold uppercase"
-            />
+        {/* 4. Invoice Metadata */}
+        <SpotlightCard className="p-5 sm:p-6 space-y-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-emerald-400">
+            4. Invoice Information
+          </h3>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wide text-slate-300 mb-1.5">
+                {t('invoiceNumberLabel')} *
+              </label>
+              <input
+                type="text"
+                required
+                value={invoiceNumber}
+                onChange={(e) => setInvoiceNumber(e.target.value.toUpperCase())}
+                placeholder="e.g. INV-89201"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono font-bold text-white uppercase focus:outline-none focus:border-emerald-400"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-mono uppercase tracking-wide text-slate-300 mb-1.5">
+                {t('purchaseDateLabel')} *
+              </label>
+              <input
+                type="text"
+                required
+                value={purchaseDate}
+                onChange={(e) => setPurchaseDate(e.target.value)}
+                placeholder="DD/MM/YYYY"
+                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-              {t('purchaseDateLabel')} *
-            </label>
-            <input
-              type="text"
-              required
-              value={purchaseDate}
-              onChange={(e) => setPurchaseDate(e.target.value)}
-              placeholder={t('purchaseDatePlaceholder')}
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium"
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1">
-              {t('securityCode')}
+            <label className="block text-xs font-mono uppercase tracking-wide text-slate-300 mb-1.5">
+              {t('securityCode')} (Optional)
             </label>
             <input
               type="text"
               value={qrCode}
               onChange={(e) => setQrCode(e.target.value.toUpperCase())}
-              placeholder={t('securityCodePlaceholder')}
-              className="w-full px-3.5 py-2.5 border border-slate-300 rounded-xl bg-slate-50 text-sm font-medium uppercase"
+              placeholder="e.g. HUB-710-2026-9801"
+              className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono text-white uppercase focus:outline-none focus:border-emerald-400"
             />
           </div>
-        </div>
+        </SpotlightCard>
 
-        {/* Submit Button */}
+        {/* 5. Submit CTA Button */}
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-4 bg-[#D97706] hover:bg-[#b56304] text-white font-bold text-sm uppercase tracking-wider rounded-2xl shadow-lg transition-all active:scale-[0.99] disabled:opacity-75"
+          className="w-full py-4.5 bg-gradient-to-r from-[#D97706] to-[#B45309] hover:from-[#B45309] hover:to-[#92400E] text-white font-black text-sm uppercase tracking-wider rounded-2xl shadow-2xl hover:shadow-amber-500/25 transition-all active:scale-[0.99] disabled:opacity-70 border border-amber-400/30"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -331,11 +358,11 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
         title={alertState.title}
       >
         <div className="space-y-4">
-          <div className="flex items-center space-x-3 text-sm font-semibold text-slate-700">
+          <div className="flex items-center space-x-3 text-sm font-semibold text-slate-200">
             {alertState.isSuccess ? (
-              <CheckCircle2 className="w-8 h-8 text-emerald-600 flex-shrink-0" />
+              <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
             ) : (
-              <AlertCircle className="w-8 h-8 text-rose-600 flex-shrink-0" />
+              <AlertCircle className="w-8 h-8 text-rose-400 flex-shrink-0" />
             )}
             <p className="whitespace-pre-line leading-relaxed">{alertState.message}</p>
           </div>
@@ -347,7 +374,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
                   onBack();
                 }
               }}
-              className="px-5 py-2.5 bg-[#1E4620] text-white font-bold text-xs rounded-xl shadow-sm hover:bg-[#163318]"
+              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95"
             >
               {t('ok')}
             </button>

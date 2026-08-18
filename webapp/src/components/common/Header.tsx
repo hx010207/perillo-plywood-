@@ -25,20 +25,20 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/90 dark:bg-[#080F0A]/90 backdrop-blur-2xl text-slate-900 dark:text-white shadow-sm dark:shadow-2xl border-b border-emerald-950/10 dark:border-white/10 px-4 sm:px-8 py-3.5 transition-colors duration-200">
+      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#080F0A]/90 backdrop-blur-2xl text-slate-900 dark:text-white shadow-sm dark:shadow-2xl border-b border-[#10B981]/30 px-4 sm:px-8 py-3.5 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo & Identity */}
           <div className="flex items-center space-x-3.5">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl overflow-hidden bg-white p-0.5 shadow-md border border-emerald-500/30 flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-full overflow-hidden bg-white p-0.5 shadow-md border-2 border-white ring-2 ring-[#10B981]/60 flex items-center justify-center flex-shrink-0">
               <img 
                 src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg" 
                 alt="Perillo Plywood" 
-                className="w-full h-full object-cover rounded-xl"
+                className="w-full h-full object-cover rounded-full"
               />
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-base sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+                <h1 className="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white">
                   {t('appName')}
                 </h1>
                 {verified ? (
@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
                   </span>
                 )}
               </div>
-              <p className="text-xs text-emerald-700 dark:text-emerald-400/90 font-medium hidden sm:block">
+              <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold hidden sm:block">
                 Loyalty Rewards Portal • Hubballi
               </p>
             </div>
@@ -63,7 +63,7 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
             {/* Theme Toggle Button (Light/Dark Mode) */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/15 text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-[#10B981]/30 text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
               title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
               aria-label="Toggle Theme"
             >
@@ -77,7 +77,7 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
             {/* Language Switcher Toggle */}
             <button
               onClick={handleNextLanguage}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-slate-200 dark:border-white/15 text-xs font-bold text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-[#10B981]/30 text-xs font-bold text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
               title="Switch Language"
             >
               <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />

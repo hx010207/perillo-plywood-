@@ -45,8 +45,8 @@ export const LedgerTab: React.FC<LedgerTabProps> = ({ user, onViewItem, refreshK
       {/* Header Row */}
       <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{t('claimsHistory')}</h2>
-          <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5">All submitted purchase invoices and points ledger</p>
+          <h2 className="text-xl font-black text-slate-900 dark:text-white tracking-tight">{t('claimsHistory')}</h2>
+          <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5">All submitted purchase invoices and points ledger</p>
         </div>
         <button
           onClick={loadInvoices}
@@ -58,16 +58,18 @@ export const LedgerTab: React.FC<LedgerTabProps> = ({ user, onViewItem, refreshK
       </div>
 
       {loading ? (
-        <div className="text-center py-16 bg-white/60 dark:bg-[#121A15]/60 rounded-2xl border border-slate-200 dark:border-white/10 text-slate-500 dark:text-slate-400 text-xs">
+        <div className="text-center py-16 bg-white/80 dark:bg-[#121A15]/60 rounded-2xl border border-[#10B981]/30 text-slate-500 dark:text-slate-400 text-xs font-semibold">
           Loading claims ledger...
         </div>
       ) : invoices.length === 0 ? (
-        <div className="p-12 text-center space-y-3 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl">
-          <FileText className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto" />
-          <h3 className="text-base font-bold text-slate-900 dark:text-white">{t('noClaimsFound')}</h3>
-          <p className="text-xs text-slate-600 dark:text-slate-300 max-w-sm mx-auto leading-relaxed">
-            {t('noClaimsSubText')}
-          </p>
+        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-12 text-center space-y-3 shadow-xl shadow-emerald-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative z-10 space-y-3">
+            <FileText className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto" />
+            <h3 className="text-base font-extrabold text-slate-900 dark:text-white">{t('noClaimsFound')}</h3>
+            <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 max-w-sm mx-auto leading-relaxed">
+              {t('noClaimsSubText')}
+            </p>
+          </div>
         </div>
       ) : (
         <div className="space-y-3">
@@ -80,49 +82,51 @@ export const LedgerTab: React.FC<LedgerTabProps> = ({ user, onViewItem, refreshK
               <div
                 key={item.id}
                 onClick={() => onViewItem(item)}
-                className="p-5 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl cursor-pointer group press-scale hover:border-emerald-500/40 transition-all space-y-3"
+                className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-5 shadow-xl shadow-emerald-900/5 cursor-pointer group press-scale hover:border-emerald-500 transition-all space-y-3 before:absolute before:inset-1.5 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/10">
-                  <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
-                    Claim ID: {item.id}
-                  </span>
-                  <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider border ${getStatusBadge(item.status)}`}>
-                    {item.status}
-                  </span>
-                </div>
-
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
-                      🏪 {storeName}
-                    </h4>
-                    <p className="text-xs text-slate-500 dark:text-slate-300 mt-0.5">{dealerCity}</p>
-                    <p className="text-xs text-amber-700 dark:text-amber-300 font-semibold mt-1 truncate">
-                      {itemSummary}
-                    </p>
+                <div className="relative z-10 space-y-3">
+                  <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-white/10">
+                    <span className="text-xs font-bold text-slate-600 dark:text-slate-300">
+                      Claim ID: {item.id}
+                    </span>
+                    <span className={`px-2.5 py-0.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider border ${getStatusBadge(item.status)}`}>
+                      {item.status}
+                    </span>
                   </div>
 
-                  {item.status === 'Approved' && (
-                    <div className="text-right">
-                      <span className="text-sm sm:text-base font-extrabold text-[#10B981]">
-                        +{item.points_earned} Pts
-                      </span>
-                      <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5">Credited to wallet</p>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-900 dark:text-white group-hover:text-emerald-700 dark:group-hover:text-emerald-300 transition-colors">
+                        🏪 {storeName}
+                      </h4>
+                      <p className="text-xs font-semibold text-slate-500 dark:text-slate-300 mt-0.5">{dealerCity}</p>
+                      <p className="text-xs text-amber-700 dark:text-amber-300 font-bold mt-1 truncate">
+                        {itemSummary}
+                      </p>
                     </div>
-                  )}
-                </div>
 
-                <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/10 text-xs">
-                  <div>
-                    <span className="font-extrabold text-slate-900 dark:text-white">
-                      {item.quantity} {t('sheets')}
-                    </span>
-                    <span className="text-[11px] text-slate-500 dark:text-slate-400 ml-2">
-                      Inv #{item.invoice_number} • {item.purchase_date}
-                    </span>
+                    {item.status === 'Approved' && (
+                      <div className="text-right">
+                        <span className="text-sm sm:text-base font-black text-[#10B981]">
+                          +{item.points_earned} Pts
+                        </span>
+                        <p className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 mt-0.5">Credited to wallet</p>
+                      </div>
+                    )}
                   </div>
 
-                  <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-white/10 text-xs">
+                    <div>
+                      <span className="font-black text-slate-900 dark:text-white">
+                        {item.quantity} {t('sheets')}
+                      </span>
+                      <span className="text-[11px] font-medium text-slate-500 dark:text-slate-400 ml-2">
+                        Inv #{item.invoice_number} • {item.purchase_date}
+                      </span>
+                    </div>
+
+                    <ChevronRight className="w-4 h-4 text-slate-400 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors" />
+                  </div>
                 </div>
               </div>
             );

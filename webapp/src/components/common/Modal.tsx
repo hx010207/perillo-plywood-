@@ -52,29 +52,31 @@ export const Modal: React.FC<ModalProps> = ({
             className="fixed inset-0 bg-black/70 backdrop-blur-md"
           />
 
-          {/* Dialog Container */}
+          {/* Dialog Container (Thin Green Box with White Dotted Line) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', duration: 0.3 }}
-            className={`relative w-full ${maxWidthClasses} bg-white dark:bg-[#121A15] text-slate-900 dark:text-white rounded-3xl shadow-2xl overflow-hidden z-10 border border-slate-200 dark:border-white/15 my-8 transition-colors duration-200`}
+            className={`relative w-full ${maxWidthClasses} bg-white dark:bg-[#121A15] text-slate-900 dark:text-white rounded-3xl shadow-2xl overflow-hidden z-10 border border-[#10B981]/40 my-8 transition-colors duration-200 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-2xl`}
           >
-            {/* Header */}
-            {title && (
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 dark:border-white/10 bg-slate-50/50 dark:bg-black/20">
-                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{title}</h3>
-                <button
-                  onClick={onClose}
-                  className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors"
-                >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
-            )}
+            <div className="relative z-10">
+              {/* Header */}
+              {title && (
+                <div className="flex items-center justify-between px-6 py-4 border-b border-[#10B981]/20 bg-slate-50/70 dark:bg-black/30">
+                  <h3 className="text-lg font-black text-slate-900 dark:text-white">{title}</h3>
+                  <button
+                    onClick={onClose}
+                    className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              )}
 
-            {/* Body */}
-            <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+              {/* Body */}
+              <div className="p-6 max-h-[80vh] overflow-y-auto">{children}</div>
+            </div>
           </motion.div>
         </div>
       )}

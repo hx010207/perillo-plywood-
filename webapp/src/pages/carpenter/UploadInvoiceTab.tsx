@@ -134,204 +134,212 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-slate-900 dark:text-white">
       {/* Top Navigation Bar */}
-      <div className="flex items-center justify-between pb-3 border-b border-emerald-950/10 dark:border-white/10">
+      <div className="flex items-center justify-between pb-3 border-b border-[#10B981]/30">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-emerald-600 dark:text-[#10B981] hover:text-emerald-700 dark:hover:text-emerald-300 font-bold text-sm transition-colors"
+          className="flex items-center space-x-2 text-emerald-600 dark:text-[#10B981] hover:text-emerald-700 dark:hover:text-emerald-300 font-extrabold text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t('back')}</span>
         </button>
-        <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">{t('newClaim')}</h2>
+        <h2 className="text-lg font-black text-slate-900 dark:text-white">{t('newClaim')}</h2>
         <div className="w-12" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 1. Upload Dropzone */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
-          <div>
-            <h3 className="section-heading">
-              1. {t('uploadInvoice')}
-            </h3>
-            <p className="text-xs text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
-              Invoice receipt image must be clear and readable, showing dealer details and quantities.
-            </p>
-          </div>
-          <ImageUploader images={images} setImages={setImages} />
-        </div>
-
-        {/* 2. Store & Dealer Details */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
-          <h3 className="section-heading">
-            2. Dealer Details
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="form-label">
-                {t('dealerNameLabel')} *
-              </label>
-              <input
-                type="text"
-                required
-                value={storeName}
-                onChange={(e) => setStoreName(e.target.value)}
-                placeholder="e.g. Mahadev Timber Traders"
-                className="form-input-field"
-              />
-            </div>
-
-            <div>
-              <label className="form-label">
-                {t('dealerCityLabel')} *
-              </label>
-              <input
-                type="text"
-                required
-                value={dealerCity}
-                onChange={(e) => setDealerCity(e.target.value)}
-                placeholder="e.g. Hubballi, Karnataka"
-                className="form-input-field"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* 3. Dynamic Plywood Items Selector */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
-          <div className="flex items-center justify-between pb-2 border-b border-emerald-950/10 dark:border-white/10">
+        {/* 1. Upload Dropzone (Thin Green Box with White Dotted Line) */}
+        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative z-10 space-y-4">
             <div>
               <h3 className="section-heading">
-                3. {t('plywoodItems')}
+                1. {t('uploadInvoice')}
               </h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
-                Add all purchased Perillo plywood grades
+              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+                Invoice receipt image must be clear and readable, showing dealer details and quantities.
               </p>
             </div>
-            <span className="px-3.5 py-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-extrabold text-xs rounded-xl border border-emerald-400/40 shadow-xs">
-              {t('totalSheetsLabel')}: {totalSheets} {t('sheets')}
-            </span>
+            <ImageUploader images={images} setImages={setImages} />
           </div>
-
-          <div className="space-y-3.5">
-            {lineItems.map((item, index) => (
-              <div key={index} className="bg-slate-50 dark:bg-[#0B130E] rounded-xl p-4 border border-slate-200 dark:border-white/10 space-y-3 transition-colors duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wide">
-                    Item 0{index + 1}
-                  </span>
-                  {lineItems.length > 1 && (
-                    <button
-                      type="button"
-                      onClick={() => removeLineItem(index)}
-                      className="text-xs font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 flex items-center space-x-1"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Remove</span>
-                    </button>
-                  )}
-                </div>
-
-                {/* Product Type Chips */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wide">
-                    Select Product Grade:
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {PRODUCT_TYPES.map((p) => {
-                      const active = item.product === p;
-                      return (
-                        <button
-                          key={p}
-                          type="button"
-                          onClick={() => updateLineItem(index, 'product', p)}
-                          className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
-                            active
-                              ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-600 dark:border-emerald-400 shadow-sm dark:shadow-glow-emerald'
-                              : 'bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Quantity */}
-                <div>
-                  <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wide">
-                    Quantity (Sheets):
-                  </label>
-                  <input
-                    type="number"
-                    min="1"
-                    value={item.quantity}
-                    onChange={(e) => updateLineItem(index, 'quantity', e.target.value.replace(/[^0-9]/g, ''))}
-                    placeholder="e.g. 10"
-                    className="w-full bg-white dark:bg-[#121A15] border border-slate-300 dark:border-white/15 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-bold text-sm focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none"
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <button
-            type="button"
-            onClick={addLineItem}
-            className="w-full py-3 border-2 border-dashed border-emerald-500/40 hover:border-emerald-600 dark:hover:border-emerald-400 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5 transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            <span>{t('addAnotherItem')}</span>
-          </button>
         </div>
 
-        {/* 4. Invoice Metadata */}
-        <div className="p-6 rounded-2xl bg-white dark:bg-[#121A15]/85 backdrop-blur-xl border border-emerald-950/10 dark:border-white/10 shadow-sm dark:shadow-xl space-y-4 transition-colors duration-200">
-          <h3 className="section-heading">
-            4. Invoice Information
-          </h3>
+        {/* 2. Store & Dealer Details (Thin Green Box with White Dotted Line) */}
+        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative z-10 space-y-4">
+            <h3 className="section-heading">
+              2. Dealer Details
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="form-label">
+                  {t('dealerNameLabel')} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={storeName}
+                  onChange={(e) => setStoreName(e.target.value)}
+                  placeholder="e.g. Mahadev Timber Traders"
+                  className="form-input-field font-semibold"
+                />
+              </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="form-label">
-                {t('invoiceNumberLabel')} *
-              </label>
-              <input
-                type="text"
-                required
-                value={invoiceNumber}
-                onChange={(e) => setInvoiceNumber(e.target.value.toUpperCase())}
-                placeholder="e.g. INV-89201"
-                className="form-input-field uppercase font-semibold"
-              />
-            </div>
-
-            <div>
-              <label className="form-label">
-                {t('purchaseDateLabel')} *
-              </label>
-              <input
-                type="text"
-                required
-                value={purchaseDate}
-                onChange={(e) => setPurchaseDate(e.target.value)}
-                placeholder="DD/MM/YYYY"
-                className="form-input-field font-semibold"
-              />
+              <div>
+                <label className="form-label">
+                  {t('dealerCityLabel')} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={dealerCity}
+                  onChange={(e) => setDealerCity(e.target.value)}
+                  placeholder="e.g. Hubballi, Karnataka"
+                  className="form-input-field font-semibold"
+                />
+              </div>
             </div>
           </div>
+        </div>
 
-          <div>
-            <label className="form-label">
-              {t('securityCode')} (Optional)
-            </label>
-            <input
-              type="text"
-              value={qrCode}
-              onChange={(e) => setQrCode(e.target.value.toUpperCase())}
-              placeholder="e.g. HUB-710-2026-9801"
-              className="form-input-field uppercase"
-            />
+        {/* 3. Dynamic Plywood Items Selector (Thin Green Box with White Dotted Line) */}
+        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative z-10 space-y-4">
+            <div className="flex items-center justify-between pb-2 border-b border-[#10B981]/30">
+              <div>
+                <h3 className="section-heading">
+                  3. {t('plywoodItems')}
+                </h3>
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                  Add all purchased Perillo plywood grades
+                </p>
+              </div>
+              <span className="px-3.5 py-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black text-xs rounded-xl border border-emerald-400/50 shadow-xs">
+                {t('totalSheetsLabel')}: {totalSheets} {t('sheets')}
+              </span>
+            </div>
+
+            <div className="space-y-3.5">
+              {lineItems.map((item, index) => (
+                <div key={index} className="bg-slate-50/90 dark:bg-[#0B130E] rounded-xl p-4 border border-[#10B981]/30 space-y-3 transition-colors duration-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wide">
+                      Item 0{index + 1}
+                    </span>
+                    {lineItems.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeLineItem(index)}
+                        className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 flex items-center space-x-1"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Product Type Chips */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wide">
+                      Select Product Grade:
+                    </label>
+                    <div className="flex flex-wrap gap-2">
+                      {PRODUCT_TYPES.map((p) => {
+                        const active = item.product === p;
+                        return (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => updateLineItem(index, 'product', p)}
+                            className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all border ${
+                              active
+                                ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-600 dark:border-emerald-400 shadow-md ring-2 ring-emerald-500/20'
+                                : 'bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Quantity */}
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wide">
+                      Quantity (Sheets):
+                    </label>
+                    <input
+                      type="number"
+                      min="1"
+                      value={item.quantity}
+                      onChange={(e) => updateLineItem(index, 'quantity', e.target.value.replace(/[^0-9]/g, ''))}
+                      placeholder="e.g. 10"
+                      className="w-full bg-white dark:bg-[#121A15] border border-[#10B981]/40 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-bold text-sm focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/30 outline-none"
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={addLineItem}
+              className="w-full py-3 border-2 border-dashed border-[#10B981]/50 hover:border-emerald-600 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5 transition-colors"
+            >
+              <Plus className="w-4 h-4" />
+              <span>{t('addAnotherItem')}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4. Invoice Information (Thin Green Box with White Dotted Line) */}
+        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative z-10 space-y-4">
+            <h3 className="section-heading">
+              4. Invoice Information
+            </h3>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className="form-label">
+                  {t('invoiceNumberLabel')} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={invoiceNumber}
+                  onChange={(e) => setInvoiceNumber(e.target.value.toUpperCase())}
+                  placeholder="e.g. INV-89201"
+                  className="form-input-field uppercase font-bold"
+                />
+              </div>
+
+              <div>
+                <label className="form-label">
+                  {t('purchaseDateLabel')} *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={purchaseDate}
+                  onChange={(e) => setPurchaseDate(e.target.value)}
+                  placeholder="DD/MM/YYYY"
+                  className="form-input-field font-bold"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="form-label">
+                {t('securityCode')} (Optional)
+              </label>
+              <input
+                type="text"
+                value={qrCode}
+                onChange={(e) => setQrCode(e.target.value.toUpperCase())}
+                placeholder="e.g. HUB-710-2026-9801"
+                className="form-input-field uppercase font-bold"
+              />
+            </div>
           </div>
         </div>
 
@@ -339,7 +347,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary-amber w-full py-4 uppercase text-sm tracking-wider font-extrabold flex items-center justify-center space-x-2"
+          className="btn-primary-amber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 border-2 border-white/40"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />

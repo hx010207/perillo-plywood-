@@ -9,7 +9,7 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: 'dark',
+  theme: 'light',
   toggleTheme: () => {},
   setTheme: () => {},
 });
@@ -18,7 +18,7 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('perillo_theme');
     if (saved === 'light' || saved === 'dark') return saved;
-    return 'dark';
+    return 'light'; // Default to pristine light mode
   });
 
   const applyTheme = (newTheme: Theme) => {

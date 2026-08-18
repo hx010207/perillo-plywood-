@@ -25,11 +25,11 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-white/95 dark:bg-[#080F0A]/90 backdrop-blur-2xl text-slate-900 dark:text-white shadow-sm dark:shadow-2xl border-b border-[#10B981]/30 px-4 sm:px-8 py-3.5 transition-colors duration-200">
+      <header className="sticky top-0 z-40 bg-[#FAF7F2]/85 dark:bg-[#1C1410]/90 backdrop-blur-lg text-[#2A1E17] dark:text-[#FAF7F2] shadow-sm border-b border-[#8C6D58]/20 px-4 sm:px-8 py-3.5 transition-colors duration-200">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo & Identity */}
           <div className="flex items-center space-x-3.5">
-            <div className="w-11 h-11 rounded-full overflow-hidden bg-white p-0.5 shadow-md border-2 border-white ring-2 ring-[#10B981]/60 flex items-center justify-center flex-shrink-0">
+            <div className="w-11 h-11 rounded-full overflow-hidden bg-white p-0.5 shadow-md border-2 border-white ring-2 ring-[#8C6D58]/40 flex items-center justify-center flex-shrink-0">
               <img 
                 src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg" 
                 alt="Perillo Plywood" 
@@ -38,21 +38,21 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h1 className="text-base sm:text-xl font-black tracking-tight text-slate-900 dark:text-white">
+                <h1 className="text-base sm:text-xl font-black tracking-tight text-[#2A1E17] dark:text-[#FAF7F2]">
                   {t('appName')}
                 </h1>
                 {verified ? (
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-400/40 shadow-xs">
-                    <CheckCircle2 className="w-3 h-3 mr-1 text-emerald-600 dark:text-emerald-400" />
+                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] sm:text-xs font-bold bg-[#10B981]/15 text-[#065F46] dark:text-emerald-300 border border-[#10B981]/30 shadow-xs">
+                    <CheckCircle2 className="w-3 h-3 mr-1 text-[#065F46] dark:text-emerald-400" />
                     Verified
                   </span>
                 ) : (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-400/30">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/15 text-amber-800 dark:text-amber-300 border border-amber-500/30">
                     Pending
                   </span>
                 )}
               </div>
-              <p className="text-xs text-emerald-700 dark:text-emerald-400 font-semibold hidden sm:block">
+              <p className="text-xs text-[#6B5A4E] dark:text-[#C4B5A5] font-semibold hidden sm:block">
                 Loyalty Rewards Portal • Hubballi
               </p>
             </div>
@@ -60,34 +60,34 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
 
           {/* Header Actions */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            {/* Theme Toggle Button (Light/Dark Mode) */}
+            {/* Theme Toggle Button */}
             <button
               onClick={toggleTheme}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-[#10B981]/30 text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
+              className="p-2 rounded-xl bg-white/70 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 border border-[#8C6D58]/20 text-[#6B5A4E] dark:text-slate-200 transition-all active:scale-95 shadow-xs"
               title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} Mode`}
               aria-label="Toggle Theme"
             >
               {theme === 'dark' ? (
                 <Sun className="w-4 h-4 text-amber-400" />
               ) : (
-                <Moon className="w-4 h-4 text-slate-700" />
+                <Moon className="w-4 h-4 text-[#8C6D58]" />
               )}
             </button>
 
             {/* Language Switcher Toggle */}
             <button
               onClick={handleNextLanguage}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-white/5 dark:hover:bg-white/10 border border-[#10B981]/30 text-xs font-bold text-slate-700 dark:text-slate-200 transition-all active:scale-95 shadow-xs"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-white/70 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 border border-[#8C6D58]/20 text-xs font-bold text-[#2A1E17] dark:text-slate-200 transition-all active:scale-95 shadow-xs"
               title="Switch Language"
             >
-              <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              <Globe className="w-3.5 h-3.5 text-[#8C6D58] dark:text-amber-400" />
               <span>{currentLangLabel}</span>
             </button>
 
             {/* Logout Button */}
             <button
               onClick={() => setShowLogoutConfirm(true)}
-              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-slate-100 hover:bg-rose-100 dark:bg-white/5 dark:hover:bg-rose-500/20 border border-slate-200 dark:border-white/15 hover:border-rose-300 dark:hover:border-rose-400/40 text-xs font-bold text-slate-700 dark:text-slate-300 hover:text-rose-700 dark:hover:text-rose-300 transition-all active:scale-95"
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 rounded-xl bg-white/70 hover:bg-rose-100 dark:bg-white/5 dark:hover:bg-rose-500/20 border border-[#8C6D58]/20 hover:border-rose-300 text-xs font-bold text-[#6B5A4E] hover:text-rose-700 dark:text-slate-300 dark:hover:text-rose-300 transition-all active:scale-95"
             >
               <LogOut className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{t('logout')}</span>
@@ -103,11 +103,11 @@ export const Header: React.FC<HeaderProps> = ({ verified }) => {
         title={t('logoutConfirmTitle')}
       >
         <div className="space-y-4">
-          <p className="text-slate-600 dark:text-slate-300 text-sm font-medium">{t('logoutConfirmMsg')}</p>
+          <p className="text-[#6B5A4E] dark:text-slate-300 text-sm font-medium">{t('logoutConfirmMsg')}</p>
           <div className="flex justify-end space-x-3 pt-2">
             <button
               onClick={() => setShowLogoutConfirm(false)}
-              className="px-4 py-2 rounded-xl text-xs font-bold border border-slate-300 dark:border-white/15 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+              className="px-4 py-2 rounded-xl text-xs font-bold border border-[#8C6D58]/30 text-[#6B5A4E] dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
             >
               {t('cancel')}
             </button>

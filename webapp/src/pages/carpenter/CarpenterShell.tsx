@@ -32,7 +32,7 @@ export const CarpenterShell: React.FC = () => {
     approvedClaims: 0,
     totalSheets: 0,
     tier: 'Member',
-    tierColor: '#94A3B8',
+    tierColor: '#8C6D58',
     tierRewardPct: 0.8,
     nextTier: 'Bronze',
     nextTierSheets: 100,
@@ -63,15 +63,16 @@ export const CarpenterShell: React.FC = () => {
   const isMoreInfo = user.status === 'more_info_requested';
 
   return (
-    <div className="relative w-full min-h-screen selection:bg-[#10B981] selection:text-black">
-      {/* 1. Full-Screen Backdrop GradientWaves */}
+    <div className="relative w-full min-h-screen selection:bg-[#8C6D58] selection:text-white">
+      {/* 1. Full-Screen Backdrop GradientWaves (Warm White / Beige / Soft Timber) */}
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         <GradientWaves
-          horizonColor="#0B1D12"
-          waveColor="#10B981"
-          crestColor="#34D399"
-          opacity={0.85}
-          speed={0.4}
+          horizonColor="#FAF7F2"
+          waveColor="#D9C5B2"
+          crestColor="#8C6D58"
+          brightness={1.1}
+          opacity={0.9}
+          speed={0.35}
         />
       </div>
 
@@ -82,7 +83,7 @@ export const CarpenterShell: React.FC = () => {
 
         {/* Banner for more_info_requested */}
         {isMoreInfo && (
-          <div className="bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm py-2.5 px-4 text-center border-b border-amber-600 flex items-center justify-center space-x-2 shadow-sm">
+          <div className="bg-amber-600 text-white font-bold text-xs sm:text-sm py-2.5 px-4 text-center border-b border-amber-700 flex items-center justify-center space-x-2 shadow-sm">
             <AlertTriangle className="w-4 h-4 flex-shrink-0" />
             <span>{t('moreInfoMsg') || 'Admin requested more information. Please update your details and save.'}</span>
           </div>

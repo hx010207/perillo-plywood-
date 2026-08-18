@@ -130,33 +130,34 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
   };
 
   return (
-    <div className="relative w-full min-h-screen selection:bg-[#10B981] selection:text-black">
-      {/* 1. Full-Screen Backdrop GradientWaves */}
+    <div className="relative w-full min-h-screen selection:bg-[#8C6D58] selection:text-white">
+      {/* 1. Full-Screen Backdrop GradientWaves (Warm Beige/Linen) */}
       <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         <GradientWaves
-          horizonColor="#0B1D12"
-          waveColor="#10B981"
-          crestColor="#34D399"
-          opacity={0.85}
-          speed={0.4}
+          horizonColor="#FAF7F2"
+          waveColor="#D9C5B2"
+          crestColor="#8C6D58"
+          brightness={1.1}
+          opacity={0.9}
+          speed={0.35}
         />
       </div>
 
       {/* 2. Foreground Main Content */}
-      <main className="relative z-10 w-full min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 text-slate-900 dark:text-white">
+      <main className="relative z-10 w-full min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 text-[#2A1E17] dark:text-[#FAF7F2]">
         <div className="sm:mx-auto sm:w-full sm:max-w-md lg:max-w-lg">
           {/* Top Controls: Language & Theme Switcher */}
           <div className="flex flex-wrap justify-center items-center gap-2 mb-6">
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full bg-white dark:bg-white/5 border border-[#10B981]/30 text-slate-700 dark:text-slate-200 shadow-xs mr-1"
+              className="p-1.5 rounded-full bg-[#FAF7F2]/80 dark:bg-white/5 border border-[#8C6D58]/25 text-[#6B5A4E] dark:text-slate-200 shadow-xs mr-1"
               title="Toggle theme"
             >
-              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-slate-700" />}
+              {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#8C6D58]" />}
             </button>
 
-            <div className="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 mr-1 font-semibold">
-              <Globe className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <div className="flex items-center space-x-1.5 text-xs text-[#6B5A4E] dark:text-slate-400 mr-1 font-semibold">
+              <Globe className="w-3.5 h-3.5 text-[#8C6D58]" />
               <span>Language:</span>
             </div>
             {supportedLanguages.map((item) => {
@@ -167,8 +168,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                   onClick={() => setLanguage(item.code)}
                   className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border ${
                     active
-                      ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-600 dark:border-emerald-400 shadow-md ring-2 ring-emerald-500/20 scale-105'
-                      : 'bg-white dark:bg-white/5 text-slate-700 dark:text-slate-300 border-[#10B981]/30 hover:bg-slate-50 dark:hover:bg-white/10'
+                      ? 'bg-[#8C6D58] text-white border-[#8C6D58] shadow-md ring-2 ring-[#8C6D58]/20 scale-105'
+                      : 'bg-[#FAF7F2]/80 dark:bg-white/5 text-[#6B5A4E] dark:text-slate-300 border-[#8C6D58]/20 hover:bg-white dark:hover:bg-white/10'
                   }`}
                 >
                   {item.label}
@@ -177,43 +178,43 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
             })}
           </div>
 
-          {/* Main Card Container (Thin Green Box with White Dotted Line) */}
-          <div className="relative rounded-3xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 sm:p-10 shadow-2xl shadow-emerald-900/10 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-2xl">
+          {/* Main Card Container (Frosted Light-Beige Card with Soft Timber Dotted Line) */}
+          <div className="relative rounded-3xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 sm:p-10 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-2xl">
             <div className="relative z-10 space-y-6">
               {/* Logo & Header */}
               <div className="flex flex-col items-center text-center">
-                <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-2 border-white ring-2 ring-[#10B981]/50 bg-white p-1 mb-3">
+                <div className="w-20 h-20 rounded-full overflow-hidden shadow-lg border-2 border-white ring-2 ring-[#8C6D58]/40 bg-white p-1 mb-3">
                   <img
                     src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg"
                     alt="Perillo Logo"
                     className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
+                <h2 className="text-2xl sm:text-3xl font-black text-[#2A1E17] dark:text-[#FAF7F2] tracking-tight">
                   {t('appName')}
                 </h2>
-                <p className="text-xs sm:text-sm font-bold text-amber-600 dark:text-amber-400 mt-1">
+                <p className="text-xs sm:text-sm font-bold text-[#8C6D58] dark:text-[#D9C5B2] mt-1">
                   {mode === 'login' ? t('loyaltyProgram') : t('createAccount')}
                 </p>
               </div>
 
               {/* Value Prop Badges */}
               {mode === 'login' && role === 'carpenter' && (
-                <div className="grid grid-cols-3 gap-2 p-3.5 bg-slate-50 dark:bg-[#0B130E] border border-[#10B981]/30 rounded-xl text-center">
+                <div className="grid grid-cols-3 gap-2 p-3.5 bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 rounded-xl text-center">
                   <div className="space-y-0.5">
-                    <Zap className="w-4 h-4 text-amber-500 dark:text-amber-400 mx-auto" />
-                    <p className="text-[10px] font-black text-slate-900 dark:text-white uppercase">Instant</p>
-                    <p className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold">Cashback</p>
+                    <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 mx-auto" />
+                    <p className="text-[10px] font-black text-[#2A1E17] dark:text-white uppercase">Instant</p>
+                    <p className="text-[9px] text-[#6B5A4E] dark:text-slate-400 font-semibold">Cashback</p>
                   </div>
-                  <div className="space-y-0.5 border-x border-[#10B981]/20">
-                    <Award className="w-4 h-4 text-emerald-600 dark:text-emerald-400 mx-auto" />
-                    <p className="text-[10px] font-black text-slate-900 dark:text-white uppercase">VIP Tiers</p>
-                    <p className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold">Up to 2.5%</p>
+                  <div className="space-y-0.5 border-x border-[#8C6D58]/20">
+                    <Award className="w-4 h-4 text-[#8C6D58] dark:text-[#D9C5B2] mx-auto" />
+                    <p className="text-[10px] font-black text-[#2A1E17] dark:text-white uppercase">VIP Tiers</p>
+                    <p className="text-[9px] text-[#6B5A4E] dark:text-slate-400 font-semibold">Up to 2.5%</p>
                   </div>
                   <div className="space-y-0.5">
-                    <ShieldCheck className="w-4 h-4 text-sky-600 dark:text-sky-400 mx-auto" />
-                    <p className="text-[10px] font-black text-slate-900 dark:text-white uppercase">Official</p>
-                    <p className="text-[9px] text-slate-500 dark:text-slate-400 font-semibold">Perillo Pass</p>
+                    <ShieldCheck className="w-4 h-4 text-[#065F46] dark:text-emerald-400 mx-auto" />
+                    <p className="text-[10px] font-black text-[#2A1E17] dark:text-white uppercase">Official</p>
+                    <p className="text-[9px] text-[#6B5A4E] dark:text-slate-400 font-semibold">Perillo Pass</p>
                   </div>
                 </div>
               )}
@@ -221,14 +222,14 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
               {mode === 'login' ? (
                 <>
                   {/* Role Toggle Switch */}
-                  <div className="flex rounded-xl bg-slate-100 dark:bg-[#0B130E] p-1.5 border border-[#10B981]/30 shadow-inner">
+                  <div className="flex rounded-xl bg-stone-200/60 dark:bg-[#1E1612] p-1.5 border border-[#8C6D58]/20 shadow-inner">
                     <button
                       type="button"
                       onClick={() => { setRole('carpenter'); setError(''); }}
                       className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 ${
                         role === 'carpenter'
-                          ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-md ring-2 ring-emerald-500/20'
-                          : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                          ? 'bg-[#8C6D58] text-white shadow-md ring-2 ring-[#8C6D58]/20'
+                          : 'text-[#6B5A4E] hover:text-[#2A1E17] dark:text-slate-400 dark:hover:text-white'
                       }`}
                     >
                       <UserCheck className="w-4 h-4" />
@@ -239,8 +240,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                       onClick={() => { setRole('admin'); setError(''); }}
                       className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 ${
                         role === 'admin'
-                          ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 shadow-md ring-2 ring-emerald-500/20'
-                          : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white'
+                          ? 'bg-[#8C6D58] text-white shadow-md ring-2 ring-[#8C6D58]/20'
+                          : 'text-[#6B5A4E] hover:text-[#2A1E17] dark:text-slate-400 dark:hover:text-white'
                       }`}
                     >
                       <ShieldCheck className="w-4 h-4" />
@@ -257,7 +258,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                             Admin Email / Identifier
                           </label>
                           <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8C6D58]/60">
                               <Mail className="w-4 h-4" />
                             </div>
                             <input
@@ -276,7 +277,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                             Admin Password
                           </label>
                           <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-[#8C6D58]/60">
                               <Lock className="w-4 h-4" />
                             </div>
                             <input
@@ -290,10 +291,10 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-white"
+                              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6B5A4E] hover:text-[#2A1E17] dark:hover:text-white"
                               title={showPassword ? 'Hide password' : 'Show password'}
                             >
-                              {showPassword ? <EyeOff className="w-4 h-4 text-emerald-600 dark:text-emerald-400" /> : <Eye className="w-4 h-4" />}
+                              {showPassword ? <EyeOff className="w-4 h-4 text-[#8C6D58]" /> : <Eye className="w-4 h-4" />}
                             </button>
                           </div>
                         </div>
@@ -303,8 +304,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                         <label className="form-label">
                           {t('enterMobile')}
                         </label>
-                        <div className="flex rounded-xl border border-[#10B981]/40 overflow-hidden bg-slate-50 dark:bg-[#0B130E] focus-within:border-emerald-500">
-                          <span className="inline-flex items-center px-4 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-black text-sm border-r border-[#10B981]/30">
+                        <div className="flex rounded-xl border border-[#8C6D58]/30 overflow-hidden bg-white dark:bg-[#1E1612] focus-within:border-[#8C6D58]">
+                          <span className="inline-flex items-center px-4 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-sm border-r border-[#8C6D58]/20">
                             +91
                           </span>
                           <input
@@ -314,7 +315,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                             value={phone}
                             onChange={(e) => { setPhone(e.target.value.replace(/[^0-9]/g, '')); setError(''); }}
                             placeholder="98765 43210"
-                            className="block w-full px-3.5 py-3 text-slate-900 dark:text-white text-base font-black bg-transparent border-0 focus:outline-none placeholder-slate-400 dark:placeholder-slate-500"
+                            className="block w-full px-3.5 py-3 text-[#2A1E17] dark:text-white text-base font-black bg-transparent border-0 focus:outline-none placeholder-[#8C6D58]/40"
                           />
                         </div>
                       </div>
@@ -329,7 +330,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <button
                       type="submit"
                       disabled={loading || busy}
-                      className="btn-primary-amber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-70 border-2 border-white/40"
+                      className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-70 border-2 border-white/40"
                     >
                       {loading || busy ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -346,7 +347,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                         <button
                           type="button"
                           onClick={() => { setMode('signup'); setError(''); }}
-                          className="text-xs font-extrabold text-amber-600 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 hover:underline"
+                          className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline"
                         >
                           {t('signUpLink')}
                         </button>
@@ -375,8 +376,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <label className="form-label">
                       {t('enterMobile')} *
                     </label>
-                    <div className="flex rounded-xl border border-[#10B981]/40 overflow-hidden bg-slate-50 dark:bg-[#0B130E]">
-                      <span className="inline-flex items-center px-3.5 bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 font-black text-xs border-r border-[#10B981]/30">
+                    <div className="flex rounded-xl border border-[#8C6D58]/30 overflow-hidden bg-white dark:bg-[#1E1612]">
+                      <span className="inline-flex items-center px-3.5 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-xs border-r border-[#8C6D58]/20">
                         +91
                       </span>
                       <input
@@ -386,7 +387,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                         value={signupPhone}
                         onChange={(e) => { setSignupPhone(e.target.value.replace(/[^0-9]/g, '')); setError(''); }}
                         placeholder="98765 43210"
-                        className="w-full px-3 py-3 text-slate-900 dark:text-white text-sm font-bold bg-transparent border-0 focus:outline-none placeholder-slate-400 dark:placeholder-slate-500"
+                        className="w-full px-3 py-3 text-[#2A1E17] dark:text-white text-sm font-bold bg-transparent border-0 focus:outline-none placeholder-[#8C6D58]/40"
                       />
                     </div>
                   </div>
@@ -450,8 +451,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     </div>
                   </div>
 
-                  <div className="pt-2 border-t border-slate-100 dark:border-white/10 space-y-3">
-                    <label className="form-label text-emerald-600 dark:text-emerald-400 font-bold">
+                  <div className="pt-2 border-t border-[#8C6D58]/15 dark:border-white/10 space-y-3">
+                    <label className="form-label text-[#8C6D58] dark:text-[#D9C5B2] font-bold">
                       UPI ID (For Instant Payout)
                     </label>
                     <input
@@ -472,7 +473,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                   <button
                     type="submit"
                     disabled={loading || busy}
-                    className="btn-primary-amber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-70 border-2 border-white/40"
+                    className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-70 border-2 border-white/40"
                   >
                     {loading || busy ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -485,7 +486,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <button
                       type="button"
                       onClick={() => { setMode('login'); setError(''); }}
-                      className="text-xs font-extrabold text-amber-600 dark:text-amber-400 hover:underline"
+                      className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline"
                     >
                       {t('loginLink')}
                     </button>
@@ -495,7 +496,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
             </div>
           </div>
 
-          <p className="text-center text-xs text-slate-500 dark:text-slate-400 font-semibold mt-6">{t('securePayouts')}</p>
+          <p className="text-center text-xs text-[#6B5A4E] dark:text-[#C4B5A5] font-semibold mt-6">{t('securePayouts')}</p>
         </div>
       </main>
     </div>

@@ -49,25 +49,25 @@ export const Modal: React.FC<ModalProps> = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/70 backdrop-blur-md"
+            className="fixed inset-0 bg-black/60 backdrop-blur-md"
           />
 
-          {/* Dialog Container (Thin Green Box with White Dotted Line) */}
+          {/* Dialog Container (Warm Linen Timber Card with Dashed Border) */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
             transition={{ type: 'spring', duration: 0.3 }}
-            className={`relative w-full ${maxWidthClasses} bg-white dark:bg-[#121A15] text-slate-900 dark:text-white rounded-3xl shadow-2xl overflow-hidden z-10 border border-[#10B981]/40 my-8 transition-colors duration-200 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-2xl`}
+            className={`relative w-full ${maxWidthClasses} bg-[#FAF7F2] dark:bg-[#261C16] text-[#2A1E17] dark:text-[#FAF7F2] rounded-3xl shadow-2xl overflow-hidden z-10 border border-[#8C6D58]/30 my-8 transition-colors duration-200 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-2xl`}
           >
             <div className="relative z-10">
               {/* Header */}
               {title && (
-                <div className="flex items-center justify-between px-6 py-4 border-b border-[#10B981]/20 bg-slate-50/70 dark:bg-black/30">
-                  <h3 className="text-lg font-black text-slate-900 dark:text-white">{title}</h3>
+                <div className="flex items-center justify-between px-6 py-4 border-b border-[#8C6D58]/15 dark:border-white/10 bg-white/60 dark:bg-black/20">
+                  <h3 className="text-lg font-black text-[#2A1E17] dark:text-[#FAF7F2]">{title}</h3>
                   <button
                     onClick={onClose}
-                    className="p-1.5 rounded-full text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-white/10 transition-colors"
+                    className="p-1.5 rounded-full text-[#6B5A4E] hover:text-[#2A1E17] dark:hover:text-white hover:bg-stone-200/60 dark:hover:bg-white/10 transition-colors"
                   >
                     <X className="w-5 h-5" />
                   </button>

@@ -132,29 +132,29 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-slate-900 dark:text-white">
+    <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-[#2A1E17] dark:text-[#FAF7F2]">
       {/* Top Navigation Bar */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#10B981]/30">
+      <div className="flex items-center justify-between pb-3 border-b border-[#8C6D58]/20">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-emerald-600 dark:text-[#10B981] hover:text-emerald-700 dark:hover:text-emerald-300 font-extrabold text-sm transition-colors"
+          className="flex items-center space-x-2 text-[#8C6D58] hover:text-[#735542] dark:text-[#D9C5B2] font-extrabold text-sm transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
           <span>{t('back')}</span>
         </button>
-        <h2 className="text-lg font-black text-slate-900 dark:text-white">{t('newClaim')}</h2>
+        <h2 className="text-lg font-black text-[#2A1E17] dark:text-[#FAF7F2]">{t('newClaim')}</h2>
         <div className="w-12" />
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        {/* 1. Upload Dropzone (Thin Green Box with White Dotted Line) */}
-        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+        {/* 1. Upload Dropzone */}
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-4">
             <div>
               <h3 className="section-heading">
                 1. {t('uploadInvoice')}
               </h3>
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-1 leading-relaxed">
+              <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] mt-1 leading-relaxed">
                 Invoice receipt image must be clear and readable, showing dealer details and quantities.
               </p>
             </div>
@@ -162,8 +162,8 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
           </div>
         </div>
 
-        {/* 2. Store & Dealer Details (Thin Green Box with White Dotted Line) */}
-        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+        {/* 2. Store & Dealer Details */}
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-4">
             <h3 className="section-heading">
               2. Dealer Details
@@ -200,35 +200,35 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
           </div>
         </div>
 
-        {/* 3. Dynamic Plywood Items Selector (Thin Green Box with White Dotted Line) */}
-        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+        {/* 3. Dynamic Plywood Items Selector */}
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-4">
-            <div className="flex items-center justify-between pb-2 border-b border-[#10B981]/30">
+            <div className="flex items-center justify-between pb-2 border-b border-[#8C6D58]/20">
               <div>
                 <h3 className="section-heading">
                   3. {t('plywoodItems')}
                 </h3>
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed">
+                <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] mt-0.5 leading-relaxed">
                   Add all purchased Perillo plywood grades
                 </p>
               </div>
-              <span className="px-3.5 py-1.5 bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 font-black text-xs rounded-xl border border-emerald-400/50 shadow-xs">
+              <span className="px-3.5 py-1.5 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-xs rounded-xl border border-[#8C6D58]/30 shadow-xs">
                 {t('totalSheetsLabel')}: {totalSheets} {t('sheets')}
               </span>
             </div>
 
             <div className="space-y-3.5">
               {lineItems.map((item, index) => (
-                <div key={index} className="bg-slate-50/90 dark:bg-[#0B130E] rounded-xl p-4 border border-[#10B981]/30 space-y-3 transition-colors duration-200">
+                <div key={index} className="bg-white/80 dark:bg-[#1E1612] rounded-xl p-4 border border-[#8C6D58]/20 space-y-3 transition-colors duration-200">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wide">
+                    <span className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] uppercase tracking-wide">
                       Item 0{index + 1}
                     </span>
                     {lineItems.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeLineItem(index)}
-                        className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 flex items-center space-x-1"
+                        className="text-xs font-bold text-rose-600 dark:text-rose-400 hover:text-rose-700 flex items-center space-x-1"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         <span>Remove</span>
@@ -238,7 +238,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
 
                   {/* Product Type Chips */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-[#6B5A4E] dark:text-[#C4B5A5] mb-2 uppercase tracking-wide">
                       Select Product Grade:
                     </label>
                     <div className="flex flex-wrap gap-2">
@@ -251,8 +251,8 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
                             onClick={() => updateLineItem(index, 'product', p)}
                             className={`px-3.5 py-2 rounded-xl text-xs font-extrabold transition-all border ${
                               active
-                                ? 'bg-emerald-600 text-white dark:bg-emerald-500 dark:text-slate-950 border-emerald-600 dark:border-emerald-400 shadow-md ring-2 ring-emerald-500/20'
-                                : 'bg-white dark:bg-white/5 border-slate-300 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10'
+                                ? 'bg-[#8C6D58] text-white border-[#8C6D58] shadow-md ring-2 ring-[#8C6D58]/20'
+                                : 'bg-[#FAF7F2] dark:bg-white/5 border-[#8C6D58]/20 text-[#6B5A4E] dark:text-[#C4B5A5] hover:bg-stone-100 dark:hover:bg-white/10'
                             }`}
                           >
                             {p}
@@ -264,7 +264,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
 
                   {/* Quantity */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1 uppercase tracking-wide">
+                    <label className="block text-xs font-bold text-[#6B5A4E] dark:text-[#C4B5A5] mb-1 uppercase tracking-wide">
                       Quantity (Sheets):
                     </label>
                     <input
@@ -273,7 +273,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
                       value={item.quantity}
                       onChange={(e) => updateLineItem(index, 'quantity', e.target.value.replace(/[^0-9]/g, ''))}
                       placeholder="e.g. 10"
-                      className="w-full bg-white dark:bg-[#121A15] border border-[#10B981]/40 rounded-xl px-4 py-2.5 text-slate-900 dark:text-white font-bold text-sm focus:border-[#10B981] focus:ring-2 focus:ring-[#10B981]/30 outline-none"
+                      className="w-full bg-white dark:bg-[#261C16] border border-[#8C6D58]/30 rounded-xl px-4 py-2.5 text-[#2A1E17] dark:text-white font-bold text-sm focus:border-[#8C6D58] focus:ring-2 focus:ring-[#8C6D58]/20 outline-none"
                     />
                   </div>
                 </div>
@@ -283,7 +283,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
             <button
               type="button"
               onClick={addLineItem}
-              className="w-full py-3 border-2 border-dashed border-[#10B981]/50 hover:border-emerald-600 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5 transition-colors"
+              className="w-full py-3 border-2 border-dashed border-[#8C6D58]/40 hover:border-[#8C6D58] text-[#8C6D58] dark:text-[#D9C5B2] hover:bg-[#8C6D58]/10 font-bold text-xs rounded-xl flex items-center justify-center space-x-1.5 transition-colors"
             >
               <Plus className="w-4 h-4" />
               <span>{t('addAnotherItem')}</span>
@@ -291,8 +291,8 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
           </div>
         </div>
 
-        {/* 4. Invoice Information (Thin Green Box with White Dotted Line) */}
-        <div className="relative rounded-2xl bg-white/90 dark:bg-[#121A15]/90 backdrop-blur-xl border border-[#10B981]/40 p-6 shadow-xl shadow-emerald-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-white/80 dark:before:border-white/20 before:pointer-events-none before:rounded-xl">
+        {/* 4. Invoice Information */}
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-4">
             <h3 className="section-heading">
               4. Invoice Information
@@ -347,7 +347,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
         <button
           type="submit"
           disabled={loading}
-          className="btn-primary-amber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 border-2 border-white/40"
+          className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 border-2 border-white/40"
         >
           {loading ? (
             <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -369,9 +369,9 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
         title={alertState.title}
       >
         <div className="space-y-4">
-          <div className="flex items-center space-x-3 text-sm font-semibold text-slate-700 dark:text-slate-200">
+          <div className="flex items-center space-x-3 text-sm font-semibold text-[#2A1E17] dark:text-stone-200">
             {alertState.isSuccess ? (
-              <CheckCircle2 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+              <CheckCircle2 className="w-8 h-8 text-[#065F46] dark:text-emerald-400 flex-shrink-0" />
             ) : (
               <AlertCircle className="w-8 h-8 text-rose-600 dark:text-rose-400 flex-shrink-0" />
             )}
@@ -385,7 +385,7 @@ export const UploadInvoiceTab: React.FC<UploadInvoiceTabProps> = ({ user, onBack
                   onBack();
                 }
               }}
-              className="px-6 py-2.5 bg-emerald-600 dark:bg-emerald-500 hover:bg-emerald-700 dark:hover:bg-emerald-400 text-white dark:text-slate-950 font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95"
+              className="px-6 py-2.5 bg-[#8C6D58] hover:bg-[#735542] text-white font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95"
             >
               {t('ok')}
             </button>

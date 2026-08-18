@@ -55,20 +55,22 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-28 sm:pb-12 text-[#2A1E17] dark:text-[#FAF7F2]">
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-[#8C6D58]/20">
+      <div className="flex items-center justify-between py-2">
         <button
           onClick={onBack}
-          className="flex items-center space-x-2 text-[#8C6D58] hover:text-[#735542] dark:text-[#D9C5B2] font-extrabold text-sm transition-colors"
+          className="flex items-center space-x-2 text-[#8C6D58] hover:text-[#735542] dark:text-[#D9C5B2] dark:hover:text-white font-extrabold text-sm transition-colors cursor-pointer group"
         >
-          <ArrowLeft className="w-4 h-4" />
-          <span>{t('back')}</span>
+          <ArrowLeft className="w-5 h-5 text-[#8C6D58] dark:text-[#D9C5B2] group-hover:-translate-x-0.5 transition-transform" />
+          <span>Back</span>
         </button>
-        <h2 className="text-lg font-black text-[#2A1E17] dark:text-[#FAF7F2]">{t('invoiceDetails')}</h2>
-        <div className="w-12" />
+        <h2 className="text-2xl font-black text-[#2A1E17] dark:text-[#FAF7F2] tracking-tight bg-transparent">
+          {t('invoiceDetails')}
+        </h2>
+        <div className="w-16" />
       </div>
 
       {/* Image Gallery Preview */}
-      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
         <div className="relative z-10 space-y-4">
           {images.length > 0 ? (
             <div>
@@ -103,11 +105,11 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
       </div>
 
       {/* Details Card */}
-      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
         <div className="relative z-10 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-[#8C6D58]/15 dark:border-white/10">
             <div>
-              <span className="text-xs text-[#6B5A4E] dark:text-[#C4B5A5] uppercase font-bold">Claim Tracking ID</span>
+              <span className="text-xs text-[#6B5A4E] dark:text-[#A89F91] uppercase font-bold">Claim Tracking ID</span>
               <h3 className="text-xl font-black text-[#2A1E17] dark:text-[#FAF7F2] mt-0.5">{item.id}</h3>
             </div>
             <span className={`px-3 py-1 rounded-xl text-xs font-extrabold uppercase tracking-wider border ${getStatusBadge(item.status)}`}>
@@ -129,22 +131,22 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
           {/* Key-Value Details */}
           <div className="divide-y divide-[#8C6D58]/15 dark:divide-white/10 text-sm">
             <div className="py-2.5 flex justify-between">
-              <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('dealerName')}</span>
+              <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('dealerName')}</span>
               <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">{storeName}</span>
             </div>
 
             <div className="py-2.5 flex justify-between">
-              <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('dealerCityLabel')}</span>
+              <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('dealerCityLabel')}</span>
               <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">{dealerCity}</span>
             </div>
 
             {/* Line items list */}
             {lineItems.length > 0 ? (
               <div className="py-3 space-y-2">
-                <span className="text-xs font-extrabold text-[#6B5A4E] dark:text-[#C4B5A5] uppercase tracking-wider">
+                <span className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] uppercase tracking-wider">
                   {t('lineItems')}
                 </span>
-                <div className="bg-white/80 dark:bg-[#1E1612] rounded-xl p-3.5 border border-[#8C6D58]/20 space-y-2">
+                <div className="bg-white/80 dark:bg-[#1E1612] rounded-xl p-3.5 border border-[#8C6D58]/20 dark:border-white/10 space-y-2">
                   {lineItems.map((li, idx) => (
                     <div key={idx} className="flex justify-between text-xs font-semibold text-[#2A1E17] dark:text-stone-200">
                       <span>{li.product}</span>
@@ -155,23 +157,23 @@ export const LedgerDetailTab: React.FC<LedgerDetailTabProps> = ({ item, onBack }
               </div>
             ) : (
               <div className="py-2.5 flex justify-between">
-                <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('productType')}</span>
+                <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('productType')}</span>
                 <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">{item.product_type}</span>
               </div>
             )}
 
             <div className="py-2.5 flex justify-between">
-              <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('quantity')}</span>
+              <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('quantity')}</span>
               <span className="font-extrabold text-[#8C6D58] dark:text-[#D9C5B2]">{item.quantity} Sheets Total</span>
             </div>
 
             <div className="py-2.5 flex justify-between">
-              <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('invoiceNumber')}</span>
+              <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('invoiceNumber')}</span>
               <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">{item.invoice_number}</span>
             </div>
 
             <div className="py-2.5 flex justify-between">
-              <span className="text-[#6B5A4E] dark:text-[#C4B5A5] font-medium">{t('purchaseDate')}</span>
+              <span className="text-[#6B5A4E] dark:text-[#A89F91] font-medium">{t('purchaseDate')}</span>
               <span className="font-semibold text-[#2A1E17] dark:text-[#FAF7F2]">{item.purchase_date}</span>
             </div>
 

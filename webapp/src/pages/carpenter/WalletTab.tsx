@@ -136,7 +136,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
   return (
     <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto text-[#2A1E17] dark:text-[#FAF7F2]">
       {/* 1. Digital Wallet Hero Card */}
-      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
         <div className="relative z-10 space-y-6">
           <div className="flex items-start justify-between">
             <div>
@@ -149,7 +149,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                 </h2>
                 <span className="text-[#8C6D58] dark:text-[#D9C5B2] text-2xl font-black">Pts</span>
               </div>
-              <div className="inline-flex items-center space-x-2 mt-2 bg-white/70 dark:bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-[#8C6D58]/20">
+              <div className="inline-flex items-center space-x-2 mt-2 bg-white/70 dark:bg-black/40 backdrop-blur-md px-3.5 py-1.5 rounded-xl border border-[#8C6D58]/20 dark:border-white/10">
                 <Sparkles className="w-4 h-4 text-amber-600" />
                 <p className="text-xs font-bold text-[#8C6D58] dark:text-[#D9C5B2]">
                   {t('equivalentTo')} ₹{currentBalance.toLocaleString()} INR (1 Pt = ₹1)
@@ -166,12 +166,12 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
             <button
               onClick={handleRedeemClick}
               disabled={currentBalance <= 0}
-              className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/40"
+              className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed border-2 border-white/40 cursor-pointer"
             >
               <Zap className="w-5 h-5 fill-current text-white" />
               <span>⚡ {t('redeemBtn')}</span>
             </button>
-            <p className="text-xs font-semibold text-[#6B5A4E] dark:text-stone-400 text-center mt-3">
+            <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] text-center mt-3">
               🔒 Direct IMPS & UPI Disbursals processed within minutes
             </p>
           </div>
@@ -182,11 +182,11 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
       <div className="flex items-center justify-between px-1">
         <div>
           <h3 className="section-heading">{t('payoutHistory')}</h3>
-          <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] mt-0.5">All past redemption requests & bank transfers</p>
+          <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-0.5">All past redemption requests & bank transfers</p>
         </div>
         <button
           onClick={() => { loadPayouts(); onRefreshStats(); }}
-          className="flex items-center space-x-1.5 text-xs font-bold text-[#6B5A4E] hover:text-[#2A1E17] dark:text-[#C4B5A5] dark:hover:text-white transition-colors"
+          className="flex items-center space-x-1.5 text-xs font-bold text-[#6B5A4E] hover:text-[#2A1E17] dark:text-[#A89F91] dark:hover:text-white transition-colors cursor-pointer"
         >
           <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
           <span>{t('pullRefresh')}</span>
@@ -195,17 +195,17 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
 
       {/* 3. Payout History List */}
       {loading ? (
-        <div className="text-center py-16 text-[#6B5A4E] dark:text-stone-400 text-xs font-semibold bg-[#FAF7F2]/80 dark:bg-[#261C16]/60 rounded-2xl border border-[#8C6D58]/20">
+        <div className="text-center py-16 text-[#6B5A4E] dark:text-[#A89F91] text-xs font-semibold bg-[#FAF7F2]/80 dark:bg-[#1A1410]/60 rounded-2xl border border-[#8C6D58]/20">
           Loading payout history...
         </div>
       ) : payouts.length === 0 ? (
-        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-12 text-center space-y-3 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-12 text-center space-y-3 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-3">
             <div className="w-12 h-12 rounded-full bg-[#8C6D58]/10 border border-[#8C6D58]/20 flex items-center justify-center text-[#8C6D58] mx-auto">
               <Wallet className="w-6 h-6" />
             </div>
             <h4 className="text-sm font-black text-[#2A1E17] dark:text-[#FAF7F2]">{t('noRedemptionHistory')}</h4>
-            <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] max-w-xs mx-auto leading-relaxed">{t('noRedemptionSubText')}</p>
+            <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] max-w-xs mx-auto leading-relaxed">{t('noRedemptionSubText')}</p>
           </div>
         </div>
       ) : (
@@ -213,12 +213,12 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
           {payouts.map((item) => (
             <div
               key={item.id}
-              className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-5 shadow-lg shadow-stone-900/5 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl"
+              className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-5 shadow-lg shadow-stone-900/5 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl"
             >
               <div className="relative z-10 flex items-center justify-between">
                 <div className="flex items-center space-x-3.5">
-                  <div className="w-11 h-11 rounded-full bg-white/70 dark:bg-white/5 border border-[#8C6D58]/20 flex items-center justify-center text-[#6B5A4E] dark:text-stone-300 flex-shrink-0">
-                    {item.payout_type === 'UPI' ? <Zap className="w-5 h-5 text-amber-600" /> : <Landmark className="w-5 h-5 text-[#8C6D58]" />}
+                  <div className="w-11 h-11 rounded-full bg-white/70 dark:bg-white/5 border border-[#8C6D58]/20 dark:border-white/10 flex items-center justify-center text-[#6B5A4E] dark:text-stone-300 flex-shrink-0">
+                    {item.payout_type === 'UPI' ? <Zap className="w-5 h-5 text-amber-600" /> : <Landmark className="w-5 h-5 text-[#8C6D58] dark:text-[#D9C5B2]" />}
                   </div>
                   <div>
                     <h4 className="text-sm font-black text-[#2A1E17] dark:text-[#FAF7F2]">
@@ -227,7 +227,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                     <p className="text-xs text-[#8C6D58] dark:text-[#D9C5B2] font-bold mt-0.5">
                       {item.points_redeemed || item.amount} Points Redeemed
                     </p>
-                    <p className="text-[11px] font-medium text-[#6B5A4E] dark:text-stone-400 mt-0.5">
+                    <p className="text-[11px] font-medium text-[#6B5A4E] dark:text-[#A89F91] mt-0.5">
                       ID: {item.id} · {(item.created_at || '').split('T')[0]}
                     </p>
                   </div>
@@ -249,13 +249,13 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
         title={t('redeemPoints')}
       >
         <form onSubmit={submitRedeem} className="space-y-5 text-[#2A1E17] dark:text-[#FAF7F2]">
-          <div className="p-4 rounded-xl bg-white/80 dark:bg-[#1E1612] border border-[#8C6D58]/20 flex items-center justify-between">
+          <div className="p-4 rounded-xl bg-white/80 dark:bg-[#1E1612] border border-[#8C6D58]/20 dark:border-white/10 flex items-center justify-between">
             <div>
-              <p className="text-xs font-black text-[#8C6D58] uppercase">{t('availableBalance')}</p>
+              <p className="text-xs font-black text-[#8C6D58] dark:text-[#D9C5B2] uppercase">{t('availableBalance')}</p>
               <p className="text-2xl font-black text-[#2A1E17] dark:text-white">{currentBalance.toLocaleString()} Pts</p>
             </div>
             <div className="text-right">
-              <p className="text-xs font-bold text-[#6B5A4E] dark:text-stone-400 uppercase">After Payout</p>
+              <p className="text-xs font-bold text-[#6B5A4E] dark:text-[#A89F91] uppercase">After Payout</p>
               <p className="text-lg font-black text-amber-700 dark:text-amber-400">{remainingBalance.toLocaleString()} Pts</p>
             </div>
           </div>
@@ -275,7 +275,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                 placeholder="e.g. 500"
                 className="form-input-field text-lg font-black"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-extrabold text-[#8C6D58] uppercase">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] uppercase">
                 = ₹{pointsNum || 0} INR
               </span>
             </div>
@@ -288,7 +288,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                   type="button"
                   onClick={() => handlePresetSelect(amt)}
                   disabled={amt > currentBalance}
-                  className="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white/80 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 text-[#6B5A4E] dark:text-slate-300 border border-[#8C6D58]/20 disabled:opacity-40 transition-colors"
+                  className="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-white/80 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 text-[#6B5A4E] dark:text-slate-300 border border-[#8C6D58]/20 dark:border-white/10 disabled:opacity-40 transition-colors cursor-pointer"
                 >
                   ₹{amt}
                 </button>
@@ -296,7 +296,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
               <button
                 type="button"
                 onClick={() => handlePresetSelect(currentBalance)}
-                className="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] border border-[#8C6D58]/30 transition-colors"
+                className="px-3 py-1.5 rounded-xl text-xs font-extrabold bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] border border-[#8C6D58]/30 transition-colors cursor-pointer"
               >
                 Max (₹{currentBalance})
               </button>
@@ -312,10 +312,10 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                 <button
                   type="button"
                   onClick={() => setRedeemType('UPI')}
-                  className={`w-full p-3.5 rounded-xl border-2 flex items-center justify-between text-left font-bold text-xs transition-all ${
+                  className={`w-full p-3.5 rounded-xl border-2 flex items-center justify-between text-left font-bold text-xs transition-all cursor-pointer ${
                     redeemType === 'UPI'
                       ? 'bg-[#8C6D58]/15 border-[#8C6D58] text-[#2A1E17] dark:text-white shadow-sm ring-2 ring-[#8C6D58]/20'
-                      : 'bg-white/60 dark:bg-white/5 border-[#8C6D58]/20 text-[#6B5A4E] dark:text-slate-400'
+                      : 'bg-white/60 dark:bg-white/5 border-[#8C6D58]/20 dark:border-white/10 text-[#6B5A4E] dark:text-slate-400'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
@@ -324,10 +324,10 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                     </div>
                     <div>
                       <p className="font-black text-[#2A1E17] dark:text-white">Instant UPI Transfer</p>
-                      <p className="text-xs text-[#8C6D58] font-semibold">{user.upi_id}</p>
+                      <p className="text-xs text-[#8C6D58] dark:text-[#D9C5B2] font-semibold">{user.upi_id}</p>
                     </div>
                   </div>
-                  {redeemType === 'UPI' && <CheckCircle2 className="w-5 h-5 text-[#8C6D58]" />}
+                  {redeemType === 'UPI' && <CheckCircle2 className="w-5 h-5 text-[#8C6D58] dark:text-[#D9C5B2]" />}
                 </button>
               )}
 
@@ -335,22 +335,22 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
                 <button
                   type="button"
                   onClick={() => setRedeemType('Bank')}
-                  className={`w-full p-3.5 rounded-xl border-2 flex items-center justify-between text-left font-bold text-xs transition-all ${
+                  className={`w-full p-3.5 rounded-xl border-2 flex items-center justify-between text-left font-bold text-xs transition-all cursor-pointer ${
                     redeemType === 'Bank'
                       ? 'bg-[#8C6D58]/15 border-[#8C6D58] text-[#2A1E17] dark:text-white shadow-sm ring-2 ring-[#8C6D58]/20'
-                      : 'bg-white/60 dark:bg-white/5 border-[#8C6D58]/20 text-[#6B5A4E] dark:text-slate-400'
+                      : 'bg-white/60 dark:bg-white/5 border-[#8C6D58]/20 dark:border-white/10 text-[#6B5A4E] dark:text-slate-400'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className="w-9 h-9 rounded-full bg-[#8C6D58]/20 flex items-center justify-center text-[#8C6D58]">
+                    <div className="w-9 h-9 rounded-full bg-[#8C6D58]/20 flex items-center justify-center text-[#8C6D58] dark:text-[#D9C5B2]">
                       <Landmark className="w-5 h-5" />
                     </div>
                     <div>
                       <p className="font-black text-[#2A1E17] dark:text-white">{user.bank_name || 'Bank IMPS'}</p>
-                      <p className="text-xs text-[#6B5A4E] dark:text-stone-400">A/C: ••••{(user.account_number || '').slice(-4)}</p>
+                      <p className="text-xs text-[#6B5A4E] dark:text-[#A89F91]">A/C: ••••{(user.account_number || '').slice(-4)}</p>
                     </div>
                   </div>
-                  {redeemType === 'Bank' && <CheckCircle2 className="w-5 h-5 text-[#8C6D58]" />}
+                  {redeemType === 'Bank' && <CheckCircle2 className="w-5 h-5 text-[#8C6D58] dark:text-[#D9C5B2]" />}
                 </button>
               )}
             </div>
@@ -359,7 +359,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
           <button
             type="submit"
             disabled={redeeming || pointsNum <= 0 || pointsNum > currentBalance}
-            className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-60 border-2 border-white/40"
+            className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-60 border-2 border-white/40 cursor-pointer"
           >
             {redeeming ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -381,7 +381,7 @@ export const WalletTab: React.FC<WalletTabProps> = ({ user, stats, onRefreshStat
           <div className="flex justify-end pt-2">
             <button
               onClick={() => setAlertState({ ...alertState, isOpen: false })}
-              className="px-6 py-2.5 bg-[#8C6D58] hover:bg-[#735542] text-white font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95"
+              className="px-6 py-2.5 bg-[#8C6D58] hover:bg-[#735542] text-white font-bold text-xs rounded-xl shadow-md transition-transform active:scale-95 cursor-pointer"
             >
               {t('ok')}
             </button>

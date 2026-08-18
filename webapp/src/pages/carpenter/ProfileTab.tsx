@@ -101,7 +101,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
   return (
     <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto text-[#2A1E17] dark:text-[#FAF7F2]">
       {/* 1. User Summary Profile Card */}
-      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
         <div className="relative z-10 space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
@@ -119,7 +119,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                     </span>
                   )}
                 </div>
-                <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] mt-0.5">
+                <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-0.5">
                   {user.phone ? `+91 ${user.phone}` : ''} • ID: {user.id}
                 </p>
                 <p className="text-xs text-[#8C6D58] dark:text-[#D9C5B2] font-bold mt-0.5">
@@ -130,7 +130,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
             <button
               onClick={() => setIsEditing(!isEditing)}
-              className="px-4 py-2 rounded-xl bg-white/70 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 text-[#8C6D58] dark:text-[#D9C5B2] text-xs font-bold transition-all border border-[#8C6D58]/20 flex items-center space-x-1.5 self-start sm:self-auto shadow-xs"
+              className="px-4 py-2 rounded-xl bg-white/70 hover:bg-white dark:bg-white/5 dark:hover:bg-white/10 text-[#8C6D58] dark:text-[#D9C5B2] text-xs font-bold transition-all border border-[#8C6D58]/20 dark:border-white/10 flex items-center space-x-1.5 self-start sm:self-auto shadow-xs cursor-pointer"
             >
               <Edit3 className="w-3.5 h-3.5" />
               <span>{isEditing ? t('cancel') : t('editProfile')}</span>
@@ -139,18 +139,18 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
           {/* Tier Status & Sheet Counter */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-[#8C6D58]/15 dark:border-white/10 text-xs">
-            <div className="p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 transition-colors">
+            <div className="p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 dark:border-white/10 transition-colors">
               <span className="text-[10px] font-bold text-[#6B5A4E] dark:text-stone-400 uppercase tracking-wide">Loyalty Tier</span>
               <p className="text-sm font-black text-[#8C6D58] dark:text-[#D9C5B2] mt-0.5 flex items-center space-x-1">
                 <span>{TIER_ICONS[stats.tier] || '🪵'}</span>
                 <span>{stats.tier} Tier</span>
               </p>
             </div>
-            <div className="p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 transition-colors">
+            <div className="p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 dark:border-white/10 transition-colors">
               <span className="text-[10px] font-bold text-[#6B5A4E] dark:text-stone-400 uppercase tracking-wide">Verified Sheets</span>
               <p className="text-sm font-black text-[#2A1E17] dark:text-[#FAF7F2] mt-0.5">{stats.totalSheets || 0} Sheets</p>
             </div>
-            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 transition-colors">
+            <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 dark:border-white/10 transition-colors">
               <span className="text-[10px] font-bold text-[#6B5A4E] dark:text-stone-400 uppercase tracking-wide">Cashback Rate</span>
               <p className="text-sm font-black text-[#8C6D58] dark:text-[#D9C5B2] mt-0.5">{stats.tierRewardPct || 0.8}% per sheet</p>
             </div>
@@ -160,7 +160,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
       {/* Edit Mode Form */}
       {isEditing ? (
-        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 sm:p-8 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10 space-y-6">
             <h4 className="section-heading">
               Edit KYC & Bank Profile
@@ -278,14 +278,14 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="px-5 py-3 rounded-xl bg-white/70 dark:bg-white/5 hover:bg-white text-[#6B5A4E] dark:text-stone-300 font-bold text-xs transition-colors border border-[#8C6D58]/20"
+                  className="px-5 py-3 rounded-xl bg-white/70 dark:bg-white/5 hover:bg-white text-[#6B5A4E] dark:text-stone-300 font-bold text-xs transition-colors border border-[#8C6D58]/20 dark:border-white/10 cursor-pointer"
                 >
                   {t('cancel')}
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="btn-primary-timber px-7 py-3 text-xs uppercase tracking-wider font-black disabled:opacity-50 border-2 border-white/40"
+                  className="btn-primary-timber px-7 py-3 text-xs uppercase tracking-wider font-black disabled:opacity-50 border-2 border-white/40 cursor-pointer"
                 >
                   {loading ? 'Saving...' : t('saveChanges')}
                 </button>
@@ -297,7 +297,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
         /* Read-Only View */
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Personal Details */}
-          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
             <div className="relative z-10 space-y-4">
               <h4 className="section-heading flex items-center space-x-2">
                 <UserIcon className="w-4 h-4" />
@@ -306,19 +306,19 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
               <div className="space-y-3 text-xs divide-y divide-[#8C6D58]/15 dark:divide-white/10">
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">Mobile</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">Mobile</span>
                   <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">+91 {user.phone}</span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">Region</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">Region</span>
                   <span className="font-semibold text-[#2A1E17] dark:text-[#FAF7F2]">{user.region || 'Hubballi, Karnataka'}</span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">Aadhaar Card</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">Aadhaar Card</span>
                   <span className="text-[#8C6D58] dark:text-[#D9C5B2] font-bold">{maskAadhaar(user.aadhaar_number)}</span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">PAN Card</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">PAN Card</span>
                   <span className="text-[#8C6D58] dark:text-[#D9C5B2] font-bold">{maskPan(user.pan_card)}</span>
                 </div>
               </div>
@@ -326,7 +326,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
           </div>
 
           {/* Bank & UPI Details */}
-          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
             <div className="relative z-10 space-y-4">
               <h4 className="text-xs font-bold uppercase tracking-wider text-[#8C6D58] dark:text-[#D9C5B2] flex items-center space-x-2">
                 <Landmark className="w-4 h-4" />
@@ -335,21 +335,21 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
               <div className="space-y-3 text-xs divide-y divide-[#8C6D58]/15 dark:divide-white/10">
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">UPI ID</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">UPI ID</span>
                   <span className="text-[#8C6D58] dark:text-[#D9C5B2] font-bold">{user.upi_id || 'Not Set'}</span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">Bank Name</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">Bank Name</span>
                   <span className="font-semibold text-[#2A1E17] dark:text-[#FAF7F2]">{user.bank_name || 'Not Set'}</span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">Account Number</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">Account Number</span>
                   <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">
                     {user.account_number ? `•••• •••• ${user.account_number.slice(-4)}` : 'Not Set'}
                   </span>
                 </div>
                 <div className="pt-2 flex justify-between">
-                  <span className="text-[#6B5A4E] dark:text-stone-400">IFSC Code</span>
+                  <span className="text-[#6B5A4E] dark:text-[#A89F91]">IFSC Code</span>
                   <span className="font-bold text-[#2A1E17] dark:text-[#FAF7F2]">{user.ifsc_code || 'Not Set'}</span>
                 </div>
               </div>
@@ -369,7 +369,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
           <div className="flex justify-end pt-2">
             <button
               onClick={() => setAlertState({ ...alertState, isOpen: false })}
-              className="px-6 py-2.5 bg-[#8C6D58] hover:bg-[#735542] text-white font-bold text-xs rounded-xl shadow-md"
+              className="px-6 py-2.5 bg-[#8C6D58] hover:bg-[#735542] text-white font-bold text-xs rounded-xl shadow-md cursor-pointer"
             >
               {t('ok')}
             </button>

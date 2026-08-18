@@ -70,12 +70,12 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
   };
 
   return (
-    <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto">
-      {/* 1. User Welcome Header (Warm Linen Card with Soft Timber Dotted Line & Circular Avatar) */}
+    <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto text-[#2A1E17] dark:text-[#FAF7F2]">
+      {/* 1. User Welcome Header */}
       <motion.div
         initial={{ opacity: 0, y: -8 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-5 sm:p-6 shadow-lg shadow-stone-900/5 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl"
+        className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-5 sm:p-6 shadow-lg shadow-stone-900/5 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl"
       >
         <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
@@ -90,7 +90,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
               <h2 className="text-xl sm:text-2xl font-black text-[#2A1E17] dark:text-[#FAF7F2] tracking-tight mt-0.5">
                 {user.name || 'Raju Carpenter'}
               </h2>
-              <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] mt-0.5">
+              <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-0.5">
                 {user.phone ? `+91 ${user.phone}` : `User ID: ${user.id}`}
               </p>
             </div>
@@ -112,8 +112,8 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
         </div>
       </motion.div>
 
-      {/* 2. 3D Holographic "Perillo Rewards Pass" (Inside Warm Frosted Card Frame) */}
-      <div className="relative rounded-3xl bg-[#FAF7F2]/80 dark:bg-[#261C16]/80 backdrop-blur-md border border-[#8C6D58]/20 p-4 sm:p-5 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-2xl">
+      {/* 2. 3D Holographic "Perillo Rewards Pass" Container */}
+      <div className="relative rounded-3xl bg-[#FAF7F2]/80 dark:bg-[#1A1410]/80 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-4 sm:p-5 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-2xl">
         <div className="relative z-10">
           <PerilloRewardsCard
             userName={user.name}
@@ -125,8 +125,8 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
         </div>
       </div>
 
-      {/* 3. Loyalty Progress Tracker (Frosted Light Beige Card) */}
-      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+      {/* 3. Loyalty Progress Tracker */}
+      <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 shadow-lg shadow-stone-900/5 space-y-4 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
         <div className="relative z-10 space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2.5">
@@ -137,7 +137,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
                 <h3 className="text-sm font-extrabold text-[#2A1E17] dark:text-[#FAF7F2] uppercase tracking-wide">
                   {t('loyaltyProgress')}
                 </h3>
-                <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5]">Cumulative verified plywood sheets</p>
+                <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91]">Cumulative verified plywood sheets</p>
               </div>
             </div>
             <div className="text-right">
@@ -148,7 +148,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
           </div>
 
           {/* Animated Progress Bar */}
-          <div className="w-full h-3 bg-stone-200 dark:bg-black/60 rounded-full overflow-hidden p-0.5 border border-[#8C6D58]/20 shadow-inner">
+          <div className="w-full h-3 bg-stone-200/80 dark:bg-black/60 rounded-full overflow-hidden p-0.5 border border-[#8C6D58]/20 dark:border-white/10 shadow-inner">
             <motion.div
               initial={{ width: 0 }}
               animate={{ width: `${progressPct}%` }}
@@ -161,7 +161,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
           {nextMilestone && (
             <div className="p-3.5 rounded-xl bg-[#8C6D58]/10 dark:bg-[#8C6D58]/20 border border-[#8C6D58]/30 text-xs font-bold text-[#2A1E17] dark:text-[#FAF7F2] flex items-center justify-between shadow-xs">
               <div className="flex items-center space-x-2.5">
-                <Gift className="w-4 h-4 text-[#8C6D58] flex-shrink-0 animate-pulse" />
+                <Gift className="w-4 h-4 text-[#8C6D58] dark:text-[#D9C5B2] flex-shrink-0 animate-pulse" />
                 <span>
                   🎁 Next gift at <strong>{nextMilestone.sheets} Sheets</strong>: {nextMilestone.gift}
                 </span>
@@ -174,13 +174,13 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
         </div>
       </div>
 
-      {/* 4. Restyled KPI Triad (Pending, Approved, Total Sheets) */}
+      {/* 4. Restyled KPI Triad */}
       <div className="grid grid-cols-3 gap-3.5 sm:gap-4">
         {/* Pending Card */}
-        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#C4B5A5] uppercase tracking-wide">
+              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#A89F91] uppercase tracking-wide">
                 PENDING
               </span>
               <Clock className="w-4 h-4 text-[#B45309]" />
@@ -188,15 +188,15 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
             <h4 className="text-2xl sm:text-3xl font-black text-[#B45309] mt-2">
               <CountUp to={stats.pendingClaims} />
             </h4>
-            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-stone-400 mt-1 leading-relaxed">Under Verification</p>
+            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-1 leading-relaxed">Under Verification</p>
           </div>
         </div>
 
         {/* Approved Card */}
-        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#C4B5A5] uppercase tracking-wide">
+              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#A89F91] uppercase tracking-wide">
                 APPROVED
               </span>
               <CheckCircle2 className="w-4 h-4 text-[#065F46] dark:text-emerald-400" />
@@ -204,15 +204,15 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
             <h4 className="text-2xl sm:text-3xl font-black text-[#065F46] dark:text-emerald-400 mt-2">
               <CountUp to={stats.approvedClaims} />
             </h4>
-            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-stone-400 mt-1 leading-relaxed">Points Credited</p>
+            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-1 leading-relaxed">Points Credited</p>
           </div>
         </div>
 
         {/* Total Sheets Card */}
-        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+        <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-4 sm:p-5 shadow-lg shadow-stone-900/5 transition-all hover:scale-[1.02] before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
           <div className="relative z-10">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#C4B5A5] uppercase tracking-wide">
+              <span className="text-[11px] sm:text-xs font-extrabold text-[#6B5A4E] dark:text-[#A89F91] uppercase tracking-wide">
                 TOTAL SHEETS
               </span>
               <Trophy className="w-4 h-4 text-[#8C6D58] dark:text-[#D9C5B2]" />
@@ -220,7 +220,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
             <h4 className="text-2xl sm:text-3xl font-black text-[#2A1E17] dark:text-[#FAF7F2] mt-2">
               <CountUp to={stats.totalSheets || 0} />
             </h4>
-            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-stone-400 mt-1 leading-relaxed">Lifetime Verified</p>
+            <p className="text-[10px] sm:text-[11px] font-semibold text-[#6B5A4E] dark:text-[#A89F91] mt-1 leading-relaxed">Lifetime Verified</p>
           </div>
         </div>
       </div>
@@ -229,12 +229,12 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
       <div className="space-y-3.5">
         <div className="flex items-center justify-between px-1">
           <h3 className="section-heading flex items-center space-x-2">
-            <FileText className="w-4 h-4 text-[#8C6D58]" />
+            <FileText className="w-4 h-4 text-[#8C6D58] dark:text-[#D9C5B2]" />
             <span>{t('recentUploads')}</span>
           </h3>
           <button
             onClick={loadRecentClaims}
-            className="text-xs font-bold text-[#6B5A4E] hover:text-[#2A1E17] dark:text-[#C4B5A5] dark:hover:text-white flex items-center space-x-1 transition-colors"
+            className="text-xs font-bold text-[#6B5A4E] hover:text-[#2A1E17] dark:text-[#A89F91] dark:hover:text-white flex items-center space-x-1 transition-colors cursor-pointer"
           >
             <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
             <span>{t('pullRefresh')}</span>
@@ -242,20 +242,20 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
         </div>
 
         {loading ? (
-          <div className="text-center py-12 bg-[#FAF7F2]/80 dark:bg-[#261C16]/60 rounded-2xl border border-[#8C6D58]/20 text-[#6B5A4E] dark:text-stone-400 text-xs font-semibold">
+          <div className="text-center py-12 bg-[#FAF7F2]/80 dark:bg-[#1A1410]/60 rounded-2xl border border-[#8C6D58]/20 text-[#6B5A4E] dark:text-[#A89F91] text-xs font-semibold">
             Loading recent invoices...
           </div>
         ) : recentClaims.length === 0 ? (
-          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-8 text-center space-y-3 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl">
+          <div className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-8 text-center space-y-3 shadow-lg shadow-stone-900/5 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl">
             <div className="relative z-10 space-y-3">
-              <div className="w-12 h-12 rounded-full bg-[#8C6D58]/15 border border-[#8C6D58]/30 text-[#8C6D58] mx-auto flex items-center justify-center">
+              <div className="w-12 h-12 rounded-full bg-[#8C6D58]/15 border border-[#8C6D58]/30 text-[#8C6D58] dark:text-[#D9C5B2] mx-auto flex items-center justify-center">
                 <Camera className="w-6 h-6" />
               </div>
               <h4 className="text-sm font-extrabold text-[#2A1E17] dark:text-[#FAF7F2]">{t('noHistory')}</h4>
-              <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#C4B5A5] max-w-xs mx-auto leading-relaxed">{t('uploadFirst')}</p>
+              <p className="text-xs font-semibold text-[#6B5A4E] dark:text-[#A89F91] max-w-xs mx-auto leading-relaxed">{t('uploadFirst')}</p>
               <button
                 onClick={onNavigateUpload}
-                className="btn-primary-timber px-6 py-2.5 text-xs uppercase tracking-wider font-bold"
+                className="btn-primary-timber px-6 py-2.5 text-xs uppercase tracking-wider font-bold cursor-pointer"
               >
                 {t('uploadInvoice')}
               </button>
@@ -267,11 +267,11 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
               <div
                 key={item.id}
                 onClick={() => onViewLedgerItem(item)}
-                className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-5 shadow-lg shadow-stone-900/5 cursor-pointer group press-scale hover:border-[#8C6D58] transition-all before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-xl"
+                className="relative rounded-2xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-5 shadow-lg shadow-stone-900/5 cursor-pointer group press-scale hover:border-[#8C6D58] transition-all before:absolute before:inset-1.5 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-xl"
               >
                 <div className="relative z-10 flex items-center justify-between">
                   <div className="flex items-center space-x-3.5">
-                    <div className="w-11 h-11 rounded-full bg-[#8C6D58]/10 border border-[#8C6D58]/20 flex items-center justify-center text-[#8C6D58] group-hover:text-[#2A1E17] dark:group-hover:text-white transition-colors flex-shrink-0">
+                    <div className="w-11 h-11 rounded-full bg-[#8C6D58]/10 border border-[#8C6D58]/20 flex items-center justify-center text-[#8C6D58] dark:text-[#D9C5B2] group-hover:text-[#2A1E17] dark:group-hover:text-white transition-colors flex-shrink-0">
                       <FileText className="w-5 h-5" />
                     </div>
                     <div>
@@ -281,7 +281,7 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
                       <p className="text-xs text-[#8C6D58] dark:text-[#D9C5B2] font-bold mt-0.5">
                         {item.dealer_city ? `${item.dealer_city} • ` : ''}{item.product_type} ({item.quantity} Sheets)
                       </p>
-                      <p className="text-[11px] font-medium text-[#6B5A4E] dark:text-[#C4B5A5] mt-0.5">
+                      <p className="text-[11px] font-medium text-[#6B5A4E] dark:text-[#A89F91] mt-0.5">
                         Inv #{item.invoice_number} · {item.purchase_date}
                       </p>
                     </div>
@@ -300,12 +300,12 @@ export const DashboardHomeTab: React.FC<DashboardHomeTabProps> = ({
         )}
       </div>
 
-      {/* 6. Global Sticky Action Button (Warm Timber Button) */}
+      {/* 6. Global Sticky Action Button */}
       <div className="fixed bottom-20 right-4 sm:bottom-8 sm:right-8 z-30">
         <Magnet strength={0.25}>
           <button
             onClick={onNavigateUpload}
-            className="btn-primary-timber px-6 py-4 rounded-2xl flex items-center space-x-2.5 uppercase text-xs sm:text-sm tracking-wider font-extrabold shadow-2xl border-2 border-white/50"
+            className="btn-primary-timber px-6 py-4 rounded-2xl flex items-center space-x-2.5 uppercase text-xs sm:text-sm tracking-wider font-extrabold shadow-2xl border-2 border-white/50 cursor-pointer"
           >
             <Camera className="w-5 h-5 text-stone-100" />
             <span>{t('uploadInvoice')}</span>

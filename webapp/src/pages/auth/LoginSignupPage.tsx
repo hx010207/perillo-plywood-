@@ -3,7 +3,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useI18n } from '../../contexts/I18nContext';
 import { useTheme } from '../../contexts/ThemeContext';
 import { ShieldCheck, UserCheck, Smartphone, Lock, Mail, Globe, ArrowRight, Award, Zap, Eye, EyeOff, Sun, Moon } from 'lucide-react';
-import { GradientWaves } from '../../components/reactbits/GradientWaves';
+import { ThemeGradientWaves } from '../../components/reactbits/ThemeGradientWaves';
 
 interface LoginSignupPageProps {
   initialRole?: 'carpenter' | 'admin';
@@ -131,17 +131,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
 
   return (
     <div className="relative w-full min-h-screen selection:bg-[#8C6D58] selection:text-white">
-      {/* 1. Full-Screen Backdrop GradientWaves (Warm Beige/Linen) */}
-      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
-        <GradientWaves
-          horizonColor="#FAF7F2"
-          waveColor="#D9C5B2"
-          crestColor="#8C6D58"
-          brightness={1.1}
-          opacity={0.9}
-          speed={0.35}
-        />
-      </div>
+      {/* 1. Full-Screen Dynamic Theme GradientWaves */}
+      <ThemeGradientWaves />
 
       {/* 2. Foreground Main Content */}
       <main className="relative z-10 w-full min-h-screen flex flex-col justify-center py-10 px-4 sm:px-6 lg:px-8 text-[#2A1E17] dark:text-[#FAF7F2]">
@@ -150,7 +141,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
           <div className="flex flex-wrap justify-center items-center gap-2 mb-6">
             <button
               onClick={toggleTheme}
-              className="p-1.5 rounded-full bg-[#FAF7F2]/80 dark:bg-white/5 border border-[#8C6D58]/25 text-[#6B5A4E] dark:text-slate-200 shadow-xs mr-1"
+              className="p-1.5 rounded-full bg-[#FAF7F2]/80 dark:bg-white/5 border border-[#8C6D58]/25 text-[#6B5A4E] dark:text-slate-200 shadow-xs mr-1 cursor-pointer"
               title="Toggle theme"
             >
               {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-[#8C6D58]" />}
@@ -166,7 +157,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                 <button
                   key={item.code}
                   onClick={() => setLanguage(item.code)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all border cursor-pointer ${
                     active
                       ? 'bg-[#8C6D58] text-white border-[#8C6D58] shadow-md ring-2 ring-[#8C6D58]/20 scale-105'
                       : 'bg-[#FAF7F2]/80 dark:bg-white/5 text-[#6B5A4E] dark:text-slate-300 border-[#8C6D58]/20 hover:bg-white dark:hover:bg-white/10'
@@ -179,7 +170,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
           </div>
 
           {/* Main Card Container (Frosted Light-Beige Card with Soft Timber Dotted Line) */}
-          <div className="relative rounded-3xl bg-[#FAF7F2]/90 dark:bg-[#261C16]/90 backdrop-blur-md border border-[#8C6D58]/20 p-6 sm:p-10 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/30 dark:before:border-[#D9C5B2]/20 before:pointer-events-none before:rounded-2xl">
+          <div className="relative rounded-3xl bg-[#FAF7F2]/90 dark:bg-[#1A1410]/85 backdrop-blur-xl border border-[#8C6D58]/25 dark:border-[#8C6D58]/30 p-6 sm:p-10 shadow-lg shadow-stone-900/5 space-y-6 transition-all duration-300 before:absolute before:inset-2 before:border before:border-dashed before:border-[#8C6D58]/20 dark:before:border-white/10 before:pointer-events-none before:rounded-2xl">
             <div className="relative z-10 space-y-6">
               {/* Logo & Header */}
               <div className="flex flex-col items-center text-center">
@@ -200,13 +191,13 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
 
               {/* Value Prop Badges */}
               {mode === 'login' && role === 'carpenter' && (
-                <div className="grid grid-cols-3 gap-2 p-3.5 bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 rounded-xl text-center">
+                <div className="grid grid-cols-3 gap-2 p-3.5 bg-white/70 dark:bg-[#1E1612] border border-[#8C6D58]/20 dark:border-white/10 rounded-xl text-center">
                   <div className="space-y-0.5">
                     <Zap className="w-4 h-4 text-amber-600 dark:text-amber-400 mx-auto" />
                     <p className="text-[10px] font-black text-[#2A1E17] dark:text-white uppercase">Instant</p>
                     <p className="text-[9px] text-[#6B5A4E] dark:text-slate-400 font-semibold">Cashback</p>
                   </div>
-                  <div className="space-y-0.5 border-x border-[#8C6D58]/20">
+                  <div className="space-y-0.5 border-x border-[#8C6D58]/20 dark:border-white/10">
                     <Award className="w-4 h-4 text-[#8C6D58] dark:text-[#D9C5B2] mx-auto" />
                     <p className="text-[10px] font-black text-[#2A1E17] dark:text-white uppercase">VIP Tiers</p>
                     <p className="text-[9px] text-[#6B5A4E] dark:text-slate-400 font-semibold">Up to 2.5%</p>
@@ -222,11 +213,11 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
               {mode === 'login' ? (
                 <>
                   {/* Role Toggle Switch */}
-                  <div className="flex rounded-xl bg-stone-200/60 dark:bg-[#1E1612] p-1.5 border border-[#8C6D58]/20 shadow-inner">
+                  <div className="flex rounded-xl bg-stone-200/60 dark:bg-[#1E1612] p-1.5 border border-[#8C6D58]/20 dark:border-white/10 shadow-inner">
                     <button
                       type="button"
                       onClick={() => { setRole('carpenter'); setError(''); }}
-                      className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 ${
+                      className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                         role === 'carpenter'
                           ? 'bg-[#8C6D58] text-white shadow-md ring-2 ring-[#8C6D58]/20'
                           : 'text-[#6B5A4E] hover:text-[#2A1E17] dark:text-slate-400 dark:hover:text-white'
@@ -238,7 +229,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <button
                       type="button"
                       onClick={() => { setRole('admin'); setError(''); }}
-                      className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 ${
+                      className={`flex-1 py-2.5 rounded-lg font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center space-x-2 cursor-pointer ${
                         role === 'admin'
                           ? 'bg-[#8C6D58] text-white shadow-md ring-2 ring-[#8C6D58]/20'
                           : 'text-[#6B5A4E] hover:text-[#2A1E17] dark:text-slate-400 dark:hover:text-white'
@@ -291,7 +282,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                             <button
                               type="button"
                               onClick={() => setShowPassword(!showPassword)}
-                              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6B5A4E] hover:text-[#2A1E17] dark:hover:text-white"
+                              className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-[#6B5A4E] hover:text-[#2A1E17] dark:hover:text-white cursor-pointer"
                               title={showPassword ? 'Hide password' : 'Show password'}
                             >
                               {showPassword ? <EyeOff className="w-4 h-4 text-[#8C6D58]" /> : <Eye className="w-4 h-4" />}
@@ -304,8 +295,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                         <label className="form-label">
                           {t('enterMobile')}
                         </label>
-                        <div className="flex rounded-xl border border-[#8C6D58]/30 overflow-hidden bg-white dark:bg-[#1E1612] focus-within:border-[#8C6D58]">
-                          <span className="inline-flex items-center px-4 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-sm border-r border-[#8C6D58]/20">
+                        <div className="flex rounded-xl border border-[#8C6D58]/30 dark:border-white/15 overflow-hidden bg-white dark:bg-[#1E1612] focus-within:border-[#8C6D58]">
+                          <span className="inline-flex items-center px-4 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-sm border-r border-[#8C6D58]/20 dark:border-white/10">
                             +91
                           </span>
                           <input
@@ -330,7 +321,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <button
                       type="submit"
                       disabled={loading || busy}
-                      className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-70 border-2 border-white/40"
+                      className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black flex items-center justify-center space-x-2 disabled:opacity-70 border-2 border-white/40 cursor-pointer"
                     >
                       {loading || busy ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -347,7 +338,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                         <button
                           type="button"
                           onClick={() => { setMode('signup'); setError(''); }}
-                          className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline"
+                          className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline cursor-pointer"
                         >
                           {t('signUpLink')}
                         </button>
@@ -376,8 +367,8 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <label className="form-label">
                       {t('enterMobile')} *
                     </label>
-                    <div className="flex rounded-xl border border-[#8C6D58]/30 overflow-hidden bg-white dark:bg-[#1E1612]">
-                      <span className="inline-flex items-center px-3.5 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-xs border-r border-[#8C6D58]/20">
+                    <div className="flex rounded-xl border border-[#8C6D58]/30 dark:border-white/15 overflow-hidden bg-white dark:bg-[#1E1612]">
+                      <span className="inline-flex items-center px-3.5 bg-[#8C6D58]/15 text-[#8C6D58] dark:text-[#D9C5B2] font-black text-xs border-r border-[#8C6D58]/20 dark:border-white/10">
                         +91
                       </span>
                       <input
@@ -473,7 +464,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                   <button
                     type="submit"
                     disabled={loading || busy}
-                    className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-70 border-2 border-white/40"
+                    className="btn-primary-timber w-full py-4 uppercase text-sm tracking-wider font-black disabled:opacity-70 border-2 border-white/40 cursor-pointer"
                   >
                     {loading || busy ? (
                       <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin mx-auto" />
@@ -486,7 +477,7 @@ export const LoginSignupPage: React.FC<LoginSignupPageProps> = ({
                     <button
                       type="button"
                       onClick={() => { setMode('login'); setError(''); }}
-                      className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline"
+                      className="text-xs font-extrabold text-[#8C6D58] dark:text-[#D9C5B2] hover:underline cursor-pointer"
                     >
                       {t('loginLink')}
                     </button>

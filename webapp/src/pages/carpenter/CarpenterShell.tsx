@@ -5,7 +5,7 @@ import { Stats, Invoice } from '../../types';
 import { fetchStats } from '../../services/api';
 import { Header } from '../../components/common/Header';
 import { CarpenterNavBar, CarpenterTab } from '../../components/navigation/CarpenterNavBar';
-import { GradientWaves } from '../../components/reactbits/GradientWaves';
+import { ThemeGradientWaves } from '../../components/reactbits/ThemeGradientWaves';
 
 import { DashboardHomeTab } from './DashboardHomeTab';
 import { UploadInvoiceTab } from './UploadInvoiceTab';
@@ -64,17 +64,8 @@ export const CarpenterShell: React.FC = () => {
 
   return (
     <div className="relative w-full min-h-screen selection:bg-[#8C6D58] selection:text-white">
-      {/* 1. Full-Screen Backdrop GradientWaves (Warm White / Beige / Soft Timber) */}
-      <div className="fixed inset-0 w-full h-full z-0 pointer-events-none overflow-hidden">
-        <GradientWaves
-          horizonColor="#FAF7F2"
-          waveColor="#D9C5B2"
-          crestColor="#8C6D58"
-          brightness={1.1}
-          opacity={0.9}
-          speed={0.35}
-        />
-      </div>
+      {/* 1. Full-Screen Dynamic Theme GradientWaves (Light Linen vs Dark Timber Mocha) */}
+      <ThemeGradientWaves />
 
       {/* 2. Foreground Content Container */}
       <main className="relative z-10 w-full min-h-screen flex flex-col">

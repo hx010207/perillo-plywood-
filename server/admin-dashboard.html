@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perillo Plywood - Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f3f6f4; }
+    h1, h2, h3, .brand-font { font-family: 'Outfit', sans-serif; }
+    .glass-card { background: rgba(255,255,255,0.9); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.4); }
+    .tab-btn.active { border-bottom: 3px solid #D97706; color: #1E4620; font-weight: 700; }
+    .tab-btn { border-bottom: 3px solid transparent; transition: all 0.2s; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+    #login-screen { display: flex; }
+    #dashboard-screen { display: none; }
+  </style>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { brand: { green: '#1E4620', greenDark: '#163318', gold: '#D97706', goldLight: '#FBBF24' } } } }
+    }
+  </script>
+</head>
+<body class="min-h-screen flex flex-col">
+
+<!-- ═══════ LOGIN SCREEN ═══════ -->
+<div id="login-screen" class="flex-grow flex items-center justify-center p-4">
+  <div class="glass-card rounded-2xl shadow-lg p-8 w-full max-w-md text-center">
+    <div class="bg-white p-3 rounded-2xl shadow-inner inline-block mb-6">
+      <img src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg" alt="Logo" class="h-16 w-16 object-contain rounded-xl">
+    </div>
+    <h1 class="text-2xl font-bold text-gray-800 mb-1">Perillo Plywood</h1>
+    <p class="text-sm text-gray-500 mb-8">Admin Dashboard Login</p>
+    
+    <div class="text-left mb-4">
+      <label for="admin-password" class="block text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Admin Password</label>
+      <input type="password" id="admin-password" placeholder="Enter admin password" 
+        class="w-full border border-gray-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-green-800 focus:border-transparent"
+        onkeydown="if(event.key==='Enter') adminLogin()">
+    </div>
+    <p id="login-error" class="text-sm text-red-500 mb-4 hidden"></p>
+    
+    <button onclick="adminLogin()" id="login-btn"
+      class="w-full bg-brand-green text-white rounded-xl py-3 font-bold text-sm hover:bg-brand-greenDark transition shadow-md">
+      Sign In
+    </button>
+  </div>
+</div>
+
+<!-- ═══════ DASHBOARD SCREEN ═══════ -->
+<div id="dashboard-screen" class="flex-grow flex flex-col">
+  <!-- Header -->
+  <header class="bg-brand-green text-white shadow-md">
+    <div class="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div class="flex items-center space-x-4">
+        <div class="bg-white p-1.5 rounded-lg shadow-inner">
+          <img src="https://perilloplywood.in/wp-content/uploads/2025/06/cropped-footerlogo-270x270.jpg" alt="Logo" class="h-10 w-10 object-contain rounded">
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-bold tracking-tight">Perillo Plywood</h1>
+          <p class="text-xs text-green-200">Carpenter Loyalty Program — Admin</p>
+        </div>
+      </div>
+      <div class="flex items-center space-x-3">
+        <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-green-800 text-green-100 border border-green-700">
+          <span class="w-2 h-2 mr-1.5 bg-green-400 rounded-full animate-pulse"></span>Live
+        </span>
+        <button onclick="adminLogout()" class="px-3 py-1.5 text-xs font-semibold border border-white/40 rounded-lg text-white hover:bg-white/10 transition">
+          Logout
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <div class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <nav class="flex space-x-6 overflow-x-auto">
+        <button class="tab-btn active py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition whitespace-nowrap" onclick="switchTab('claims')">
+          📋 Claims Review
+        </button>
+        <button class="tab-btn py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition whitespace-nowrap" onclick="switchTab('carpenters')">
+          👷 Carpenters
+        </button>
+        <button class="tab-btn py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition whitespace-nowrap" onclick="switchTab('payouts')">
+          💰 Payouts
+        </button>
+        <button class="tab-btn py-4 px-2 text-sm font-medium text-gray-500 hover:text-gray-800 transition whitespace-nowrap" onclick="switchTab('tiers')">
+          🏆 Loyalty Tiers
+        </button>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main class="flex-grow max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8 w-full">
+
+    <!-- ══ CLAIMS TAB ══ -->
+    <div id="tab-claims" class="tab-content active">
+      <!-- Stats -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div class="glass-card rounded-xl shadow-sm p-5 flex items-center space-x-4 border-l-4 border-brand-gold">
+          <div class="p-2.5 bg-amber-100 rounded-lg text-brand-gold"><i data-lucide="clock" class="w-5 h-5"></i></div>
+          <div><p class="text-xs text-gray-500 font-medium uppercase">Pending</p><p id="stat-pending" class="text-2xl font-bold text-gray-800">0</p></div>
+        </div>
+        <div class="glass-card rounded-xl shadow-sm p-5 flex items-center space-x-4 border-l-4 border-emerald-600">
+          <div class="p-2.5 bg-emerald-100 rounded-lg text-emerald-600"><i data-lucide="check-circle" class="w-5 h-5"></i></div>
+          <div><p class="text-xs text-gray-500 font-medium uppercase">Approved</p><p id="stat-approved" class="text-2xl font-bold text-gray-800">0</p></div>
+        </div>
+        <div class="glass-card rounded-xl shadow-sm p-5 flex items-center space-x-4 border-l-4 border-rose-500">
+          <div class="p-2.5 bg-rose-100 rounded-lg text-rose-500"><i data-lucide="x-circle" class="w-5 h-5"></i></div>
+          <div><p class="text-xs text-gray-500 font-medium uppercase">Rejected</p><p id="stat-rejected" class="text-2xl font-bold text-gray-800">0</p></div>
+        </div>
+        <div class="glass-card rounded-xl shadow-sm p-5 flex items-center space-x-4 border-l-4 border-brand-green">
+          <div class="p-2.5 bg-green-100 rounded-lg text-brand-green"><i data-lucide="award" class="w-5 h-5"></i></div>
+          <div><p class="text-xs text-gray-500 font-medium uppercase">Points Given</p><p id="stat-points" class="text-2xl font-bold text-gray-800">0</p></div>
+        </div>
+      </div>
+
+      <!-- Claims Table -->
+      <div class="glass-card rounded-xl shadow-sm overflow-hidden border border-gray-200">
+        <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-gray-800">Claims Queue</h2>
+            <p class="text-xs text-gray-500">Review carpenter invoice submissions</p>
+          </div>
+          <button onclick="fetchClaims()" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition shadow-sm">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5" id="refresh-icon"></i><span>Refresh</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">ID</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Carpenter</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Store / Items</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Sheets</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Invoice</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="claims-table-body" class="bg-white divide-y divide-gray-200">
+              <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ CARPENTERS TAB ══ -->
+    <div id="tab-carpenters" class="tab-content">
+      <div class="glass-card rounded-xl shadow-sm overflow-hidden border border-gray-200">
+        <div class="px-5 py-4 border-b border-gray-200 flex items-center justify-between">
+          <div>
+            <h2 class="text-base font-bold text-gray-800">Carpenter Accounts</h2>
+            <p class="text-xs text-gray-500">Verify and manage carpenter profiles</p>
+          </div>
+          <button onclick="fetchCarpenters()" class="flex items-center space-x-1.5 px-3 py-1.5 text-xs font-semibold text-gray-600 bg-white hover:bg-gray-50 border border-gray-300 rounded-lg transition shadow-sm">
+            <i data-lucide="rotate-cw" class="w-3.5 h-3.5"></i><span>Refresh</span>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">ID</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Name / Phone</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Region</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Aadhaar</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Tier / Sheets</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Points</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody id="carpenters-table-body" class="bg-white divide-y divide-gray-200">
+              <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ PAYOUTS TAB ══ -->
+    <div id="tab-payouts" class="tab-content">
+      <div class="glass-card rounded-xl shadow-sm overflow-hidden border border-gray-200">
+        <div class="px-5 py-4 border-b border-gray-200">
+          <h2 class="text-base font-bold text-gray-800">Payout Requests</h2>
+          <p class="text-xs text-gray-500">Approve or reject carpenter redemption requests</p>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Payout ID</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Carpenter</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Amount</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Mode</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Date</th>
+                <th class="px-4 py-3 text-left text-xs font-semibold text-gray-500 uppercase">Status</th>
+                <th class="px-4 py-3 text-right text-xs font-semibold text-gray-500 uppercase">Action</th>
+              </tr>
+            </thead>
+            <tbody id="payouts-table-body" class="bg-white divide-y divide-gray-200">
+              <tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TIERS TAB ══ -->
+    <div id="tab-tiers" class="tab-content">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Tier Levels -->
+        <div class="glass-card rounded-xl shadow-sm p-6 border border-gray-200">
+          <h2 class="text-base font-bold text-gray-800 mb-4">🏆 Loyalty Tier Levels</h2>
+          <div class="space-y-3">
+            <div class="flex items-center p-3 rounded-lg bg-gray-50 border border-gray-200">
+              <span class="text-lg mr-3">📦</span>
+              <div class="flex-grow"><p class="font-bold text-sm text-gray-700">Member</p><p class="text-xs text-gray-500">0–99 sheets</p></div>
+              <span class="text-xs font-bold text-gray-500 bg-gray-200 px-2 py-1 rounded">0.8% reward</span>
+            </div>
+            <div class="flex items-center p-3 rounded-lg bg-amber-50 border border-amber-200">
+              <span class="text-lg mr-3">🥉</span>
+              <div class="flex-grow"><p class="font-bold text-sm text-amber-800">Bronze</p><p class="text-xs text-amber-600">100+ sheets</p></div>
+              <span class="text-xs font-bold text-amber-700 bg-amber-200 px-2 py-1 rounded">1.0% reward</span>
+            </div>
+            <div class="flex items-center p-3 rounded-lg bg-gray-100 border border-gray-300">
+              <span class="text-lg mr-3">🥈</span>
+              <div class="flex-grow"><p class="font-bold text-sm text-gray-700">Silver</p><p class="text-xs text-gray-500">400+ sheets</p></div>
+              <span class="text-xs font-bold text-gray-600 bg-gray-300 px-2 py-1 rounded">1.5% reward</span>
+            </div>
+            <div class="flex items-center p-3 rounded-lg bg-yellow-50 border border-yellow-300">
+              <span class="text-lg mr-3">🥇</span>
+              <div class="flex-grow"><p class="font-bold text-sm text-yellow-800">Gold</p><p class="text-xs text-yellow-600">700+ sheets</p></div>
+              <span class="text-xs font-bold text-yellow-700 bg-yellow-200 px-2 py-1 rounded">2.0% reward</span>
+            </div>
+            <div class="flex items-center p-3 rounded-lg bg-purple-50 border border-purple-300">
+              <span class="text-lg mr-3">💎</span>
+              <div class="flex-grow"><p class="font-bold text-sm text-purple-800">Platinum</p><p class="text-xs text-purple-600">1000+ sheets</p></div>
+              <span class="text-xs font-bold text-purple-700 bg-purple-200 px-2 py-1 rounded">2.5% reward</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Milestone Gifts -->
+        <div class="glass-card rounded-xl shadow-sm p-6 border border-gray-200">
+          <h2 class="text-base font-bold text-gray-800 mb-4">🎁 Milestone Gifts</h2>
+          <div class="space-y-4">
+            <div class="p-4 rounded-lg border-2 border-dashed border-amber-300 bg-amber-50">
+              <p class="font-bold text-sm text-amber-800">🎯 100 Sheets Milestone</p>
+              <p class="text-xs text-amber-700 mt-1">Branded utility item</p>
+            </div>
+            <div class="p-4 rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+              <p class="font-bold text-sm text-gray-700">🎯 400 Sheets Milestone</p>
+              <p class="text-xs text-gray-600 mt-1">Carpenter tool support gift</p>
+            </div>
+            <div class="p-4 rounded-lg border-2 border-dashed border-yellow-300 bg-yellow-50">
+              <p class="font-bold text-sm text-yellow-800">🎯 700 Sheets Milestone</p>
+              <p class="text-xs text-yellow-700 mt-1">Premium tool kit or bonus reward</p>
+            </div>
+            <div class="p-4 rounded-lg border-2 border-dashed border-purple-300 bg-purple-50">
+              <p class="font-bold text-sm text-purple-800">🎯 1000 Sheets Milestone</p>
+              <p class="text-xs text-purple-700 mt-1">Highest cashback slab / premium loyalty benefit</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="bg-white border-t border-gray-200 py-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-xs text-gray-400">
+      &copy; 2026 Perillo Plywood. All rights reserved.
+    </div>
+  </footer>
+</div>
+
+<!-- ═══════ CLAIM DETAIL MODAL ═══════ -->
+<div id="details-modal" class="fixed inset-0 z-50 overflow-y-auto hidden">
+  <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeModal()"></div>
+    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+    <div class="inline-block align-middle bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:max-w-3xl sm:w-full border border-gray-100">
+      <div class="bg-brand-green px-6 py-4 flex items-center justify-between text-white">
+        <h3 class="text-lg font-bold" id="modal-title-text">Review Claim</h3>
+        <button onclick="closeModal()" class="text-white hover:text-gray-200"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="flex flex-col space-y-2">
+          <span class="text-xs font-semibold text-gray-500">Invoice Photo</span>
+          <div class="border border-gray-200 rounded-xl overflow-hidden bg-gray-50 flex items-center justify-center h-72 relative">
+            <img id="modal-invoice-img" src="" alt="Invoice" class="object-contain h-full w-full cursor-zoom-in" onclick="window.open(this.src)">
+          </div>
+          <div id="modal-thumbnail-row" class="flex gap-2 overflow-x-auto pb-1"></div>
+        </div>
+        <div class="flex flex-col justify-between space-y-4">
+          <div class="space-y-3">
+            <div class="grid grid-cols-2 gap-3">
+              <div><span class="text-xs text-gray-400 font-medium uppercase">Carpenter</span><p id="modal-carpenter-name" class="font-bold text-gray-800 text-sm"></p></div>
+              <div><span class="text-xs text-gray-400 font-medium uppercase">Phone</span><p id="modal-carpenter-phone" class="text-gray-600 text-sm"></p></div>
+            </div>
+            <hr class="border-gray-100">
+            <div><span class="text-xs text-gray-400 font-medium uppercase">Store Name</span><p id="modal-store" class="text-gray-800 text-sm font-medium"></p></div>
+            <div><span class="text-xs text-gray-400 font-medium uppercase">Dealer City</span><p id="modal-city" class="text-gray-800 text-sm font-medium"></p></div>
+            <div><span class="text-xs text-gray-400 font-medium uppercase">Line Items</span><div id="modal-line-items" class="mt-1"></div></div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><span class="text-xs text-gray-400 font-medium uppercase">Total Sheets</span><p id="modal-qty" class="text-brand-green font-bold text-lg"></p></div>
+              <div><span class="text-xs text-gray-400 font-medium uppercase">Invoice No.</span><p id="modal-invoice-num" class="text-gray-800 text-sm font-medium"></p></div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div><span class="text-xs text-gray-400 font-medium uppercase">Purchase Date</span><p id="modal-date" class="text-gray-800 text-sm"></p></div>
+              <div><span class="text-xs text-gray-400 font-medium uppercase">QR Code</span><p id="modal-qrcode" class="text-gray-800 text-sm italic"></p></div>
+            </div>
+            <div id="rejection-box" class="hidden pt-2">
+              <label class="block text-xs font-semibold text-rose-500 uppercase mb-1">Rejection Reason</label>
+              <textarea id="rejection-reason" rows="2" class="w-full border border-rose-300 focus:outline-none focus:ring-1 focus:ring-rose-500 rounded-xl p-3 text-sm" placeholder="e.g. Invoice image is blurry"></textarea>
+            </div>
+          </div>
+          <div id="modal-actions" class="flex flex-col space-y-2 pt-2">
+            <div id="default-actions-row" class="flex space-x-3">
+              <button onclick="showRejectionInput()" class="flex-1 px-4 py-2.5 bg-white border border-rose-300 text-rose-600 rounded-xl hover:bg-rose-50 font-bold transition text-sm">Reject</button>
+              <button id="btn-approve" onclick="approveClaim()" class="flex-1 px-4 py-2.5 bg-brand-green text-white rounded-xl hover:bg-brand-greenDark font-bold transition text-sm shadow-md">Approve & Reward</button>
+            </div>
+            <div id="reject-actions-row" class="flex space-x-3 hidden">
+              <button onclick="cancelRejection()" class="flex-1 px-4 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 font-bold text-sm">Cancel</button>
+              <button id="btn-reject-confirm" onclick="submitRejection()" class="flex-1 px-4 py-2.5 bg-rose-600 text-white rounded-xl hover:bg-rose-700 font-bold text-sm">Confirm Reject</button>
+            </div>
+          </div>
+          <div id="processed-badge" class="hidden p-3 rounded-xl text-center font-bold text-sm"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeClaims = [];
+  let activeClaimId = null;
+
+  // ─── Auth ──────────────────────────────────────────────
+  async function adminLogin() {
+    const pwd = document.getElementById('admin-password').value;
+    const errEl = document.getElementById('login-error');
+    errEl.classList.add('hidden');
+
+    if (!pwd) { errEl.textContent = 'Please enter a password'; errEl.classList.remove('hidden'); return; }
+
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ password: pwd })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('login-screen').style.display = 'none';
+        document.getElementById('dashboard-screen').style.display = 'flex';
+        fetchClaims();
+        setInterval(fetchClaims, 5000);
+      } else {
+        errEl.textContent = data.error || 'Invalid password';
+        errEl.classList.remove('hidden');
+      }
+    } catch (err) {
+      errEl.textContent = 'Connection error. Is the server running?';
+      errEl.classList.remove('hidden');
+    }
+  }
+
+  function adminLogout() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('dashboard-screen').style.display = 'none';
+    document.getElementById('admin-password').value = '';
+  }
+
+  // ─── Tabs ──────────────────────────────────────────────
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      b.classList.remove('active');
+      if (['claims','carpenters','payouts','tiers'][i] === tabName) b.classList.add('active');
+    });
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.getElementById('tab-' + tabName).classList.add('active');
+
+    if (tabName === 'carpenters') fetchCarpenters();
+    if (tabName === 'payouts') fetchPayouts();
+  }
+
+  // ─── Claims ────────────────────────────────────────────
+  async function fetchClaims() {
+    try {
+      const res = await fetch('/api/admin/claims');
+      activeClaims = await res.json();
+      renderClaims();
+      updateStats();
+    } catch (err) { console.error('Fetch claims error:', err); }
+  }
+
+  function updateStats() {
+    let p = 0, a = 0, r = 0, pts = 0;
+    activeClaims.forEach(c => {
+      if (c.status === 'Pending') p++;
+      else if (c.status === 'Approved') { a++; pts += (c.points_earned || 0); }
+      else if (c.status === 'Rejected') r++;
+    });
+    document.getElementById('stat-pending').innerText = p;
+    document.getElementById('stat-approved').innerText = a;
+    document.getElementById('stat-rejected').innerText = r;
+    document.getElementById('stat-points').innerText = pts.toLocaleString();
+  }
+
+  function renderClaims() {
+    const tbody = document.getElementById('claims-table-body');
+    if (activeClaims.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">No claims yet</td></tr>';
+      return;
+    }
+    tbody.innerHTML = activeClaims.map(c => {
+      let sc = c.status === 'Pending' ? 'bg-amber-100 text-amber-800' : c.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+      const store = c.store_name || c.dealer_name || '-';
+      const city = c.dealer_city || '-';
+      const itemsSummary = c.product_type || '-';
+      return `<tr class="hover:bg-gray-50 transition">
+        <td class="px-4 py-3 text-sm font-semibold text-gray-900">${c.id}</td>
+        <td class="px-4 py-3"><div class="text-sm font-semibold text-gray-800">${c.carpenter_name}</div><div class="text-xs text-gray-500">${c.carpenter_phone}</div></td>
+        <td class="px-4 py-3"><div class="text-sm text-gray-900 font-medium">${store}</div><div class="text-xs text-gray-500">${city}</div><div class="text-xs text-gray-500 truncate max-w-[180px]">${itemsSummary}</div></td>
+        <td class="px-4 py-3 text-sm font-bold text-brand-green">${c.quantity}</td>
+        <td class="px-4 py-3 text-sm text-gray-500"><div>${c.invoice_number}</div><div class="text-xs text-gray-400">${c.purchase_date}</div></td>
+        <td class="px-4 py-3"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${sc}">${c.status}</span></td>
+        <td class="px-4 py-3 text-right"><button onclick="openModal('${c.id}')" class="px-3 py-1.5 text-xs font-semibold text-white bg-brand-green hover:bg-brand-greenDark rounded-lg shadow-sm transition">Review</button></td>
+      </tr>`;
+    }).join('');
+    lucide.createIcons();
+  }
+
+  function openModal(claimId) {
+    const c = activeClaims.find(x => x.id === claimId);
+    if (!c) return;
+    activeClaimId = claimId;
+    document.getElementById('modal-title-text').innerText = 'Review: ' + claimId;
+    const images = parseImages(c);
+    document.getElementById('modal-invoice-img').src = images[0] || '';
+    document.getElementById('modal-carpenter-name').innerText = c.carpenter_name;
+    document.getElementById('modal-carpenter-phone').innerText = c.carpenter_phone;
+    document.getElementById('modal-store').innerText = c.store_name || c.dealer_name || '-';
+    document.getElementById('modal-city').innerText = c.dealer_city || '-';
+    document.getElementById('modal-qty').innerText = c.quantity + ' Sheets';
+    document.getElementById('modal-invoice-num').innerText = c.invoice_number;
+    document.getElementById('modal-date').innerText = c.purchase_date;
+    document.getElementById('modal-qrcode').innerText = c.qr_code || 'None';
+
+    // Render line items
+    const liDiv = document.getElementById('modal-line-items');
+    let items = [];
+    try { items = JSON.parse(c.line_items || '[]'); } catch(e) {}
+    if (items.length > 0) {
+      liDiv.innerHTML = items.map(it => `<div class="flex justify-between text-sm py-1 border-b border-gray-50"><span class="text-gray-700">${it.product}</span><span class="font-bold text-brand-green">×${it.quantity}</span></div>`).join('');
+    } else {
+      liDiv.innerHTML = `<p class="text-sm text-gray-500">${c.product_type || '-'}</p>`;
+    }
+
+    const thumbRow = document.getElementById('modal-thumbnail-row');
+    thumbRow.innerHTML = images.map((img) => `<img src="${img}" alt="Invoice thumbnail" class="w-16 h-16 rounded-lg border border-gray-200 object-cover cursor-zoom-in" onclick="document.getElementById('modal-invoice-img').src='${img}'; window.open('${img}')">`).join('');
+
+    // Reset
+    document.getElementById('rejection-box').classList.add('hidden');
+    document.getElementById('rejection-reason').value = '';
+    if (c.status === 'Pending') {
+      document.getElementById('modal-actions').classList.remove('hidden');
+      document.getElementById('processed-badge').classList.add('hidden');
+      document.getElementById('default-actions-row').classList.remove('hidden');
+      document.getElementById('reject-actions-row').classList.add('hidden');
+    } else {
+      document.getElementById('modal-actions').classList.add('hidden');
+      document.getElementById('processed-badge').classList.remove('hidden');
+      const badge = document.getElementById('processed-badge');
+      if (c.status === 'Approved') {
+        badge.className = 'p-3 rounded-xl text-center font-bold text-sm bg-emerald-100 text-emerald-800';
+        badge.innerHTML = '✓ Approved — +' + c.points_earned + ' Points';
+      } else {
+        badge.className = 'p-3 rounded-xl text-center font-bold text-sm bg-rose-100 text-rose-800';
+        badge.innerHTML = '✗ Rejected: ' + (c.rejection_reason || 'Failed');
+      }
+    }
+    document.getElementById('details-modal').classList.remove('hidden');
+    lucide.createIcons();
+  }
+
+  function closeModal() { document.getElementById('details-modal').classList.add('hidden'); activeClaimId = null; }
+  function showRejectionInput() { document.getElementById('default-actions-row').classList.add('hidden'); document.getElementById('rejection-box').classList.remove('hidden'); document.getElementById('reject-actions-row').classList.remove('hidden'); }
+  function cancelRejection() { document.getElementById('default-actions-row').classList.remove('hidden'); document.getElementById('rejection-box').classList.add('hidden'); document.getElementById('reject-actions-row').classList.add('hidden'); }
+
+  function parseImages(claim) {
+    if (!claim) return [];
+    if (Array.isArray(claim.image_urls)) return claim.image_urls;
+    if (typeof claim.image_urls === 'string' && claim.image_urls.trim()) {
+      try {
+        const parsed = JSON.parse(claim.image_urls);
+        if (Array.isArray(parsed)) return parsed;
+      } catch (e) {}
+      return [claim.image_urls];
+    }
+    return claim.image_url ? [claim.image_url] : [];
+  }
+
+  async function approveClaim() {
+    if (!activeClaimId) return;
+    const btn = document.getElementById('btn-approve'); btn.disabled = true; btn.innerText = 'Processing...';
+    try {
+      const res = await fetch('/api/admin/claims/' + activeClaimId + '/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'Approved' }) });
+      const r = await res.json();
+      if (r.success) { closeModal(); fetchClaims(); } else { alert(r.error); }
+    } catch(e) { alert('Network error'); }
+    btn.disabled = false; btn.innerText = 'Approve & Reward';
+  }
+
+  async function submitRejection() {
+    const reason = document.getElementById('rejection-reason').value.trim();
+    if (!reason) { alert('Enter a reason'); return; }
+    const btn = document.getElementById('btn-reject-confirm'); btn.disabled = true; btn.innerText = 'Rejecting...';
+    try {
+      const res = await fetch('/api/admin/claims/' + activeClaimId + '/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action: 'Rejected', rejectionReason: reason }) });
+      const r = await res.json();
+      if (r.success) { closeModal(); fetchClaims(); } else { alert(r.error); }
+    } catch(e) { alert('Network error'); }
+    btn.disabled = false; btn.innerText = 'Confirm Reject';
+  }
+
+  // ─── Carpenters ────────────────────────────────────────
+  async function fetchCarpenters() {
+    try {
+      const res = await fetch('/api/admin/carpenters');
+      const data = await res.json();
+      renderCarpenters(data);
+    } catch (err) { console.error(err); }
+  }
+
+  function renderCarpenters(carps) {
+    const tbody = document.getElementById('carpenters-table-body');
+    if (carps.length === 0) { tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-gray-400 text-sm">No carpenters</td></tr>'; return; }
+    tbody.innerHTML = carps.map(c => {
+      const verified = c.verified === true || c.verified === 'true';
+      const vBadge = verified ? '<span class="bg-emerald-100 text-emerald-800 text-xs font-semibold px-2 py-0.5 rounded-full">✓ Verified</span>' : '<span class="bg-amber-100 text-amber-800 text-xs font-semibold px-2 py-0.5 rounded-full">Pending</span>';
+      const vBtn = verified
+        ? `<button onclick="toggleVerify('${c.id}', false)" class="px-3 py-1 text-xs font-semibold border border-gray-300 text-gray-600 rounded-lg hover:bg-gray-50">Unverify</button>`
+        : `<button onclick="toggleVerify('${c.id}', true)" class="px-3 py-1 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 shadow-sm">Verify</button>`;
+      const tierColors = { Member: 'text-gray-500', Bronze: 'text-amber-700', Silver: 'text-gray-600', Gold: 'text-yellow-600', Platinum: 'text-purple-700' };
+      const tc = tierColors[c.tier] || 'text-gray-500';
+      const aadhaar = c.aadhaar_number ? '•••• ' + c.aadhaar_number.slice(-4) : '-';
+      return `<tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 text-sm font-semibold text-gray-900">${c.id}</td>
+        <td class="px-4 py-3"><div class="text-sm font-semibold text-gray-800">${c.name}</div><div class="text-xs text-gray-500">${c.phone}</div></td>
+        <td class="px-4 py-3 text-sm text-gray-600">${c.region || '-'}</td>
+        <td class="px-4 py-3 text-sm text-gray-600 font-mono">${aadhaar}</td>
+        <td class="px-4 py-3"><span class="text-sm font-bold ${tc}">${c.tier || 'Member'}</span><div class="text-xs text-gray-400">${c.total_sheets || 0} sheets</div></td>
+        <td class="px-4 py-3 text-sm font-bold text-brand-green">${(c.points_balance || 0).toLocaleString()}</td>
+        <td class="px-4 py-3">${vBadge}</td>
+        <td class="px-4 py-3 text-right">${vBtn}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function toggleVerify(id, verified) {
+    try {
+      await fetch('/api/admin/carpenters/' + id + '/verify', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ verified }) });
+      fetchCarpenters();
+    } catch(e) { alert('Error'); }
+  }
+
+  // ─── Payouts ───────────────────────────────────────────
+  async function fetchPayouts() {
+    try {
+      const res = await fetch('/api/admin/payouts');
+      const data = await res.json();
+      renderPayouts(data);
+    } catch (err) { console.error(err); }
+  }
+
+  function renderPayouts(pays) {
+    const tbody = document.getElementById('payouts-table-body');
+    if (pays.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-gray-400 text-sm">No payout requests</td></tr>'; return; }
+    tbody.innerHTML = pays.map(p => {
+      const sc = p.status === 'Requested' ? 'bg-amber-100 text-amber-800' : p.status === 'Approved' ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800';
+      const actions = p.status === 'Requested'
+        ? `<div class="flex space-x-1 justify-end">
+            <button onclick="payoutAction('${p.id}','Approved')" class="px-2 py-1 text-xs font-semibold bg-emerald-600 text-white rounded-lg hover:bg-emerald-700">Approve</button>
+            <button onclick="payoutAction('${p.id}','Rejected')" class="px-2 py-1 text-xs font-semibold border border-rose-300 text-rose-600 rounded-lg hover:bg-rose-50">Reject</button>
+          </div>`
+        : `<span class="text-xs text-gray-400">Processed</span>`;
+      const date = (p.created_at || '').split('T')[0] || '-';
+      return `<tr class="hover:bg-gray-50">
+        <td class="px-4 py-3 text-sm font-semibold text-gray-900">${p.id}</td>
+        <td class="px-4 py-3"><div class="text-sm font-semibold text-gray-800">${p.carpenter_name || '-'}</div><div class="text-xs text-gray-500">${p.carpenter_phone || ''}</div></td>
+        <td class="px-4 py-3 text-sm font-bold text-gray-800">₹${p.amount}</td>
+        <td class="px-4 py-3 text-sm text-gray-600">${p.payout_type}</td>
+        <td class="px-4 py-3 text-sm text-gray-500">${date}</td>
+        <td class="px-4 py-3"><span class="inline-flex px-2 py-0.5 rounded-full text-xs font-semibold ${sc}">${p.status}</span></td>
+        <td class="px-4 py-3 text-right">${actions}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  async function payoutAction(id, action) {
+    try {
+      await fetch('/api/admin/payouts/' + id + '/action', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify({ action }) });
+      fetchPayouts();
+    } catch(e) { alert('Error'); }
+  }
+
+  // Init
+  document.addEventListener('DOMContentLoaded', () => { lucide.createIcons(); });
+</script>
+</body>
+</html>

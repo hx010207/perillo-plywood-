@@ -2,9 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useI18n } from '../../contexts/I18nContext';
 import { User, Stats } from '../../types';
 import { updateProfile } from '../../services/api';
-import { User as UserIcon, Phone, MapPin, CreditCard, ShieldCheck, Zap, Landmark, KeyRound, Edit3, CheckCircle2, AlertCircle, Sparkles } from 'lucide-react';
+import { User as UserIcon, Phone, MapPin, CreditCard, ShieldCheck, Zap, Landmark, KeyRound, Edit3, CheckCircle2, AlertCircle } from 'lucide-react';
 import { Modal } from '../../components/common/Modal';
-import { SpotlightCard } from '../../components/reactbits/SpotlightCard';
 
 interface ProfileTabProps {
   user: User;
@@ -14,7 +13,6 @@ interface ProfileTabProps {
 }
 
 const TIER_ICONS: Record<string, string> = { Member: '🪵', Bronze: '🥉', Silver: '🥈', Gold: '🥇', Platinum: '💎' };
-const TIER_COLORS: Record<string, string> = { Member: '#94A3B8', Bronze: '#CD7F32', Silver: '#6B7280', Gold: '#F59E0B', Platinum: '#8B5CF6' };
 
 export const ProfileTab: React.FC<ProfileTabProps> = ({
   user,
@@ -103,15 +101,15 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
   return (
     <div className="space-y-6 pb-28 sm:pb-12 max-w-4xl mx-auto text-white">
       {/* 1. User Summary Profile Card */}
-      <SpotlightCard className="p-6 sm:p-8 space-y-6">
+      <div className="p-6 sm:p-8 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="flex items-center space-x-4">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-emerald-600 to-emerald-950 flex items-center justify-center text-white font-black text-2xl shadow-lg border border-emerald-400/40">
+            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#1E4620] to-[#0A160D] flex items-center justify-center text-white font-extrabold text-2xl shadow-lg border border-emerald-400/40">
               {(user.name || 'R').charAt(0).toUpperCase()}
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <h3 className="text-xl sm:text-2xl font-black font-display text-white">{user.name || 'Carpenter'}</h3>
+                <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">{user.name || 'Carpenter'}</h3>
                 {stats.verified && (
                   <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-400/30">
                     <ShieldCheck className="w-3 h-3 mr-1 text-emerald-400" />
@@ -119,7 +117,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                   </span>
                 )}
               </div>
-              <p className="text-xs text-slate-400 font-mono mt-0.5">
+              <p className="text-xs text-slate-300 mt-0.5">
                 {user.phone ? `+91 ${user.phone}` : ''} • ID: {user.id}
               </p>
               <p className="text-xs text-amber-300 font-medium mt-0.5">
@@ -139,34 +137,34 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
 
         {/* Tier Status & Sheet Counter */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 border-t border-white/10 text-xs">
-          <div className="p-3 rounded-xl bg-black/40 border border-white/10">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Loyalty Tier</span>
-            <p className="text-sm font-black text-amber-300 mt-0.5 flex items-center space-x-1">
+          <div className="p-3.5 rounded-xl bg-[#0B130E] border border-white/10">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Loyalty Tier</span>
+            <p className="text-sm font-extrabold text-amber-300 mt-0.5 flex items-center space-x-1">
               <span>{TIER_ICONS[stats.tier] || '🪵'}</span>
               <span>{stats.tier} Tier</span>
             </p>
           </div>
-          <div className="p-3 rounded-xl bg-black/40 border border-white/10">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Verified Sheets</span>
-            <p className="text-sm font-black font-mono text-white mt-0.5">{stats.totalSheets || 0} Sheets</p>
+          <div className="p-3.5 rounded-xl bg-[#0B130E] border border-white/10">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Verified Sheets</span>
+            <p className="text-sm font-extrabold text-white mt-0.5">{stats.totalSheets || 0} Sheets</p>
           </div>
-          <div className="col-span-2 sm:col-span-1 p-3 rounded-xl bg-black/40 border border-white/10">
-            <span className="text-[10px] font-mono text-slate-400 uppercase">Cashback Slab</span>
-            <p className="text-sm font-black font-mono text-emerald-400 mt-0.5">{stats.tierRewardPct || 0.8}% per sheet</p>
+          <div className="col-span-2 sm:col-span-1 p-3.5 rounded-xl bg-[#0B130E] border border-white/10">
+            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wide">Cashback Rate</span>
+            <p className="text-sm font-extrabold text-emerald-400 mt-0.5">{stats.tierRewardPct || 0.8}% per sheet</p>
           </div>
         </div>
-      </SpotlightCard>
+      </div>
 
       {/* Edit Mode Form */}
       {isEditing ? (
-        <SpotlightCard className="p-6 sm:p-8 space-y-6">
-          <h4 className="text-base font-black font-display text-emerald-400 uppercase tracking-wider">
+        <div className="p-6 sm:p-8 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-6">
+          <h4 className="section-heading">
             Edit KYC & Bank Profile
           </h4>
 
           <form onSubmit={handleSave} className="space-y-4">
             <div>
-              <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+              <label className="form-label">
                 {t('fullName')} *
               </label>
               <input
@@ -174,12 +172,12 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                 required
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
+                className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm font-semibold"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+              <label className="form-label">
                 {t('regionLabel')}
               </label>
               <input
@@ -187,13 +185,13 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
                 placeholder="e.g. Hubballi, Karnataka"
-                className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-semibold text-white focus:outline-none focus:border-emerald-400"
+                className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm font-semibold"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+                <label className="form-label">
                   {t('aadhaar')}
                 </label>
                 <input
@@ -202,12 +200,12 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                   value={aadhaarNumber}
                   onChange={(e) => setAadhaarNumber(e.target.value.replace(/[^0-9]/g, ''))}
                   placeholder="12-digit Aadhaar"
-                  className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono text-white focus:outline-none focus:border-emerald-400"
+                  className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm font-semibold"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-mono uppercase text-slate-300 mb-1.5">
+                <label className="form-label">
                   {t('panCardLabel')}
                 </label>
                 <input
@@ -216,57 +214,57 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                   value={panCard}
                   onChange={(e) => setPanCard(e.target.value.toUpperCase())}
                   placeholder="ABCDE1234F"
-                  className="w-full px-3.5 py-3 rounded-xl bg-black/40 border border-white/15 text-sm font-mono text-white uppercase focus:outline-none focus:border-emerald-400"
+                  className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3.5 text-white uppercase placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm font-semibold"
                 />
               </div>
             </div>
 
             <div className="pt-3 border-t border-white/10">
-              <h5 className="text-xs font-mono uppercase text-emerald-400 mb-3">Bank & UPI Details</h5>
+              <h5 className="section-heading mb-3">Bank & UPI Details</h5>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('upiId')}</label>
+                  <label className="form-label">{t('upiId')}</label>
                   <input
                     type="text"
                     value={upiId}
                     onChange={(e) => setUpiId(e.target.value)}
                     placeholder="mobile@upi"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
+                    className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('bankName')}</label>
+                    <label className="form-label">{t('bankName')}</label>
                     <input
                       type="text"
                       value={bankName}
                       onChange={(e) => setBankName(e.target.value)}
                       placeholder="State Bank of India"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs text-white focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('ifscCode')}</label>
+                    <label className="form-label">{t('ifscCode')}</label>
                     <input
                       type="text"
                       value={ifscCode}
                       onChange={(e) => setIfscCode(e.target.value.toUpperCase())}
                       placeholder="SBIN0001234"
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white uppercase focus:outline-none focus:border-emerald-400"
+                      className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3 text-white uppercase placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-mono text-slate-400 mb-1">{t('accountNumber')}</label>
+                  <label className="form-label">{t('accountNumber')}</label>
                   <input
                     type="text"
                     value={accountNumber}
                     onChange={(e) => setAccountNumber(e.target.value.replace(/[^0-9]/g, ''))}
                     placeholder="Account Number"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-black/40 border border-white/15 text-xs font-mono text-white focus:outline-none focus:border-emerald-400"
+                    className="w-full bg-[#0B130E] border border-white/15 rounded-xl px-4 py-3 text-white placeholder-slate-500 focus:border-[#10B981] focus:ring-1 focus:ring-[#10B981] outline-none text-sm"
                   />
                 </div>
               </div>
@@ -283,19 +281,19 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               <button
                 type="submit"
                 disabled={loading}
-                className="px-7 py-3 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs uppercase tracking-wider rounded-xl shadow-glow-emerald transition-all disabled:opacity-50"
+                className="btn-primary-amber px-7 py-3 text-xs uppercase tracking-wider font-extrabold disabled:opacity-50"
               >
                 {loading ? 'Saving...' : t('saveChanges')}
               </button>
             </div>
           </form>
-        </SpotlightCard>
+        </div>
       ) : (
         /* Read-Only View */
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {/* Personal Details */}
-          <SpotlightCard className="p-6 space-y-4">
-            <h4 className="text-xs font-mono font-bold text-emerald-400 uppercase tracking-widest flex items-center space-x-2">
+          <div className="p-6 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-4">
+            <h4 className="section-heading flex items-center space-x-2">
               <UserIcon className="w-4 h-4" />
               <span>Personal KYC Details</span>
             </h4>
@@ -303,7 +301,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
             <div className="space-y-3 text-xs divide-y divide-white/10">
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">Mobile</span>
-                <span className="font-mono text-white">+91 {user.phone}</span>
+                <span className="font-bold text-white">+91 {user.phone}</span>
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">Region</span>
@@ -311,18 +309,18 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">Aadhaar Card</span>
-                <span className="font-mono text-emerald-300 font-bold">{maskAadhaar(user.aadhaar_number)}</span>
+                <span className="text-emerald-400 font-bold">{maskAadhaar(user.aadhaar_number)}</span>
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">PAN Card</span>
-                <span className="font-mono text-emerald-300 font-bold">{maskPan(user.pan_card)}</span>
+                <span className="text-emerald-400 font-bold">{maskPan(user.pan_card)}</span>
               </div>
             </div>
-          </SpotlightCard>
+          </div>
 
           {/* Bank & UPI Details */}
-          <SpotlightCard className="p-6 space-y-4">
-            <h4 className="text-xs font-mono font-bold text-amber-400 uppercase tracking-widest flex items-center space-x-2">
+          <div className="p-6 rounded-2xl bg-[#121A15]/80 backdrop-blur-xl border border-white/10 shadow-xl space-y-4">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-amber-400 flex items-center space-x-2">
               <Landmark className="w-4 h-4" />
               <span>Bank & UPI Details</span>
             </h4>
@@ -330,7 +328,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
             <div className="space-y-3 text-xs divide-y divide-white/10">
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">UPI ID</span>
-                <span className="font-mono text-emerald-300 font-bold">{user.upi_id || 'Not Set'}</span>
+                <span className="text-emerald-400 font-bold">{user.upi_id || 'Not Set'}</span>
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">Bank Name</span>
@@ -338,16 +336,16 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">Account Number</span>
-                <span className="font-mono text-white">
+                <span className="font-bold text-white">
                   {user.account_number ? `•••• •••• ${user.account_number.slice(-4)}` : 'Not Set'}
                 </span>
               </div>
               <div className="pt-2 flex justify-between">
                 <span className="text-slate-400">IFSC Code</span>
-                <span className="font-mono text-white">{user.ifsc_code || 'Not Set'}</span>
+                <span className="font-bold text-white">{user.ifsc_code || 'Not Set'}</span>
               </div>
             </div>
-          </SpotlightCard>
+          </div>
         </div>
       )}
 
@@ -362,7 +360,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
           <div className="flex justify-end pt-2">
             <button
               onClick={() => setAlertState({ ...alertState, isOpen: false })}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold text-xs rounded-xl shadow-md"
+              className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs rounded-xl shadow-md"
             >
               {t('ok')}
             </button>

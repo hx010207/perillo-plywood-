@@ -5,6 +5,7 @@ import { Stats, Invoice } from '../../types';
 import { fetchStats } from '../../services/api';
 import { Header } from '../../components/common/Header';
 import { CarpenterNavBar, CarpenterTab } from '../../components/navigation/CarpenterNavBar';
+import { AuroraBackground } from '../../components/reactbits/AuroraBackground';
 
 import { DashboardHomeTab } from './DashboardHomeTab';
 import { UploadInvoiceTab } from './UploadInvoiceTab';
@@ -62,13 +63,16 @@ export const CarpenterShell: React.FC = () => {
   const isMoreInfo = user.status === 'more_info_requested';
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen flex flex-col relative text-slate-100 selection:bg-[#10B981] selection:text-black">
+      {/* Ambient Moving Aurora Mesh Background */}
+      <AuroraBackground />
+
       {/* Header */}
       <Header verified={stats.verified} />
 
       {/* Banner for more_info_requested */}
       {isMoreInfo && (
-        <div className="bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm py-2.5 px-4 text-center border-b border-amber-600 flex items-center justify-center space-x-2 shadow-xs">
+        <div className="bg-amber-500 text-slate-950 font-bold text-xs sm:text-sm py-2.5 px-4 text-center border-b border-amber-600 flex items-center justify-center space-x-2 shadow-sm">
           <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span>{t('moreInfoMsg') || 'Admin requested more information. Please update your details and save.'}</span>
         </div>
@@ -86,7 +90,7 @@ export const CarpenterShell: React.FC = () => {
       )}
 
       {/* Main Content Area */}
-      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8 relative z-10">
         {isMoreInfo ? (
           <ProfileTab
             user={user}

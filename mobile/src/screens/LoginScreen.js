@@ -25,6 +25,7 @@ export default function LoginScreen() {
   const [phone, setPhone] = useState('');
   const [identifier, setIdentifier] = useState('admin@perillo.local');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Signup States
   const [name, setName] = useState('');
@@ -200,17 +201,23 @@ export default function LoginScreen() {
                     </View>
 
                     <Text style={[styles.inputLabel, styles.inputGap]}>Admin Password</Text>
-                    <View style={styles.inputContainer}>
+                    <View style={[styles.inputContainer, { flexDirection: 'row', alignItems: 'center' }]}>
                       <TextInput
-                        style={styles.input}
+                        style={[styles.input, { flex: 1 }]}
                         placeholder="Password"
-                        secureTextEntry
+                        secureTextEntry={!showPassword}
                         value={password}
                         onChangeText={(text) => {
                           setPassword(text);
                           setError('');
                         }}
                       />
+                      <TouchableOpacity
+                        onPress={() => setShowPassword(!showPassword)}
+                        style={{ paddingHorizontal: 12, paddingVertical: 8 }}
+                      >
+                        <Text style={{ fontSize: 16 }}>{showPassword ? '👁️' : '🙈'}</Text>
+                      </TouchableOpacity>
                     </View>
                   </>
                 ) : (
